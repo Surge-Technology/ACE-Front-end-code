@@ -10,7 +10,7 @@ import "./eventregister.css";
 import Swal from 'sweetalert2';
 const eventRegister = (props) => {
   const [state, setState] = useState({ title: "", eventType: "", eventCategory:"", eventTypeOptions: "", description: "", registrationFee: "", perdayFee: "", alldayCheck: true, customCheck: false, startDateAll: "", startTimeAll: "", endTimeAll: "" });
-  const [customEventLoopValues, setCustomEventLoopValues] = useState([{ startDate: "", startTime: "", endTime: "" }]);
+  const [customEventLoopValues, setCustomEventLoopValues] = useState([{ startDate: "",endDate:"", startTime: "", endTime: "" }]);
   const [pricingLoopValues, setPricingLoopValues] = useState([{ mathValue: "", greaterlessnumber: "", discountfeeValue: "", discountfeeNumber: "" }]);
   const [eventTypeOptions, setEventTypeOptions] = useState("");
   const [eventCategoryOptions, setEventCategoryOptions] = useState("");
@@ -27,36 +27,34 @@ const eventRegister = (props) => {
     getAllregistredStudents();
     if (params.id !== "new") {
       Axios.get(`event/${params.id}`).then((res) => {
-        let event = { value: res.data.eventType.id, label: res.data.eventType.name }
+         let event = { value: res.data.eventType.id, label: res.data.eventType.name }
         let eventCategoryFetch = { value: res.data.eventCategory.id, label: res.data.eventCategory.name }
-
+       
         if (res.data.isAllDay === true) {
-          setState({
+           setState({
             ...state, title: res.data.name, eventType: event,eventCategory:eventCategoryFetch, description: res.data.description, registrationFee: res.data.registrationFee, perdayFee: res.data.perDay, alldayCheck: res.data.isAllDay, customCheck: res.data.isCustomRange, startDateAll: res.data.allDayEvent.eventDate ? moment(res.data.allDayEvent.eventDate).format("MM/DD/YYYY") : res.data.allDayEvent.eventDate,
             startTimeAll: res.data.allDayEvent.startTime ? moment(res.data.allDayEvent.startTime, ["HH:mm:ss"]).format("hh:mm a") : res.data.allDayEvent.startTime,
             endTimeAll: res.data.allDayEvent.endTime ? moment(res.data.allDayEvent.endTime, ["HH:mm:ss"]).format("hh:mm a") : res.data.allDayEvent.endTime,
           })
         }
         else {
+           let pricingValues = []
+          res.data.eventPricing.map((key, index) => {
+            pricingValues.push({ mathValue: { value: key.eventPricingCriteria.id, label: key.eventPricingCriteria.name }, greaterlessnumber: key.totalDays, discountfeeNumber: key.discount, discountfeeValue: { value: key.discountOrFee.id, label: key.discountOrFee.name } })
+          })
+          setPricingLoopValues(pricingValues)
+          let customDateValues = []
+          customDateValues.push({
+           startDate: res.data.customRangeEvent.startDate? moment(res.data.customRangeEvent.startDate).format("MM/DD/YYYY") : res.data.customRangeEvent.startDate,
+           endDate: res.data.customRangeEvent.endDate? moment(res.data.customRangeEvent.endDate).format("MM/DD/YYYY") : res.data.customRangeEvent.endDate,
+           startTime: res.data.customRangeEvent.startTime ? moment(res.data.customRangeEvent.startTime, ["HH:mm:ss"]).format("hh:mm a") : res.data.customRangeEvent.startTime,
+           endTime: res.data.customRangeEvent.endTime ? moment(res.data.customRangeEvent.endTime, ["HH:mm:ss"]).format("hh:mm a") : res.data.customRangeEvent.endTime,
+         })
+          setCustomEventLoopValues(customDateValues);
           setState({ ...state, title: res.data.name, eventType: event,eventCategory:eventCategoryFetch, description: res.data.description, registrationFee: res.data.registrationFee, perdayFee: res.data.perDay, alldayCheck: res.data.isAllDay, customCheck: res.data.isCustomRange })
         }
-        let customDateValues = []
-        res.data.customRangeEvent.map((key, index) => {
-          customDateValues.push({
-            startDate: key.eventDate ? moment(key.eventDate).format("MM/DD/YYYY") : key.eventDate,
-            startTime: key.startTime ? moment(key.startTime, ["HH:mm:ss"]).format("hh:mm a") : key.startTime,
-            endTime: key.endTime ? moment(key.endTime, ["HH:mm:ss"]).format("hh:mm a") : key.endTime,
-          })
-        })
-        setCustomEventLoopValues(customDateValues);
-        let pricingValues = []
-        res.data.eventPricing.map((key, index) => {
-          pricingValues.push({ mathValue: { value: key.eventPricingCriteria.id, label: key.eventPricingCriteria.name }, greaterlessnumber: key.totalDays, discountfeeNumber: key.discount, discountfeeValue: { value: key.discountOrFee.id, label: key.discountOrFee.name } })
-        })
-        setPricingLoopValues(pricingValues)
-      }).catch((err) => {
-        Swal.fire( err.response.data.message, 'Please try again '  ) 
-        })
+        
+      }).catch((err) => {   })
     }
   }, []);
   const getCommunicationData = ()=>{
@@ -68,6 +66,7 @@ const eventRegister = (props) => {
   }
   const getAllregistredStudents = () => {
     Axios.get(`event/${params.id}/event-registration`).then((res) => {
+      console.log("Registered",res)
       setRegistredStudents(res.data)
       if (res.status == 401) {
         Swal.fire({ title: "error", icon: "error", text: "Session Expired" })
@@ -104,7 +103,7 @@ const eventRegister = (props) => {
     <>
       <Card >
         <CardBody className='cardbg'>
-          <h3><strong>Event</strong></h3>
+          <h3><strong>Event</strong></h3> 
           <Card className='cardbgw'>
             <CardBody>
               <Row>
@@ -189,19 +188,25 @@ const eventRegister = (props) => {
                             {state.customCheck === true ? (customEventLoopValues.map((element, index) => (
                               <div key={index}>
                                 <Row className='rowextend4'>
-                                  <Col md={3}>
+                                  <Col md={2}>
                                     <FormGroup>
-                                      <Label  >{index === 0 ? "Date" : ""}</Label>
+                                      <Label  >{index === 0 ? "Start Date" : ""}</Label>
                                       <Input name="startDate" value={element.startDate || "startDate"} readOnly/>
                                     </FormGroup>
                                   </Col>
-                                  <Col md={3}>
+                                  <Col md={2}>
+                                    <FormGroup>
+                                      <Label  >{index === 0 ? "End Date" : ""}</Label>
+                                      <Input name="endDate" value={element.endDate || "endDate"} readOnly/>
+                                    </FormGroup>
+                                  </Col>
+                                  <Col md={2}>
                                     <FormGroup>
                                       <Label  > {index === 0 ? "Start Time" : ""}</Label>
                                       <Input name="startTime" value={element.startTime || "startTime"} readOnly/>
                                     </FormGroup>
                                   </Col>
-                                  <Col md={3}>
+                                  <Col md={2}>
                                     <FormGroup>
                                       <Label  > {index === 0 ? "End Time" : ""}</Label>
                                       <Input name="endTime" value={element.endTime || "endTime"} readOnly/>
@@ -229,23 +234,23 @@ const eventRegister = (props) => {
                           <h5><strong>Pricing Details</strong></h5>
                           <div className='cardcolor'>
                             <Row>
-                              <Col md={6}>
-                                <Label for="">Registration Fee $ </Label>
-                                <Input
-                                  type="number"
-                                  placeholder="Registration fee"
-                                  name="registrationFee"
-                                  value={state.registrationFee}
-                                  readOnly
-                                />
-                              </Col>
-                              <Col md={6}>
+                            <Col md={6}>
                                 <Label for="">Event Fee $</Label>
                                 <Input
                                   type="number"
                                   placeholder="Per day fee "
                                   name="perdayFee"
                                   value={state.perdayFee}
+                                  readOnly
+                                />
+                              </Col>
+                            <Col md={6}>
+                                <Label for="">Registration Fee $ </Label>
+                                <Input
+                                  type="number"
+                                  placeholder="Registration fee"
+                                  name="registrationFee"
+                                  value={state.registrationFee}
                                   readOnly
                                 />
                               </Col>
@@ -335,7 +340,7 @@ const eventRegister = (props) => {
         </CardBody>
         <Row>
 <center>
-<Button size="md" type="button" id="cancelbutton" onClick={() => navigate(-1)}>Back</Button>{' '}
+<Button size="md" type="button" id="cancelbutton" onClick={() =>navigate('/events')}>Back</Button>{' '}
 
 </center>
 

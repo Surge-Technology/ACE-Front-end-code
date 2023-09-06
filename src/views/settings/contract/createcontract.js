@@ -44,7 +44,7 @@ const createcontract = () => {
   });
   useEffect(() => {
     alllengths();
-    allfrequencies();
+  //  allfrequencies();
     if (params.id !== "new") {
       Axios.get(`contract-promotion/${params.id}`).then((res) => {
         console.log("response", res)
@@ -73,7 +73,7 @@ const createcontract = () => {
     }
   }, []);
   const alllengths = () => {
-    Axios.get(`tenure`).then((res) => {
+    Axios.get(`/all-tenures`).then((res) => {
       let lengthsArray = []
       res.data.map((key, index) => {
         lengthsArray.push({ value: key.id, label: key.name })
@@ -83,8 +83,8 @@ const createcontract = () => {
       Swal.fire(err.response.data.message, 'Please try again ')
     })
   }
-  const allfrequencies = () => {
-    Axios.get(`subscription-frequency`).then((res) => {
+  const allfrequencies = (selectedOption) => {
+    Axios.get(`/tenure/${selectedOption.value}/subscription-frequency`).then((res) => {
       let frequenciesArray = []
       res.data.map((key, index) => {
         frequenciesArray.push({ value: key.id, label: key.name })
@@ -274,7 +274,7 @@ const createcontract = () => {
                                       name="lengths"
                                       options={contractlengths}
                                       value={values.lengths}
-                                      onChange={(selectedOption) => form.setFieldValue('lengths', selectedOption)}
+                                      onChange={(selectedOption) => (form.setFieldValue('lengths', selectedOption),allfrequencies(selectedOption))}
                                       onBlur={() => { form.setFieldTouched('lengths') }}
                                     />
                                   )}

@@ -32,8 +32,8 @@ instance.interceptors.response.use(function (config) {
       if(error.response===undefined){
         //connection refused
         console.log("connection refused");
-       localStorage.clear();
-        window.location.reload(false);
+      //  localStorage.clear();
+      //   window.location.reload(false);
       }
         if(error.response.status === 401){
           Swal.fire(
@@ -42,11 +42,9 @@ instance.interceptors.response.use(function (config) {
             'question'
           )
           console.log("config 401");
-          localStorage.clear()
-          window.location.reload(false);
-         //  window.location = '/login';  
+          // localStorage.clear()
+          // window.location.reload(false);
          
-                 //this.props.history.push("/login");
         }
         if(error.response.status === 500){
             Swal.fire(

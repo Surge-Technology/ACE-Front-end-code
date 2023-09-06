@@ -126,6 +126,7 @@ export default function Dashboard() {
   const getAllBatches = () => {
     Axios.get(`batches`)
       .then((n) => {
+        console.log("nnnn",n)
         let batchArray = [];
         n.data.content.map((event, i) => {
           let startDate = event.startDate.split("-");
@@ -178,6 +179,7 @@ export default function Dashboard() {
   const getAllEvents = () => {
     Axios.get("event")
       .then((n) => {
+        console.log("event",n)
         let eventArray = [];
         n.data.content.map((event, i) => {
           if (event.isAllDay == true) {

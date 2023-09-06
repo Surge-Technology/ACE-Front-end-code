@@ -35,23 +35,47 @@ export default function StudentEventModal(props) {
     }
     useEffect(()=>{
        Axios.get(`event/${props.eventId}`).then((res)=>{
-          if(res.data.isCustomRange===true){
-          //"isCustomRange" 
-          const list = []
-          let checkboxData = []
-          res.data.customRangeEvent.map((customEvent,index)=>{
-            let time = customEvent.startTime.split(":");
-            let startTimee = new Date();
-            startTimee.setHours(time[0]);
-            startTimee.setMinutes(time[1]);
+           if(res.data.isCustomRange===true){
+            console.log("res",res)
+         // console.log("res", moment(res.data.customRangeEvent.startTime, ["HH:mm:ss"]).format("hh:mm a"),res)
 
-            let endTime = customEvent.endTime.split(":");
-            let endTimee = new Date();
-            endTimee.setHours(endTime[0]);
-            endTimee.setMinutes(endTime[1]);
-           checkboxData[index] = false
-            list.push({"startTimeView":startTimee,"endTimeView":endTimee,"eventDate": customEvent.eventDate, "startTime": customEvent.startTime,"endTime":  customEvent.endTime})
-          })
+ 
+         const list = []
+         let checkboxData = []
+          let date1 = new Date(res.data.customRangeEvent.startDate);  
+          let  date2 = new Date(res.data.customRangeEvent.endDate);   
+             let time_difference = date2.getTime() - date1.getTime();  
+              let days_difference = time_difference / (1000 * 60 * 60 * 24);  
+             let eventStartTime = moment(res.data.customRangeEvent.startTime, ["HH:mm:ss"]).format("hh:mm a")
+            let eventEndTime = moment(res.data.customRangeEvent.endTime, ["HH:mm:ss"]).format("hh:mm a")
+            for (let i = 1; i < days_difference+1; i++) {
+              var date = new Date(date1)
+              date.setDate(date.getDate() + i)
+              checkboxData[i-1] = false
+              list.push({"enrollmentDate": moment(date).format("YYYY-MM-DD"), "startTime":eventStartTime,"endTime":  eventEndTime})
+            }
+            
+
+
+
+
+
+          // const list = []
+          // let checkboxData = []
+
+          // res.data.customRangeEvent.map((customEvent,index)=>{
+          //   let time = customEvent.startTime.split(":");
+          //   let startTimee = new Date();
+          //   startTimee.setHours(time[0]);
+          //   startTimee.setMinutes(time[1]);
+
+          //   let endTime = customEvent.endTime.split(":");
+          //   let endTimee = new Date();
+          //   endTimee.setHours(endTime[0]);
+          //   endTimee.setMinutes(endTime[1]);
+          //  checkboxData[index] = false
+          //   list.push({"startTimeView":startTimee,"endTimeView":endTimee,"enrollmentDate": customEvent.enrollmentDate, "startTime": customEvent.startTime,"endTime":  customEvent.endTime})
+          // })
           let length = []
           res.data.eventPricing.map((lengt,index)=>{
             length.push(lengt.totalDays);
@@ -62,10 +86,11 @@ export default function StudentEventModal(props) {
             checkbox : checkboxData,
             eventsList : list,
             registrationFee : res.data.registrationFee,
-            perDay : res.data.perDay,fee:res.data.registrationFee,
+            perDay : res.data.perDay,
+            fee:res.data.registrationFee,
             eventLength : res.data.eventPricing.length,
             eventPricing : res.data.eventPricing,
-            totalFee : res.data.registrationFee,
+            totalFee : res.data.perDay,
             selectedEventsLength : [],discountOrFee : "",discount : 0 ,
             extraDiscount:"",finalTotalFee:0
           }))
@@ -75,7 +100,7 @@ export default function StudentEventModal(props) {
           setState((prevState)=>({
             ...prevState,
             alldayORcustom:"isAllDay",
-            eventsList:[{"eventDate": res.data.allDayEvent.eventDate, "startTime": res.data.allDayEvent.startTime,"endTime":  res.data.allDayEvent.endTime}],
+            eventsList:[{"enrollmentDate": res.data.allDayEvent.eventDate, "startTime": res.data.allDayEvent.startTime,"endTime":  res.data.allDayEvent.endTime}],
             registrationFee:res.data.registrationFee,
             perDay:res.data.perDay,
             fee:res.data.registrationFee,
@@ -84,14 +109,13 @@ export default function StudentEventModal(props) {
             extraDiscount:"",finalTotalFee:0
           }))
         }
-      }).catch(err=>{ 
-        Swal.fire( err.response.data.message, 'Please try again '  ) 
-      })
+      }).catch(err=>{   })
     },[])
     const checkboxHandleChange = (e)=>{ 
       let eventSelected = selectedEventsLength;
        e.target.checked?(eventSelected.push(e.target.name)):(eventSelected.pop(e.target.name));
        let amouunt = e.target.checked?fee+perDay:fee-perDay;
+       console.log("amount",amouunt)
        let checked = checkbox;
        if(checked.length<e.target.name){
         checked[e.target.name] = e.target.value
@@ -103,6 +127,7 @@ export default function StudentEventModal(props) {
          checkbox:checked,fee:amouunt,selectedEventsLength:eventSelected,totalFee:amouunt
       }))
       eventPricing.map((mapPricing,index)=>{
+       
       if(eventSelected.length>mapPricing.totalDays){
         if(mapPricing.eventPricingCriteria.name==="Greater Than"){
           if(mapPricing.discountOrFee.name==="Discount %"){
@@ -193,7 +218,7 @@ export default function StudentEventModal(props) {
                 }
             }
           },
-          "eventEnrollmentDate":  eventEnrollmentData,
+          "customRangeEventEnrollmentDate":  eventEnrollmentData,
           }
           if(PaymentData.paymentType.label==="AutoPay"){
             payload.autoPay = {
@@ -219,8 +244,9 @@ export default function StudentEventModal(props) {
              "backPictureAttachment":PaymentData.backPictureAttachment
             }
           }
+          console.log("payload",payload)
               axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
-            axios.post(`${process.env.REACT_APP_BASE_URL}/event/${props.eventId}/payment-type/${PaymentData.paymentType.value}/event-registration`,payload).then((res)=>{
+            axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/payment-type/${PaymentData.paymentType.value}/event-registration`,payload).then((res)=>{
                toast.success("Registered successfully", { theme: "colored" })
               setState((prevState)=>({...prevState,loader:false}))
               if(res.data.cardPaymentResponse!=null){
@@ -248,7 +274,7 @@ export default function StudentEventModal(props) {
         })
         let existingstudentPayload ={
           "totalFee": finalTotalFee,
-          "eventEnrollmentDate": eventEnrollmentData,
+          "customRangeEventEnrollmentDate": eventEnrollmentData,
       }
       if(PaymentData.paymentType.label==="AutoPay"){
         existingstudentPayload.autoPay = {
@@ -274,10 +300,10 @@ export default function StudentEventModal(props) {
           "backPictureAttachment":PaymentData.backPictureAttachment
          }
        }
-
- 
+       console.log("existingstudentPayload",existingstudentPayload)
+ ///custom-range-event/578/student/325/payment-type/19/event-registration
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
-       axios.post(`${process.env.REACT_APP_BASE_URL}/event/${props.eventId}/student/${props.studentTypeData.currentStudentId}/payment-type/${PaymentData.paymentType.value}/event-registration`,existingstudentPayload).then((res)=>{
+       axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/student/${props.studentTypeData.currentStudentId}/payment-type/${PaymentData.paymentType.value}/event-registration`,existingstudentPayload).then((res)=>{
          toast.success("Registered successfully", { theme: "colored" })
        setState((prevState)=>({...prevState,loader:false}))
        if(res.data.cardPaymentResponse!=null){
@@ -329,7 +355,7 @@ export default function StudentEventModal(props) {
                     return(<div style={{marginLeft:"20px"}} key={index}> 
                                 {/* <Input type="checkbox" name="guardianCheckbox" value={guardianCheckbox} onChange={sameHasGuardiancheckHandle}  /> <Label check > <span style={{margin:"0px 0px 0px 26px"}}>{mapData.event}</span></Label> */}
                                 <Input type="checkbox"  name={index} value={checkbox[index]} onChange={checkboxHandleChange} /> <Label check > 
-                                <span style={{margin:"0px 0px 0px 26px"}}>{mapData.eventDate} <span style={{fontSize:"12px",padding:"0px 0px 0px 10px"}}> {moment(mapData.startTimeView).format("hh:mm a")} - {moment(mapData.endTimeView).format("hh:mm a")}</span></span></Label>
+                                <span style={{margin:"0px 0px 0px 26px"}}>{mapData.enrollmentDate} <span style={{fontSize:"12px",padding:"0px 0px 0px 10px"}}> {moment(mapData.startTimeView).format("hh:mm a")} - {moment(mapData.endTimeView).format("hh:mm a")}</span></span></Label>
                             </div>)
                      })}
                     </Col>

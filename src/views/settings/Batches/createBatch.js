@@ -104,7 +104,7 @@ const createBatch = () => {
   }
   const getAllStaff = () => {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-    axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/staff`)
+    axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/roles/Coach/users`)
       .then((res) => {
         let staffArray = []
         res.data.map((key, index) => {

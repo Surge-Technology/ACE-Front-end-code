@@ -69,8 +69,15 @@ export default function StudentAttandList() {
   const statusHandleChange =()=>{
     return(<><Badge color="primary">Active</Badge></>)
   }
-  const timeDisplay = (cell, row) => {
-    return cell !== null && cell !== undefined ? moment(cell, ["HH:mm"]).format("hh:mm a") : "";
+  const absentCount = (cell, row) => {
+    let date1 = new Date(startDate);
+    let date2 = new Date(endDate);
+    let time_difference = date2.getTime() - date1.getTime();
+    let days_difference = time_difference / (1000 * 60 * 60 * 24);
+    let totalcont = days_difference+1
+    let absent = totalcont-row.attendanceCount
+    let finalData = absent.toFixed(0)
+    return(<>{finalData?finalData:null}</>)
   }
   return (
     <>
@@ -117,11 +124,8 @@ export default function StudentAttandList() {
                   <TableHeaderColumn width="140" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
                   <TableHeaderColumn width="180" dataField='masterName' dataSort>Master Name</TableHeaderColumn>
                   <TableHeaderColumn width="120" dataField='program'  dataSort>Program</TableHeaderColumn>
-                  <TableHeaderColumn width="120" dataField='batch'    dataSort>Class</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataField='MasterName'  dataFormat={statusHandleChange} dataSort>Status</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataField='startTime' dataFormat={timeDisplay} dataSort>Start Time</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataField='endTime'  dataFormat={timeDisplay}  dataSort>End Time</TableHeaderColumn>
-                  <TableHeaderColumn width="100"  dataField="attendanceCount" dataSort>Attn.count</TableHeaderColumn>
+                  <TableHeaderColumn width="100" dataAlign='center' dataField="attendanceCount" dataSort>Attn. Count</TableHeaderColumn>
+                  <TableHeaderColumn width="100" dataAlign='center' dataField='endTime'  dataFormat={absentCount}  dataSort>Absent Count</TableHeaderColumn>
                 </BootstrapTable>
                 </Col>
               </Row>

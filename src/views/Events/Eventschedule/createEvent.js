@@ -14,8 +14,8 @@ import DatePicker from "react-datepicker";
 import moment from 'moment';
 import eventImage from "../../../assets/images/avatars/event-planning.webp"
 const createEvent = () => {
-  const [state, setState] = useState({ title: "", eventType: "", eventCategory: "", description: "", registrationFee: "", perdayFee: "", alldayCheck: true, customCheck: false, startDateAll: null, startTimeAll: null, endTimeAll: null });
-  const [customEventLoopValues, setCustomEventLoopValues] = useState([{ startDate: null, startTime: null, endTime: null }]);
+  const [state, setState] = useState({ title: "", eventType: "", eventCategory: "", description: "", registrationFee: "", perdayFee: "", alldayCheck: true, customCheck: false, startDateAll: null, startTimeAll: null, endTimeAll: null,startDate:null,endDate:null,startTime:null,endTime:null });
+  //const [customEventLoopValues, setCustomEventLoopValues] = useState([{ startDate: null,endDate:null, startTime: null, endTime: null }]);
   const [pricingLoopValues, setPricingLoopValues] = useState([{ mathValue: "", greaterlessnumber: "", discountfeeValue: "", discountfeeNumber: "" }]);
   const [eventTypeOptions, setEventTypeOptions] = useState("");
   const [eventCategoryOptions, setEventCategoryOptions] = useState("");
@@ -33,7 +33,11 @@ const createEvent = () => {
     startDateAll: state.startDateAll,
     startTimeAll: state.startTimeAll,
     endTimeAll: state.endTimeAll,
-    customEventLoopValues: customEventLoopValues,
+  // customEventLoopValues: customEventLoopValues,
+    startDate:state.startDate,
+    endDate:state.endDate,
+    startTime:state.startTime,
+    endTime:state.endTime,
     pricingLoopValues: pricingLoopValues
   }
   const EventSchema = () =>
@@ -45,24 +49,23 @@ const createEvent = () => {
       startTimeAll: Yup.date().required('Start time is required').nullable(),
       endTimeAll: Yup.date().required('End time is required').nullable(),
       description: Yup.string().min(2, 'Too Short!').required('Description Required'),
-      registrationFee: Yup.number().positive().required('Registration Fee is required'),
-      perdayFee: Yup.number().positive().required('Perday Fee is required'),
+       perdayFee: Yup.number().positive().required('Perday Fee is required'),
     });
   const EventSchemaCustom = () =>
     Yup.object().shape({
       title: Yup.string().min(2, 'Too Short!').max(70, 'Too Long!').required('Title Required'),
       eventType: Yup.object().required('Event Type is Required'),
       eventCategory: Yup.object().required('Event Category is Required'),
-      customEventLoopValues: Yup.array().of(
-        Yup.object().shape({
-          startDate: Yup.date().required('Start date is required').nullable(),
+      // customEventLoopValues: Yup.array().of(
+      //   Yup.object().shape({
+           startDate: Yup.date().required('Start date is required').nullable(),
+           endDate: Yup.date().required('End date is required').nullable(),
           startTime: Yup.date().required('Start time is required').nullable(),
           endTime: Yup.date().required('End time is required').nullable(),
-        })
-      ),
+      //   })
+      // ),
       description: Yup.string().min(2, 'Too Short!').required('Description Required'),
-      registrationFee: Yup.number().positive().required('Registration Fee is required'),
-      perdayFee: Yup.number().positive().required('Perday Fee is required'),
+       perdayFee: Yup.number().positive().required('Perday Fee is required'),
       pricingLoopValues: Yup.array().of(
         Yup.object().shape({
           mathValue: Yup.object().required("Select one option"),
@@ -134,14 +137,16 @@ const createEvent = () => {
     })
   }
   const eventSubmit = (values) => {
+    console.log("values",values)
+   
      let customArray = []
-    values.customEventLoopValues.map((element, i) => {
-      customArray.push({
-        eventDate: moment(element.startDate).format('YYYY-MM-DD'),
-        startTime: moment(element.startTime).format("HH:mm:ss"),
-        endTime: moment(element.endTime).format("HH:mm:ss")
-      })
-    })
+    // values.customEventLoopValues.map((element, i) => {
+    //   customArray.push({
+    //     eventDate: moment(element.startDate).format('YYYY-MM-DD'),
+    //     startTime: moment(element.startTime).format("HH:mm:ss"),
+    //     endTime: moment(element.endTime).format("HH:mm:ss")
+    //   })
+    // })
     let priceArray = []
     values.pricingLoopValues.map((element, i) => {
        priceArray.push({
@@ -177,9 +182,17 @@ const createEvent = () => {
       isCustomRange: state.customCheck,
       registrationFee: values.registrationFee,
       perDay: values.perdayFee,
-      customRangeEvent: customArray,
+     // customRangeEvent: customArray,
+     "customRangeEvent":{
+      startDate: moment(values.startDate).format("YYYY-MM-DD"),
+      endDate: moment(values.endDate).format("YYYY-MM-DD"),
+      startTime: moment(values.startTime).format("HH:mm:ss"),
+      endTime: moment(values.endTime).format("HH:mm:ss"),
+      },
       eventPricing: priceArray
     }
+    
+    //return;
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     if (state.alldayCheck === true) {
       axios.post(`${process.env.REACT_APP_BASE_URL}/event-type/${values.eventType.value}/event-category/${values.eventCategory.value}/event`, alldaypayload)
@@ -257,7 +270,7 @@ const createEvent = () => {
                           <Label for="">Title<span className="required">*</span> </Label>
                           <Input
                             type="text"
-                            name="title"
+                            name="title" 
                             placeholder="Title"
                             value={values.title}
                             onChange={handleChange}
@@ -362,83 +375,147 @@ const createEvent = () => {
                             </Row>
                           )}
                           {state.customCheck === true ?
-                            <FieldArray
-                              name="customEventLoopValues"
-                              render={arrayHelpers => {
-                                const customEventLoopValues = values.customEventLoopValues;
-                                return (
-                                  <div>
-                                    {customEventLoopValues && customEventLoopValues.length > 0 ? customEventLoopValues.map((element, index) => (
-                                      <div key={index}>
-                                        <Row className='rowextend1'>
-                                          <Col md={3}>
-                                            <Label  >{index === 0 ? "Date" : ""}<span className="required">*</span></Label>
-                                            <DatePicker
-                                              name="startDate"
-                                              selected={element.startDate ? element.startDate : null}
-                                              onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.startDate`, selectedOption)}
-                                              onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.startDate`) }}
-                                              minDate={new Date()}
-                                              placeholderText="mm/dd/yyyy"
-                                            />
-                                            <ErrorMessage name={`customEventLoopValues.${index}.startDate`} component="div" className='errmsg' />
-                                          </Col>
-                                          <Col md={3}>
-                                            <FormGroup>
-                                              <Label  > {index === 0 ? "Start Time" : ""}<span className="required">*</span></Label>
-                                              <DatePicker
-                                                name="startTime"
-                                                selected={element.startTime ? element.startTime : null}
-                                                onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.startTime`, selectedOption)}
-                                                onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.startTime`) }}
-                                                placeholderText="--:-- --"
-                                                showTimeSelect
-                                                showTimeSelectOnly
-                                                timeCaption="Time"
-                                                dateFormat="h:mm aa"
-                                              />
-                                              <ErrorMessage name={`customEventLoopValues.${index}.startTime`} component="div" className='errmsg' />
-                                            </FormGroup>
-                                          </Col>
-                                          <Col md={3}>
-                                            <FormGroup>
-                                              <Label  > {index === 0 ? "End Time" : ""}<span className="required">*</span></Label>
-                                              <DatePicker
-                                                name="endTime"
-                                                selected={element.endTime ? element.endTime : null}
-                                                onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.endTime`, selectedOption)}
-                                                onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.endTime`) }}
-                                                placeholderText="--:-- --"
-                                                showTimeSelect
-                                                showTimeSelectOnly
-                                                timeCaption="Time"
-                                                dateFormat="h:mm aa"
-                                                minTime={new Date(new Date(element.startTime).getTime() + (15 * 60 * 1000))}
-                                                maxTime={new Date().setHours(23, 59, 59)}
-                                              />
-                                              <ErrorMessage name={`customEventLoopValues.${index}.endTime`} component="div" className='errmsg' />
-                                            </FormGroup>
-                                          </Col>
-                                          <Col md={3}>
-                                            <Button color='success'
-                                              onClick={() =>
-                                                arrayHelpers.push({ startDate: "", startTime: "", endTime: "" })
-                                              }
-                                              id="plusbutton" >
-                                              <i className="fa fa-plus" aria-hidden="true" id="plusicon"></i>
-                                            </Button> &nbsp;
-                                            {index ? <Button color='danger' onClick={() => { arrayHelpers.remove(index) }} id="minusbutton">
-                                              <i className="fa fa-minus" aria-hidden="true" id="minusicon"></i>
-                                            </Button> : null}
-                                          </Col>
-                                        </Row>
-                                      </div>
-                                    ))
-                                      : null}
-                                  </div>
-                                );
-                              }}
-                            />
+                           <>
+                          <Row>
+                              <Col md={3}>
+                                 <Label  >Start Date<span className="required">*</span></Label>
+                              <DatePicker
+                                name="startDate"
+                                selected={values.startDate ? new Date(values.startDate) : null}
+                                onChange={(selectedOption) => setFieldValue(`startDate`, selectedOption)}
+                                onBlur={() => { setFieldTouched(`startDate`) }}
+                                minDate={new Date()}
+                                placeholderText="mm/dd/yyyy"
+                              />
+                              <ErrorMessage name="startDate" component="div" className='errmsg' />
+                            </Col>
+                            <Col md={3}>
+                                <Label  >End Date<span className="required">*</span></Label>
+                              <DatePicker
+                                name="endDate"
+                                selected={values.endDate ? new Date(values.endDate) : null}
+                                onChange={(selectedOption) => setFieldValue(`endDate`, selectedOption)}
+                                onBlur={() => { setFieldTouched(`endDate`) }}
+                                minDate={values.startDate}
+                                placeholderText="mm/dd/yyyy"
+                              />
+                              <ErrorMessage name="endDate" component="div" className='errmsg' />
+                            </Col> 
+                            <Col md={3}>
+                                <FormGroup>
+                                  <Label  > Start Time<span className="required">*</span></Label>
+                                  <DatePicker
+                                  name="startTime"
+                                  selected={values.startTime ? values.startTime : null}
+                                  onChange={(selectedOption) => setFieldValue(`startTime`, selectedOption)}
+                                  onBlur={() => { setFieldTouched(`startTime`) }}
+                                  placeholderText="--:-- --"
+                                  showTimeSelect
+                                  showTimeSelectOnly
+                                  timeCaption="Time"
+                                  dateFormat="h:mm aa"
+                                />
+                                <ErrorMessage name={`startTime`} component="div" className='errmsg' />
+                              </FormGroup>
+                            </Col>
+                            <Col md={3}>
+                                <FormGroup>
+                                  <Label  > End Time<span className="required">*</span></Label>
+                                  <DatePicker
+                                  name="endTime"
+                                  selected={values.endTime ? values.endTime : null}
+                                  onChange={(selectedOption) => setFieldValue(`endTime`, selectedOption)}
+                                  onBlur={() => { setFieldTouched(`endTime`) }}
+                                  placeholderText="--:-- --"
+                                  showTimeSelect
+                                  showTimeSelectOnly
+                                  timeCaption="Time"
+                                  dateFormat="h:mm aa"
+                                  minTime={new Date(new Date(values.startTime).getTime() + (5 * 60 * 1000))}
+                                  maxTime={new Date().setHours(23, 59, 59)}
+                                />
+                                <ErrorMessage name={`endTime`} component="div" className='errmsg' />
+                              </FormGroup>
+                            </Col>
+                          </Row>
+                          </>
+                            // <FieldArray
+                            //   name="customEventLoopValues"
+                            //   render={arrayHelpers => {
+                            //     const customEventLoopValues = values.customEventLoopValues;
+                            //     return (
+                            //       <div>
+                            //         {customEventLoopValues && customEventLoopValues.length > 0 ? customEventLoopValues.map((element, index) => (
+                            //           <div key={index}>
+                            //             <Row className='rowextend1'>
+                            //               <Col md={3}>
+                            //                 <Label  >{index === 0 ? "Date" : ""}<span className="required">*</span></Label>
+                            //                 <DatePicker
+                            //                   name="startDate"
+                            //                   selected={element.startDate ? element.startDate : null}
+                            //                   onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.startDate`, selectedOption)}
+                            //                   onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.startDate`) }}
+                            //                   minDate={new Date()}
+                            //                   placeholderText="mm/dd/yyyy"
+                            //                 />
+                            //                 <ErrorMessage name={`customEventLoopValues.${index}.startDate`} component="div" className='errmsg' />
+                            //               </Col>
+                            //               <Col md={3}>
+                            //                 <FormGroup>
+                            //                   <Label  > {index === 0 ? "Start Time" : ""}<span className="required">*</span></Label>
+                            //                   <DatePicker
+                            //                     name="startTime"
+                            //                     selected={element.startTime ? element.startTime : null}
+                            //                     onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.startTime`, selectedOption)}
+                            //                     onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.startTime`) }}
+                            //                     placeholderText="--:-- --"
+                            //                     showTimeSelect
+                            //                     showTimeSelectOnly
+                            //                     timeCaption="Time"
+                            //                     dateFormat="h:mm aa"
+                            //                   />
+                            //                   <ErrorMessage name={`customEventLoopValues.${index}.startTime`} component="div" className='errmsg' />
+                            //                 </FormGroup>
+                            //               </Col>
+                            //               <Col md={3}>
+                            //                 <FormGroup>
+                            //                   <Label  > {index === 0 ? "End Time" : ""}<span className="required">*</span></Label>
+                            //                   <DatePicker
+                            //                     name="endTime"
+                            //                     selected={element.endTime ? element.endTime : null}
+                            //                     onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.endTime`, selectedOption)}
+                            //                     onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.endTime`) }}
+                            //                     placeholderText="--:-- --"
+                            //                     showTimeSelect
+                            //                     showTimeSelectOnly
+                            //                     timeCaption="Time"
+                            //                     dateFormat="h:mm aa"
+                            //                     minTime={new Date(new Date(element.startTime).getTime() + (15 * 60 * 1000))}
+                            //                     maxTime={new Date().setHours(23, 59, 59)}
+                            //                   />
+                            //                   <ErrorMessage name={`customEventLoopValues.${index}.endTime`} component="div" className='errmsg' />
+                            //                 </FormGroup>
+                            //               </Col>
+                            //               <Col md={3}>
+                            //                 <Button color='success'
+                            //                   onClick={() =>
+                            //                     arrayHelpers.push({ startDate: "", startTime: "", endTime: "" })
+                            //                   }
+                            //                   id="plusbutton" >
+                            //                   <i className="fa fa-plus" aria-hidden="true" id="plusicon"></i>
+                            //                 </Button> &nbsp;
+                            //                 {index ? <Button color='danger' onClick={() => { arrayHelpers.remove(index) }} id="minusbutton">
+                            //                   <i className="fa fa-minus" aria-hidden="true" id="minusicon"></i>
+                            //                 </Button> : null}
+                            //               </Col>
+                            //             </Row>
+                            //           </div>
+                            //         ))
+                            //           : null}
+                            //       </div>
+                            //     );
+                            //   }}
+                            // />
                             : null}
                         </Col>
                       </Row>
@@ -461,19 +538,7 @@ const createEvent = () => {
                         <h5><strong>Pricing Details</strong></h5>
                         <hr />
                         <Row>
-                          <Col md={6}>
-                            <Label for="">Registration Fee $<span className="required">*</span> </Label>
-                            <Input
-                              type="number"
-                              placeholder="Registration fee"
-                              name="registrationFee"
-                              value={values.registrationFee}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              invalid={touched.registrationFee && !!errors.registrationFee} />
-                            <ErrorMessage name="registrationFee" component="div" className='errmsg'></ErrorMessage>
-                          </Col>
-                          <Col md={6}>
+                        <Col md={6}>
                             <Label for="">Event Fee $ <span className="required">*</span></Label>
                             <Input
                               type="number"
@@ -485,6 +550,17 @@ const createEvent = () => {
                               invalid={touched.perdayFee && !!errors.perdayFee} />
                             <ErrorMessage name="perdayFee" component="div" className='errmsg'></ErrorMessage>
                           </Col>
+                          <Col md={6}>
+                            <Label for="">Registration Fee $  </Label>
+                            <Input
+                              type="number"
+                              placeholder="Registration fee"
+                              name="registrationFee"
+                              value={values.registrationFee}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                           </Col>
                         </Row>
                         <br />
                         <Row>

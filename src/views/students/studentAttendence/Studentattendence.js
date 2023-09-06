@@ -87,11 +87,6 @@ const Studentattendence = () => {
         setState({ ...state });
         console.log("staffArray",staffArray)
         setMasterOptions(staffArray);
-        // setAttendenceStartTime(response.data[0].batch.startTime);
-        // setAttendenceTime(`${moment(response.data[0].batch.startTime, ["HH:mm"]).format("hh:mm a")} - ${moment(response.data[0].batch.endTime, ["HH:mm"]).format("hh:mm a")}`);
-        // setStudentAttendenceList(response.data);
-        // state.loader = false;
-        // setState({ ...state });
       }).catch((err) => { })
   }
   const getclassId = (data) => { studentDependable(data.value) }
@@ -99,13 +94,13 @@ const Studentattendence = () => {
     state.loader = true;
     setState({ ...state });
     Axios.get(`batch/${id}/student`).then(response => {
-      state.loader = false;
-      setState({ ...state });
-      setAttendenceStartTime(response.data[0].batch.startTime);
-      setAttendenceTime(`${moment(response.data[0].batch.startTime, ["HH:mm"]).format("hh:mm a")} - ${moment(response.data[0].batch.endTime, ["HH:mm"]).format("hh:mm a")}`);
-      setStudentAttendenceList(response.data);
-     
-    }).catch((err) => {
+        console.log("ress",response)
+        state.loader = false;
+        setState({ ...state });
+        setAttendenceStartTime(response.data[0].batch.startTime);
+        setAttendenceTime(`${moment(response.data[0].batch.startTime, ["HH:mm"]).format("hh:mm a")} - ${moment(response.data[0].batch.endTime, ["HH:mm"]).format("hh:mm a")}`);
+        setStudentAttendenceList(response.data);
+      }).catch((err) => {
       Swal.fire(err.response.data.message, 'Please try again later');
       state.loader = false;
       setState({ ...state });
@@ -165,7 +160,7 @@ const Studentattendence = () => {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.post(`${process.env.REACT_APP_BASE_URL}/user/${values.master.value}/batch/${values.class.value}/studentAttendance`, payload)
       .then((res) => {
-        if (res.status === 201) {
+         if (res.status === 201) {
           toast.success("Attendence done successfully", { theme: "colored" });
           setTimeout(() => {
             navigate('/attendence/createstaffattendence/new');
@@ -230,7 +225,7 @@ const Studentattendence = () => {
                     </Col>  
                     <Col md={3}>
                       <FormGroup>
-                        <Label for="master">Master</Label>{console.log("masterOptions",masterOptions)}
+                        <Label for="master">Master</Label> 
                         <Select
                           name="master"
                           value={values.master}
