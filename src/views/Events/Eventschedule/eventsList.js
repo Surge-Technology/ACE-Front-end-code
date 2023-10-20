@@ -15,6 +15,7 @@ const eventsList = () => {
   const tableList = (page) => {
     setState((prevState) => ({ ...prevState, loader: true }))
     Axios.get(`event?page=${page - 1}&size=10&sort=id,desc`).then((res) => {
+      console.log("res", res)
       setState((prevState) => ({
         ...prevState,
         eventList: res.data.content,
@@ -60,9 +61,10 @@ const eventsList = () => {
     return (<>{index + 1}</>)
   }
   const typeFetch = (cell, row) => {
-    return (<>{cell.name}</>)
+    //console.log("cell", cell.name, cell)
+   return (<>{cell.name}</>)
   }
-  const boolenHandleChange=(cell,row)=>{
+const boolenHandleChange=(cell,row)=>{
      return (<>{cell===true?"Yes":"No"}</>)
   }
   return (
@@ -87,12 +89,12 @@ const eventsList = () => {
                 <BootstrapTable data={eventList} keyField="name" search striped hover multiColumnSearch={true} version='4'>
                   <TableHeaderColumn width="20" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
                   <TableHeaderColumn width="30" dataAlign='left' dataField='name'  >Title</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='eventType' dataFormat={typeFetch} >Event Type</TableHeaderColumn>
+                   <TableHeaderColumn width="30" dataAlign='left' dataField='eventType' dataFormat={typeFetch} >Event Type</TableHeaderColumn>
                   <TableHeaderColumn width="30" dataAlign='left' dataField='registrationFee'  >Registration Fee $</TableHeaderColumn>
                   <TableHeaderColumn width="30" dataAlign='left' dataField='perDay'  >Event Fee $</TableHeaderColumn>
                   <TableHeaderColumn width="30" dataAlign='left' dataField='isAllDay' dataFormat={boolenHandleChange} >All Day</TableHeaderColumn>
                   <TableHeaderColumn width="40" dataAlign='left' dataField='isCustomRange' dataFormat={boolenHandleChange}>Custom Range</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField="id" dataFormat={(id) => eventActionsHandle(id)} >Action</TableHeaderColumn>
+                  <TableHeaderColumn width="30" dataAlign='left' dataField="id" dataFormat={(id) => eventActionsHandle(id)} >Action</TableHeaderColumn> 
                 </BootstrapTable>
                 <CardFooter>
                   {eventList.length >= 1 ? <TablePagination totalPages={totalPages} currentPage={currentPage} callbackfunc={onPaginationChange} defaultPageSize={"10"}></TablePagination> : null}

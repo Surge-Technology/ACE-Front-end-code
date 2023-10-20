@@ -20,7 +20,7 @@ let initialData = {
  contractNameSelect:"",paymentTypeModalToggle:false,
   memberFrequency:"",fee:"",totalFee:"",discount:"",status:"New",sports:"",programName:"",batch:"",contractNameOptions:"",
   contractMemberOptions:[{ value: "selecct", label: "Select"}],startDate:"",endDate:"",sportsOptions:"",programNameOptions: [{ value: "selecct", label: "Select"}],allBatchesOptions:[{ value: "selecct", label: "Select"}],PaymentData:"",
-  guardianCheckbox:false, tenureLength:"",studentImageNameForApi:"",stateOptions:"",loader:false,contractImageName:"", contractData:"",stripeModalToggle:false,member:"",memberOptions:[]
+  guardianCheckbox:false, tenureLength:"",studentImageNameForApi:"",stateOptions:"",loader:false,contractImageName:"", contractData:"",stripeModalToggle:false,member:"",memberOptions:[],sportNprogramView:false
 }
 function createStudent() { 
   const [initialStudentFields,setState] = useState(initialData);
@@ -30,7 +30,7 @@ function createStudent() {
       memberFrequency,fee,totalFee,discount,status,sports,programName,batch,contractNameOptions,
       contractMemberOptions,startDate,endDate,sportsOptions,programNameOptions,allBatchesOptions,PaymentData,
       guardianCheckbox,tenureLength,studentImageNameForApi,stateOptions,loader,contractImageName,contractData,stripeModalToggle,
-      member,memberOptions} =initialStudentFields;
+      member,memberOptions,sportNprogramView} =initialStudentFields;
   const [studentImage, setStudentImage] = useState("");
   let history = useNavigate();
   let previewImage = student1;
@@ -288,6 +288,20 @@ function createStudent() {
     }).catch(err=>{
       Swal.fire(err.response.data.message,'Please try again later');
     })
+    setTimeout(()=>{
+      Axios.get(`${process.env.REACT_APP_BASE_URL}/sports/all`).then((res) => {
+        console.log("sports/all,",res);
+        setState((prevState)=>({
+          ...prevState,
+           sports: { value: res.data[0]?res.data[0].id:null, label: res.data[0]?res.data[0].name:null },
+           programName: { value: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].id:null:null, label: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].name:null:null },
+           sportNprogramView:res.data[0]?res.data[0].view:null
+        }))
+        sportsSelectHandle({ value: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].id:null:null, label: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].name:null:null },"programName")
+       }).catch((err) => { 
+         Swal.fire( err.response.data.message, 'Please try again '  ) 
+        })
+    },1000)
    },[])
    const contractSelectHandle =(fieldData,type)=>{
     if(type==="getMembers"){
@@ -317,6 +331,7 @@ function createStudent() {
       }).catch(err=>{ })
     }if(type==="getFee"){
        Axios.get(`contract-promotion/${contractNameSelect.value}`).then((res)=>{
+        console.log("res",res)
            let lengt = res.data.tenure.name.slice(0, 2);
         let length = parseInt(lengt);
         let startDate = new Date().setUTCHours(0,0,0,0); 
@@ -327,7 +342,9 @@ function createStudent() {
          let dat =  new Date(startDatewithLength);
          let finalDate = moment(dat).format('MM/DD/YYYY')
          res.data.pricing.map((mapdata,index)=>{
-             if(mapdata.subscriptionFrequency.id ===fieldData.value){
+          console.log("hello",mapdata.subscriptionFrequency.id, fieldData.value)
+             if(mapdata.id===member.value){
+            //  console.log("mapdata",mapdata)
              setState((prevState)=>({
                 ...prevState,
                 fee:res.data.basePrice+mapdata.fee,totalFee:mapdata.total,discount:mapdata.discount,
@@ -592,8 +609,9 @@ function createStudent() {
                         </Col>
                       </Row>
                       <hr></hr>
-                      <h5><strong>Sports Details</strong></h5>
+                      {/* <h5><strong>Sports Details</strong></h5> */}
                       <Row>
+                        {values.sportNprogramView?<> 
                             <Col md={4}>
                             <Label > Sports  <span className='colorRed'>*</span> </Label>
                             <Select
@@ -613,7 +631,7 @@ function createStudent() {
                                 options={programNameOptions}
                               />
                               <ErrorMessage name="programName" component="div"  className='errmsg'></ErrorMessage>
-                            </Col>
+                            </Col></>:null}
                             <Col md={4}>
                               <Label > Batch  <span className='colorRed'>*</span> </Label>
                               <Select

@@ -87,6 +87,7 @@ const Studentattendence = () => {
         setState({ ...state });
         console.log("staffArray",staffArray)
         setMasterOptions(staffArray);
+        setClassOptions([]);
       }).catch((err) => { })
   }
   const getclassId = (data) => { studentDependable(data.value) }
@@ -162,6 +163,7 @@ const Studentattendence = () => {
       .then((res) => {
          if (res.status === 201) {
           toast.success("Attendence done successfully", { theme: "colored" });
+          setStudentAttendenceList([]);
           setTimeout(() => {
             navigate('/attendence/createstaffattendence/new');
           }, 1000);
@@ -217,7 +219,7 @@ const Studentattendence = () => {
                           name="program"
                           value={values.program}
                           options={programOptions}
-                          onChange={(selectedOption) => { setFieldValue('program', selectedOption), getMastersByprogram(selectedOption, 'getMasters'),setFieldValue("master", null) , setFieldValue("class", null) }}
+                          onChange={(selectedOption) => { setFieldValue('program', selectedOption), getMastersByprogram(selectedOption, 'getMasters'),setFieldValue("master", {}) , setFieldValue("class", {}) }}
                           invalid={touched.program && !!errors.program}
                         />
                         <ErrorMessage name="program" component="div" className='errmsg'></ErrorMessage>
@@ -230,7 +232,7 @@ const Studentattendence = () => {
                           name="master"
                           value={values.master}
                           options={masterOptions}
-                          onChange={(selectedOption) => { setFieldValue('master', selectedOption), getmasterId(selectedOption, 'master'), setFieldValue("class", null) }}
+                          onChange={(selectedOption) => { setFieldValue('master', selectedOption), getmasterId(selectedOption, 'master'), setFieldValue("class", {}) }}
                           invalid={touched.master && !!errors.master}
                         />
                         <ErrorMessage name="master" component="div" className='errmsg'></ErrorMessage>

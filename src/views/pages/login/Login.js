@@ -35,6 +35,7 @@ const Login = () => {
       username: e.email,
       password: e.password
     }
+    console.log("userloginRequestPayload", userloginRequestPayload);
     axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login`, userloginRequestPayload)
       .then((res) => {
         console.log("res", res);

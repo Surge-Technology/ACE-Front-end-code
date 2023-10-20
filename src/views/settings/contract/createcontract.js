@@ -103,7 +103,7 @@ const createcontract = () => {
         fee: element.then,
         discount: element.discount,
         subscriptionFrequency: { id: element.frequency.value },
-        total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) * (element.discount / 100)).toFixed(2)
+        total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (element.discount)).toFixed(2)
       })
     })
     let newarray1 = [];
@@ -116,7 +116,7 @@ const createcontract = () => {
           fee: element.then,
           discount: element.discount,
           subscriptionFrequency: { id: element.frequency.value },
-          total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) * (element.discount / 100)).toFixed(2)
+          total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (element.discount)).toFixed(2)
         })
       }
       // else{
@@ -132,7 +132,7 @@ const createcontract = () => {
         fee: element.then,
         discount: element.discount,
         subscriptionFrequency: { id: element.frequency.value },
-        total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) * (element.discount / 100)).toFixed(2)
+        total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (element.discount)).toFixed(2)
       })
     })
     const payload = {
@@ -141,8 +141,6 @@ const createcontract = () => {
       pricing: newarray
     }
     const merged = [...backendValues, ...newarray1];
-    console.log("minus", newarray3)
-    console.log("plus", merged)
     // let pricingValue;
     // if(backbutton===true){
     //   console.log("button true")
@@ -157,14 +155,15 @@ const createcontract = () => {
       basePrice: values.pricing,
       pricing: newarray3
     }
-    console.log("updatepayload", updatePayload)
+    console.log("payload", payload)
     if (params.id === "new") {
       axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
       axios.post(`${process.env.REACT_APP_BASE_URL}/contract-tenure/${values.lengths.value}/contract-promotion`, payload).then((res) => {
+        console.log("res", res)
         if (res.status === 201) {
           toast.success("Contract created successfully", { theme: "colored" });
           setTimeout(() => {
-            navigate('/settings/allcontracts');
+          //  navigate('/settings/allcontracts');
           }, 2000);
         }
       }).catch((err) => {
@@ -346,16 +345,16 @@ const createcontract = () => {
                                         </Col>
                                         <Col md={2}>
                                           <FormGroup>
-                                            <Label for="discount">{index === 0 ? "Discount %" : ""} </Label>
+                                            <Label for="discount">{index === 0 ? "Discount " : ""} </Label>
                                             <Input type="number" name={`contractLoopValues.${index}.discount`} min="0" step="1" onKeyPress={preventMinus} id="discount" placeholder="0" onChange={handleChange} onBlur={handleBlur} disabled={enrolled && (defaultcount >= (index + 1)) ? true : false}
                                               value={element.discount || ""} />
                                             <ErrorMessage name={`contractLoopValues.${index}.discount`} component="div" className='errmsg' />
                                           </FormGroup>
                                         </Col>
                                         <Col md={2}>
-                                          <FormGroup>
+                                           <FormGroup>
                                             <Label for="amount">{index === 0 ? "Total $" : ""}</Label>
-                                            <Input type="number" name={`contractLoopValues.${index}.amount`} disabled="true" readonly="readonly" value={values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) * (element.discount / 100)).toFixed(2)} />
+                                            <Input type="number" name={`contractLoopValues.${index}.amount`} disabled="true" readonly="readonly" value={values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (element.discount)).toFixed(2)} />
                                           </FormGroup>
                                         </Col>
                                         <Col md={2}>

@@ -27,7 +27,7 @@ email:"",phone:"",contractNameSelect:"",memberFrequency:"",fee:"",discount:"",to
 programNameOptions:"",sports:"",programName:"",batch:"",allBatchesOptions:"",sportsOptions:"",deactivationModalToggle:false,editStatusModalToggle:false,
 contractEditButton:false,historyButtonClick:false,paymentButtonClick:false,contractNameOptions:"",contractMemberOptions:"",tenureLength:"",sameAsStudent:"",
 referBy:"",gender:"",addressId:"",parentId:"",gaddressId:"",loader:false,studentStatusLevel:[],studentStatusSubLevel:[],contractId:"",chaqueId:"",cardId:"",
-contractImageName:"",notes:"",member:"",memberOptions:[]}
+contractImageName:"",notes:"",member:"",memberOptions:[],sportNprogramView:false}
 export default function editStudent() {
     const [initialStateData,setState]=useState(initialData);
     const [studentImage, setStudentImage] = useState("");
@@ -37,7 +37,7 @@ export default function editStudent() {
         fee,discount,totalFee ,startDate,endDate,contractStatus,contractStatusOption,stateOptions,programNameOptions,sports,programName,batch,
         allBatchesOptions,sportsOptions,deactivationModalToggle,editStatusModalToggle,contractEditButton,historyButtonClick,paymentButtonClick,
         contractNameOptions,contractMemberOptions,tenureLength,sameAsStudent,referBy,gender,addressId,parentId,gaddressId,loader,studentStatusLevel,studentStatusSubLevel,
-        contractId,chaqueId,cardId,contractImageName,notes,member,memberOptions} = initialStateData;
+        contractId,chaqueId,cardId,contractImageName,notes,member,memberOptions,sportNprogramView} = initialStateData;
     const staticPreviewImage = student1;
     const params = useParams();
     const navigate = useNavigate();
@@ -289,6 +289,16 @@ export default function editStudent() {
                         contractMemberOptions:allmembers 
                       }))
                     }).catch(err=>{ })
+                    Axios.get(`${process.env.REACT_APP_BASE_URL}/sports/all`).then((res) => {
+                        console.log("sports/all,",res);
+                        setState((prevState)=>({
+                          ...prevState,
+                           sportNprogramView:res.data[0]?res.data[0].view:null
+                        }))
+                        sportsSelectHandle({ value: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].id:null:null, label: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].name:null:null },"programName")
+                       }).catch((err) => { 
+                         Swal.fire( err.response.data.message, 'Please try again '  ) 
+                        })
               }, 2000);
               setStudentImage( res.data.photo===""?"":process.env.REACT_APP_BASE_URL_BASE+"auth/student/image/"+res.data.photo);
         }).catch(err=>{
@@ -741,7 +751,7 @@ export default function editStudent() {
                                 <Col>
                                     <Card>
                                         <CardBody>
-                                        <Row>
+                                        {values.sportNprogramView?<>  <Row>
                                             <Col >
                                             <h5><strong>Sports</strong></h5>
                                             <Select
@@ -763,6 +773,7 @@ export default function editStudent() {
                                             />
                                             </Col>
                                             </Row>
+                                            </>:null}
                                             <Row>
                                             <Col  >
                                             <Label > Batch </Label>
