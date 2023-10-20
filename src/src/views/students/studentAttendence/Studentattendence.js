@@ -163,8 +163,8 @@ const Studentattendence = () => {
       .then((res) => {
          if (res.status === 201) {
           toast.success("Attendence done successfully", { theme: "colored" });
-          setStudentAttendenceList([]);
           setTimeout(() => {
+            setStudentAttendenceList([]);
             navigate('/attendence/createstaffattendence/new');
           }, 1000);
         }
