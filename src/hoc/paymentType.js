@@ -11,17 +11,19 @@ import DatePicker from "react-datepicker";
 import { ToastContainer, toast } from 'react-toastify';
 import moment from 'moment/moment';
 import CardApp from './cardPayment/cardApp';
-   let card = {currency:"",description:""};
-  let cheque = { date:"",payeeName:"",chequeNo:""};
+   let card = {cardType:"",expireDate:"",cardNumber:"",pin:"",currency:"",description:""};
+  let cheque = { date:"",payeeName:"",chequeNo:"",accountNo:"",routingNo:""};
   let autoPay = {accountNo:"",routingNo:""};
 let initialPaymentData ={
+    cardType:"",expireDate:"",cardNumber:"",pin:"",
     currency:"",currencyOptions:[{ value:"usd", label:"usd" }],description:"",paymentType:"",accountNo:"",routingNo:"",chargeAmount:"",
     date:"",payeeName:"",chequeNo:"",frontPictureAttachment:"",backPictureAttachment:"",paymentTypeOptions:"",loader:false,stripeModalToggle:false
 }
 let valid = {"paymentType": Yup.object().required(`Payment Type is required`)};
+let todayDate = moment(new Date()).format("YYYY-MM-DD");
 export default function PaymentType(props) {
     const [initialState,setState] = useState(initialPaymentData);
-    const {currency,currencyOptions,description,paymentType,accountNo,routingNo,chargeAmount,date,
+    const {cardType,expireDate,currency,cardNumber,pin,currencyOptions,description,paymentType,accountNo,routingNo,chargeAmount,date,
         payeeName,chequeNo,frontPictureAttachment,backPictureAttachment,paymentTypeOptions,loader,stripeModalToggle} = initialState;
         const navigate = useNavigate();
         let validationSchema = (data) => { 
@@ -35,9 +37,10 @@ export default function PaymentType(props) {
         }))
       }
     let  onSubmitPayment=(data)=>{
-        // console.log("sub",data)
-        // return;
-        if(paymentType.label==="Cheque" && frontPictureAttachment==="" ){
+        let formdata =data
+        formdata.frontPictureAttachment=frontPictureAttachment;
+        formdata.backPictureAttachment= backPictureAttachment
+         if(paymentType.label==="Cheque" && frontPictureAttachment==="" ){
              Swal.fire( "Upload Front Picture", 'Cheque') 
         }
         if(paymentType.label==="Cheque" && backPictureAttachment===""){
@@ -47,15 +50,7 @@ export default function PaymentType(props) {
                 //if for edit student screen update of contract and payment
                 setState((prevState)=>({...prevState,loader:true}))
                  let payload = {
-                    // "contract": {
-                    //      "fee": props.contractDetails.fee,
-                    //     "discount": props.contractDetails.discount,
-                    //     "totalFee": props.contractDetails.totalFee,
-                    //     "membersAndFrequency": props.contractDetails.membersAndFrequency.label,
-                    //     "startDate": moment(props.contractDetails.startDate).format("YYYY-MM-DD"),
-                    //     "endDate": moment(props.contractDetails.endDate).format("YYYY-MM-DD"),
-                    //     "attachment":props.contractDetails.contractImageName
-                    // }
+                    
                     "contract":{
                          "pricing":{
                         "id":props.contractDetails.member.value,
@@ -81,21 +76,31 @@ export default function PaymentType(props) {
                      }
                 }
                 if(paymentType.label==="Card"){
-                    payload.cardPaymentResponse = {
-                       "amount": data.chargeAmount,
-                        "currency": data.currency.value,
-                        "description":data.description
-                     } 
+                    // payload.cardPaymentResponse = {
+                    //    "amount": data.chargeAmount,
+                    //     "currency": data.currency.value,
+                    //     "description":data.description
+                    //  } 
+                    payload.usAePayCardPaymentResponse= {
+                        "amount": data.chargeAmount, 
+                        "currency": data.currency.value,  
+                        "description": data.description,
+                        "cardNumber": data.cardNumber,
+                        "cardExpiryDate":moment(data.expireDate).format("YYYY-MM-DD"),
+                        "cardCode": data.pin
+                      }
                 }
                 if(paymentType.label==="Cheque"){
-                    payload.chequePayment = {
+                      payload.usAePayChequePayment = {
                         "payeeName"    : data.payeeName,
-                       "chequeNumber" : data.chequeNo,
-                       "date"         : moment(data.date).format("YYYY-MM-DD"),
-                       "chargeAmount" : data.chargeAmount,
-                    "frontPictureAttachment": frontPictureAttachment,
-                    "backPictureAttachment": backPictureAttachment
-                     }
+                        "chequeNumber" : data.chequeNo,
+                        "date"         : moment( data.date).format("YYYY-MM-DD"),
+                        "amount" : data.chargeAmount,
+                        "frontPictureAttachment":data.frontPictureAttachment,
+                        "backPictureAttachment":data.backPictureAttachment,
+                        "checkAccountNumber": data.accountNo,
+                        "checkRoutingNumber": data.routingNo,
+                      }
                 }
                  Swal.fire({
                     title: 'Are you sure?',
@@ -134,7 +139,7 @@ export default function PaymentType(props) {
                 
             }else{
                 //else for create student screen and student event registering screen
-                props.sendData(data);
+                props.sendData(formdata);
             }
         }
      }
@@ -286,19 +291,33 @@ export default function PaymentType(props) {
                     :paymentType.label==="Card"?
                         <>
                             <Row>
-                                {/* <Col md={6}>
+                                <Col md={6}>
                                     <Label > Card Type  <span className='colorRed'>*</span> </Label>
                                     <Input name="cardType" type="text" value={values.cardType} placeholder="ex:-visa"  onChange={handleChange} onBlur={handleBlur} invalid={touched.cardType &&!!errors.cardType } />
                                     <ErrorMessage name="cardType" component="div"  className='errmsg'></ErrorMessage>
                                 </Col>
                                 <Col  md={6}>
-                                    <Label > Name on card  <span className='colorRed'>*</span></Label>
-                                    <Input name="nameOnCard" type="text" value={values.nameOnCard} placeholder="Enter name on card"  onChange={handleChange} onBlur={handleBlur} invalid={touched.nameOnCard &&!!errors.nameOnCard } />
-                                    <ErrorMessage name="nameOnCard" component="div"  className='errmsg'></ErrorMessage>
-                                </Col> */}
+                                     <Label ><span>expire Date  <span className='colorRed'>*</span></span></Label>
+                                     
+{/* <input type="month" format="mm-yyyy" />  */}
+                                    <DatePicker
+                                        name="expireDate"
+                                        min={todayDate}
+                                        dateFormat="MMM yyy"
+                                        selected={values.expireDate?new Date(values.expireDate):null}
+                                        onChange={(e)=>{setFieldValue("expireDate",e)}}
+                                         showMonthYearPicker
+                                        onBlur={handleBlur}
+                                         
+                                    />
+                                    <ErrorMessage name="expireDate" component="div"  className='errmsg'></ErrorMessage>
+                                    {/* <Label > Name on card  <span className='colorRed'>*</span></Label>
+                                    <Input name="nameOnCard" type="text" value={values.nameOnCard} placeholder="Enter name on card"  onChange={handleChange} onBlur={handleBlur}   />
+                                    <ErrorMessage name="nameOnCard" component="div"  className='errmsg'></ErrorMessage> */}
+                                </Col>
                             </Row> 
                            
-                            {/* <Row>
+                            <Row>
                                 <Col  md={6}>
                                     <Label > Card Number   <span className='colorRed'>*</span></Label>
                                     <Input name="cardNumber" type="number" value={values.cardNumber} placeholder="XXXXX XXXXX XXXXX"  onChange={handleChange} onBlur={handleBlur} invalid={touched.cardNumber &&!!errors.cardNumber } />
@@ -309,7 +328,7 @@ export default function PaymentType(props) {
                                     <Input name="pin" type="number" value={values.pin} placeholder="XXX" onChange={handleChange} onBlur={handleBlur} invalid={touched.pin &&!!errors.pin } />
                                     <ErrorMessage name="pin" component="div"  className='errmsg'></ErrorMessage>
                                 </Col>
-                            </Row> */}
+                            </Row>
                             <Row>
                                 <Col  md={6}>
                                 <Label > Currency  <span className='colorRed'>*</span> </Label>
@@ -320,16 +339,7 @@ export default function PaymentType(props) {
                                     options={currencyOptions}
                                 />
                                 <ErrorMessage name="currency" component="div"  className='errmsg'></ErrorMessage>
-                                    {/* <Label ><span>expire Date  <span className='colorRed'>*</span></span></Label>
-                                     <DatePicker
-                                        name="expireDate"
-                                        selected={values.expireDate?new Date(values.expireDate):null}
-                                        onChange={(e)=>{setFieldValue("expireDate",e)}}
-                                        onBlur={handleBlur}
-                                        placeholderText="mm/dd/yyyy"
-                                    />
-                                    <ErrorMessage name="expireDate" component="div"  className='errmsg'></ErrorMessage> */}
-                                </Col>
+                                 </Col>
                                 <Col  md={6}>
                                     <Label ><span>Charge Amount $</span></Label>
                                     <Input name="chargeAmount" type="text" value={chargeAmount} disabled  onChange={handleChange} onBlur={handleBlur}  />
@@ -378,19 +388,43 @@ export default function PaymentType(props) {
                                 </Col>
                             </Row>
                             <Row>
+                                 <Col md ={6}>
+                                <Label> Account No  <span className='colorRed'>*</span></Label>
+                                    <Input name="accountNo" type="number" value={values.accountNo} onChange={handleChange} onBlur={handleBlur} invalid={touched.accountNo &&!!errors.accountNo }/>
+                                    <ErrorMessage name="accountNo" component="div"  className='errmsg'></ErrorMessage>
+                                </Col>
+                                <Col md ={6}>
+                                <Label> Routing No  <span className='colorRed'>*</span></Label>
+                                    <Input name="routingNo" type="number" value={values.routingNo} onChange={handleChange} onBlur={handleBlur} invalid={touched.routingNo &&!!errors.routingNo }/>
+                                    <ErrorMessage name="routingNo" component="div"  className='errmsg'></ErrorMessage>
+                                    </Col>
+                            </Row>
+                            <Row>
                                 <Col  md={6}>
-                                    <Label ><span>front Picture Attachment</span></Label>
-                                    <span className="btn btn-primary btn-file">
-                                      Upload  Front  <input type="file" onChange={(e) =>frontPicFileHandleChange(e)}/>
-                                    </span> 
-                                    {frontPictureAttachment}
+                                    <Row>
+                                        <Col>
+                                            <Label ><span>front Picture Attachment</span></Label>
+                                            <span className="btn btn-primary btn-file">
+                                            Upload  Front  <input type="file" onChange={(e) =>frontPicFileHandleChange(e)}/>
+                                            </span>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <span> {frontPictureAttachment?<b style={{color:"green"}}>Successfully Uploaded</b>:null}</span> 
+                                    </Row>
                                  </Col>
                                 <Col  md={6}>
-                                    <Label ><span>back Picture Attachment  <span className='colorRed'>*</span></span></Label>
-                                    <span className="btn btn-primary btn-file">
-                                    Upload Back  <input type="file"  onChange={(e) =>backPicFileHandleChange(e)}/>
-                                    </span> 
-                                    {backPictureAttachment}
+                                    <Row>
+                                        <Col>
+                                            <Label ><span>back Picture Attachment  <span className='colorRed'>*</span></span></Label>
+                                            <span className="btn btn-primary btn-file">
+                                            Upload Back  <input type="file"  onChange={(e) =>backPicFileHandleChange(e)}/>
+                                            </span>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <span> {backPictureAttachment?<b style={{color:"green"}}>Successfully Uploaded</b>:null}</span>
+                                    </Row>
                                 </Col>
                             </Row>
                         </>

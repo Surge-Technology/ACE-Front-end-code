@@ -65,7 +65,8 @@ function createStudent() {
   }
   const onSubmit=(values)=>{ 
     console.log("values",values);
-   // return;
+    console.log("cardPaymentResponse",PaymentData)
+  //  return;
     // if(PaymentData===""){
     //   Swal.fire({
     //     position : 'center',
@@ -139,36 +140,48 @@ function createStudent() {
          }
         }
        if(PaymentData.paymentType.label==="Card"){
-        payload.cardPaymentResponse = {
-          "currency": PaymentData.currency.value,
+        // payload.cardPaymentResponse = {
+        //   "currency": PaymentData.currency.value,
+        //   "description": PaymentData.description,
+        //    "amount" : PaymentData.chargeAmount
+        //  } 
+         payload.usAePayCardPaymentResponse= {
+          "amount": PaymentData.chargeAmount, 
+          "currency": PaymentData.currency.value,  
           "description": PaymentData.description,
-           "amount" : PaymentData.chargeAmount
-         } 
+          "cardNumber": PaymentData.cardNumber,
+          "cardExpiryDate":moment(PaymentData.expireDate).format("YYYY-MM-DD"),
+          "cardCode": PaymentData.pin
+        }
        }
        if(PaymentData.paymentType.label==="Cheque"){
-        payload.cheque = {
-           "payeeName"    : PaymentData.payeeName,
-           "chequeNumber" : PaymentData.chequeNo,
-           "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
-           "chargeAmount" : PaymentData.chargeAmount,
-         "frontPictureAttachment":PaymentData.frontPictureAttachment,
-          "backPictureAttachment":PaymentData.backPictureAttachment
-         }
-       }
+           payload.usAePayChequePayment = {
+              "payeeName"    : PaymentData.payeeName,
+              "chequeNumber" : PaymentData.chequeNo,
+              "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
+              "amount" : PaymentData.chargeAmount,
+              "frontPictureAttachment":PaymentData.frontPictureAttachment,
+              "backPictureAttachment":PaymentData.backPictureAttachment,
+              "checkAccountNumber": PaymentData.accountNo,
+              "checkRoutingNumber": PaymentData.routingNo,
+            }
+        }
         
            console.log("payload",payload)
+          // return
             axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+          //  {{url}}/api/sports/20/program/21/batch/197/payment-type/19/contract-promotion/214/contract-status/New/student
               axios.post(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/payment-type/${PaymentData.paymentType.value}/contract-promotion/${contractNameSelect.value}/contract-status/New/student`,payload).then((res)=>{
                 toast.success("Student registered successfully", { theme: "colored" })
                console.log("res",res);
-               if(res.data.cardPaymentResponse!=null){
-                localStorage.setItem("clientSecret",res.data.cardPaymentResponse.clientSecret)
-                setState((prevState)=>({...prevState,stripeModalToggle:!stripeModalToggle}));
-               }else{
+              //  if(res.data.cardPaymentResponse!=null){
+              //   localStorage.setItem("clientSecret",res.data.cardPaymentResponse.clientSecret)
+              //   setState((prevState)=>({...prevState,stripeModalToggle:!stripeModalToggle}));
+              //  }else{
                 setTimeout(() => {
                   history("/studentTabs/2");
                 }, 1000);
-               }
+              // }
                setState((prevState)=>({...prevState,loader:false}));
              
             }).catch(err=>{
@@ -331,7 +344,7 @@ function createStudent() {
       }).catch(err=>{ })
     }if(type==="getFee"){
        Axios.get(`contract-promotion/${contractNameSelect.value}`).then((res)=>{
-        console.log("res",res)
+       // console.log("res",res)
            let lengt = res.data.tenure.name.slice(0, 2);
         let length = parseInt(lengt);
         let startDate = new Date().setUTCHours(0,0,0,0); 
@@ -342,10 +355,8 @@ function createStudent() {
          let dat =  new Date(startDatewithLength);
          let finalDate = moment(dat).format('MM/DD/YYYY')
          res.data.pricing.map((mapdata,index)=>{
-          console.log("hello",mapdata.subscriptionFrequency.id, fieldData.value)
-             if(mapdata.id===member.value){
-            //  console.log("mapdata",mapdata)
-             setState((prevState)=>({
+              if(mapdata.id===member.value ){
+              setState((prevState)=>({
                 ...prevState,
                 fee:res.data.basePrice+mapdata.fee,totalFee:mapdata.total,discount:mapdata.discount,
                 tenureLength:length,endDate:finalDate,memberFrequency:fieldData
@@ -465,7 +476,7 @@ function createStudent() {
           <Formik
             enableReinitialize={true}
             initialValues={initialStudentFields}
-             validationSchema={ValidationSchema}
+            validationSchema={ValidationSchema}
             onSubmit={onSubmit} 
             >           
           {({ values,setFieldValue,handleChange,handleSubmit,handleBlur,errors,touched }) => (
@@ -655,13 +666,15 @@ function createStudent() {
                           </span>} 
                         </div>
                       </div>                         */}
+                        <div className="card"  >
                        <img  src={studentImage != ""?studentImage:previewImage} style={{width:"80%",height:"300px",objectFit: "cover", margin: "4px 0 2px",marginLeft:"auto",marginRight:"auto",borderRadius:"50%"}}/>
-                        <div className=" cardimgv" >
+                        <div className="card-footer cardimgv" >
                         {studentImage != ""?<Button type="button" color="secondary" className='floatl' onClick={(e) =>removeFileHandleChange(e)}  >Remove</Button>: 
                           <span className="btn btn-primary btn-file">
                               Upload<input type="file" accept=".jpg, .jpeg, .png"  onChange={(e) =>fileHandleChange(e)}/>
                           </span>}
                        </div> 
+                       </div>
                       </Row>
                         <div className='height15'></div>
                         <Row>
@@ -761,7 +774,7 @@ function createStudent() {
                          
                           </Col>
                           <Col md={6}>
-                            {contractImageName?"Uploaded":null}
+                          <span> {contractImageName?<b style={{color:"green"}}>Successfully Uploaded</b>:null}</span>
                           </Col>
                         </Row>
                         <Row> <ErrorMessage name="contractImageName" component="div"  className='errmsg'></ErrorMessage></Row>

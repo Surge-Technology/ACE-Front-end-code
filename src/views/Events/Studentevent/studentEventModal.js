@@ -228,20 +228,38 @@ export default function StudentEventModal(props) {
             }
             }
           if(PaymentData.paymentType.label==="Card"){
-            payload.cardPaymentResponse = {
-              "amount": PaymentData.chargeAmount,
-              "currency": PaymentData.currency.value,
-              "description": PaymentData.description
-            } 
+            // payload.cardPaymentResponse = {
+            //   "amount": PaymentData.chargeAmount,
+            //   "currency": PaymentData.currency.value,
+            //   "description": PaymentData.description
+            // } 
+            payload.usAePayCardPaymentResponse= {
+              "amount": PaymentData.chargeAmount, 
+              "currency": PaymentData.currency.value,  
+              "description": PaymentData.description,
+              "cardNumber": PaymentData.cardNumber,
+              "cardExpiryDate":moment(PaymentData.expireDate).format("YYYY-MM-DD"),
+              "cardCode": PaymentData.pin
+            }
           }
           if(PaymentData.paymentType.label==="Cheque"){
-            payload.chequePayment = {
+            // payload.chequePayment = {
+            //   "payeeName"    : PaymentData.payeeName,
+            //   "chequeNumber" : PaymentData.chequeNo,
+            //   "date"         : moment(PaymentData.date).format("YYYY-MM-DD"),
+            //   "chargeAmount" : PaymentData.chargeAmount,
+            //  "frontPictureAttachment":PaymentData.frontPictureAttachment,
+            //  "backPictureAttachment":PaymentData.backPictureAttachment
+            // }
+            payload.usAePayChequePayment = {
               "payeeName"    : PaymentData.payeeName,
               "chequeNumber" : PaymentData.chequeNo,
-              "date"         : moment(PaymentData.date).format("YYYY-MM-DD"),
-              "chargeAmount" : PaymentData.chargeAmount,
-             "frontPictureAttachment":PaymentData.frontPictureAttachment,
-             "backPictureAttachment":PaymentData.backPictureAttachment
+              "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
+              "amount" : PaymentData.chargeAmount,
+              "frontPictureAttachment":PaymentData.frontPictureAttachment,
+              "backPictureAttachment":PaymentData.backPictureAttachment,
+              "checkAccountNumber": PaymentData.accountNo,
+              "checkRoutingNumber": PaymentData.routingNo,
             }
           }
           console.log("payload",payload)

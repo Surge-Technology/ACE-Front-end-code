@@ -8,7 +8,7 @@ const instance = axios.create({
 //let token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYW5pQGdtYWlsLmNvbSIsImV4cCI6MTY3NDE1MDUxNiwiaWF0IjoxNjc0MTMyNTE2fQ.iUjf7VthLeRVJ9Pk1i1L-M2jBfRqxaVrzcArNXthBolHozbhTeR1ieIEZrjnNjEs2e9fje-oysfm_aMNZhEmiw"
 instance.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
 //instance.defaults.headers.common['Authorization'] =  "Bearer " + token;
-
+console.log("localStorage.getItem",localStorage.getItem("token"))
 instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 instance.interceptors.response.use(function (config) {
@@ -16,7 +16,7 @@ instance.interceptors.response.use(function (config) {
         if(token<10){
             console.log("token cleared");
          localStorage.clear();
-         window.location.reload(false);
+        window.location.reload(false);
           //this.props.history.push("/auth/Login");
        }   
     if(config.status ===200 || config.status===201 || config.status===204){
@@ -31,8 +31,8 @@ instance.interceptors.response.use(function (config) {
     // if(error.response){
       if(error.response===undefined){
         //connection refused
-        console.log("connection refused");
-       localStorage.clear();
+        console.log("Connection refused");
+         localStorage.clear();
         window.location.reload(false);
       }
         if(error.response.status === 401){
@@ -42,8 +42,8 @@ instance.interceptors.response.use(function (config) {
             'question'
           )
           console.log("config 401");
-          localStorage.clear()
-          window.location.reload(false);
+           localStorage.clear()
+           window.location.reload(false);
          //  window.location = '/login';  
          
                  //this.props.history.push("/login");

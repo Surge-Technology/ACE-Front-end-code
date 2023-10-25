@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Form, ErrorMessage } from 'formik';
 import * as Yup from "yup";
 import YupPassword from 'yup-password';
@@ -29,13 +29,18 @@ const Login = () => {
       .minNumbers(1, 'Password must contain at least 1 number')
       .minSymbols(1, 'Password must contain at least 1 special character'),
   });
+  useEffect(()=>{
+    // if(!localStorage.getItem('reload')){
+    //   window.location.reload(false);
+    //   localStorage.setItem('reload',true)
+    // }
+  },[])
   const userLoginSubmit = (e) => {
     setFormValues({ ...formValues, loader: true });
     let userloginRequestPayload = {
       username: e.email,
       password: e.password
     }
-    console.log("userloginRequestPayload", userloginRequestPayload);
     axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login`, userloginRequestPayload)
       .then((res) => {
         console.log("res", res);

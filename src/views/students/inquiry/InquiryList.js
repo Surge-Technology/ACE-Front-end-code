@@ -83,9 +83,9 @@ const deleteInquiryHandle=(id)=>{
     return (
       <>
         <span>      
-        {permissions.canUpdate?    <i className="fa fa-pencil" id="pencilspace" aria-hidden="true" onClick={()=> history(`/studentTabs/CreateInquiry/${row.id}`)} style={{ cursor: 'pointer', fontSize: "15px", color: "green" }}></i>     :null}
-       {permissions.canDelete?   <i className="fa fa-trash-o" aria-hidden="true" id="trashspace" onClick={()=>{deleteInquiryHandle(row.id)}} style={{ cursor: 'pointer', fontSize: "15px",padding:"0px 10px 0px 0px", color: "red" }}></i> :null}
-       {studPermissions.canCreate?   <i className="fa fa-user" id="pencilspace" aria-hidden="true" onClick={()=> history(`/studentTabs/students/create`)} style={{ cursor: 'pointer', fontSize: "15px", color: "green" }}></i>     :null}
+        {permissions.canUpdate?    <i className="fa fa-pencil" title='Edit' id="pencilspace" aria-hidden="true" onClick={()=> history(`/studentTabs/CreateInquiry/${row.id}`)} style={{ cursor: 'pointer', fontSize: "15px", color: "green" }}></i>     :null}
+       {permissions.canDelete?   <i className="fa fa-trash-o" title='Delete' aria-hidden="true" id="trashspace" onClick={()=>{deleteInquiryHandle(row.id)}} style={{ cursor: 'pointer', fontSize: "15px",padding:"0px 10px 0px 0px", color: "red" }}></i> :null}
+       {studPermissions.canCreate?   <i className="fa fa-user" title='Redirect To Add Student' id="pencilspace" aria-hidden="true" onClick={()=> history(`/studentTabs/students/create`)} style={{ cursor: 'pointer', fontSize: "15px", color: "green" }}></i>     :null}
         </span>
       </>
     )
@@ -100,6 +100,15 @@ const deleteInquiryHandle=(id)=>{
   }
   const displayDate = (date)=>{
     return(<>{moment(date).format("MM/DD/YYYY")}</>)
+  }
+  const displayinquiryServices = (cell, row) => {
+    return (<span>{row.inquiryServices? row.inquiryServices.name :null}</span>)
+  }
+  const displayinquiryStatus = (cell, row) => {
+    return (<span>{row.inquiryStatus? row.inquiryStatus.name :null}</span>)
+  }
+  const displayinquiryType = (cell, row) => {
+    return (<span>{row.inquiryType? row.inquiryType.name :null}</span>)
   }
   return (
     <>
@@ -123,9 +132,12 @@ const deleteInquiryHandle=(id)=>{
         <Card >
            <BootstrapTable data={inquiryList} hover multiColumnSearch={true} version='4' search>
                 <TableHeaderColumn width="140" dataField='firstName' dataFormat={displayFullName} dataSort>Name</TableHeaderColumn>
-                <TableHeaderColumn width="180" dataField='email' dataSort>Email</TableHeaderColumn>
-                <TableHeaderColumn width="120" dataField='phone'  dataSort>Phone</TableHeaderColumn>
-                <TableHeaderColumn width="100" dataField='creationDate' dataFormat={displayDate}  dataSort>Registered Date</TableHeaderColumn>
+                <TableHeaderColumn width="160" dataField='email' dataSort>Email</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='phone'  dataSort>Phone</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='inquiryServices' dataFormat={displayinquiryServices} dataSort> Services</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='inquiryStatus' dataFormat={displayinquiryStatus} dataSort> Status</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='inquiryType' dataFormat={displayinquiryType} dataSort> Type</TableHeaderColumn>
+                <TableHeaderColumn width="100" dataField='creationDate' dataFormat={displayDate}  dataSort>Created Date</TableHeaderColumn>
                 <TableHeaderColumn width="60"  dataField="id" dataAlign='center' dataFormat={studentsActionsHandle} isKey>Action</TableHeaderColumn>
             </BootstrapTable>
             <CardFooter> 

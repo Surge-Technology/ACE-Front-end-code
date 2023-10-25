@@ -247,8 +247,7 @@ export default function editStudent() {
                 gstate:{value: res.data.parent.address.state.id,label:  res.data.parent.address.state.name},email:res.data.email,phone:res.data.phone,sports:{value: res.data.sports.id,label:  res.data.sports.name},
                 programName:{value: res.data.program.id,label:  res.data.program.name},batch:{value: res.data.batch.id,label:  res.data.batch.name},
                 contractNameSelect:{value: res.data.contract.contractPromotion.id,label:res.data.contract.contractPromotion.name},
-            //     contractMemberOptions:[{value: res.data.contract.membersAndFrequency,label:  res.data.contract.membersAndFrequency}],
-            memberFrequency:{value: res.data.contract.pricing.subscriptionFrequency.id,label:  res.data.contract.pricing.subscriptionFrequency.name},    
+             memberFrequency:{value: res.data.contract.pricing.subscriptionFrequency.id,label:  res.data.contract.pricing.subscriptionFrequency.name},    
             fee: parseInt(res.data.contract.pricing.fee) ,discount:res.data.contract.pricing.discount,totalFee:res.data.contract.pricing.total,startDate:res.data.contract.startDate,
                 endDate:res.data.contract.endDate,contractStatus:{value: res.data.contract.contractStatus,label:  res.data.contract.contractStatus},
                 tenureLength:res.data.contract.contractPromotion.tenure.name.slice(0, 2),sameAsStudent:res.data.sameAsStudent,
@@ -257,8 +256,8 @@ export default function editStudent() {
                 studentStatusLevel:res.data.studentCurrentBeltStatus===null?[]:res.data.studentCurrentBeltStatus.level,
                 studentStatusSubLevel:res.data.studentCurrentBeltStatus===null?[]:res.data.studentCurrentBeltStatus.subLevel,
                 contractId:res.data.contract.id,
-                cardId:res.data.cardPaymentResponse===null?"":res.data.cardPaymentResponse.id,
-                chaqueId:res.data.chequePayment===null?"":res.data.chequePayment.id,
+                // cardId:res.data.cardPaymentResponse===null?"":res.data.cardPaymentResponse.id,
+                // chaqueId:res.data.chequePayment===null?"":res.data.chequePayment.id,
                 contractImageName:res.data.contract.attachment,
                 notes:res.data.notes,
                
@@ -695,11 +694,11 @@ export default function editStudent() {
                                                             disabled
                                                         />
                                                     </Col>
-                                                    <Col md={2}>
-                                                    <span className="btn btn-primary btn-file">
+                                                    <Col md={4}>
+                                                    <span className="btn btn-primary btn-file" style={{marginTop:"12px"}}>
                                                         Contract Upload <input type="file"   onChange={(e) =>ContractFileHandleChange(e)}/>
                                                     </span>
-                                                        {contractImageName}
+                                                       <span> {contractImageName?<b style={{color:"green"}}>Uploaded</b>:null}</span>
                                                      </Col>
                                                 </Row>
                                             </AccordionBody>

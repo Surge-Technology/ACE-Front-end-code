@@ -7,6 +7,7 @@ import Axios from "../../hoc/axiosConfig";
 import { CChartPie,CChartBar,CChartLine,CChartPolarArea ,CChartDoughnut} from '@coreui/react-chartjs'
 import Swal from 'sweetalert2';
 import './dashboard.css';
+import axios from 'axios';
 const dashboardState = {
   "totalStudents": 0,
   "activeStudents": 0,
@@ -36,10 +37,15 @@ export default function Dashboard() {
   const random = () => Math.round(Math.random() * 100)
   const navigate = useNavigate();
   useEffect(() => {
+    if(!localStorage.getItem('reload')){
+      window.location.reload(false);
+      localStorage.setItem('reload',true)
+    }
     getAllBatches();
     getAllEvents();
-    Axios.get("/dashboard/student").then((res) => {
-      setState((prevState) => ({
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/student`).then((res) => {
+       setState((prevState) => ({
        ...prevState,
        "totalStudents": res.data.totalStudents,
        "activeStudents": res.data.activeStudents,
@@ -55,8 +61,9 @@ export default function Dashboard() {
       // "inactiveContracts": 2
      }))
     }).catch(err => { console.log(err)})
-    Axios.get("/student-attendances/count").then((res) => {
-       setState((prevState) => ({
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/student-attendances/count`).then((res) => {
+      setState((prevState) => ({
         ...prevState,
         activeStudentCount: res.data.activeStudentCount,
          currentMonthAttendance: res.data.currentMonthAttendance,
@@ -69,8 +76,9 @@ export default function Dashboard() {
       }))
     }).catch(err => { console.log(err)})
     let employmentType = localStorage.getItem('employmentType')
-    Axios.get(`/staff-attendances/count`).then((res) => {
-       setState((prevState) => ({
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/staff-attendances/count`).then((res) => {
+        setState((prevState) => ({
         ...prevState,
         permanentStaffCount: res.data.permanentStaffCount,
          temporaryStaffCount: res.data.temporaryStaffCount,
@@ -82,7 +90,8 @@ export default function Dashboard() {
         // "staffcurrentMonthAttendance": 90
       }))
     }).catch(err => { console.log(err)})
-    Axios.get("/level-testing/count").then((res) => {
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/level-testing/count`).then((res) => {
        setState((prevState) => ({
         ...prevState,
         testingActiveStudentCount: res.data.activeStudentCount,
@@ -93,8 +102,9 @@ export default function Dashboard() {
           // "eligibleTestCount": 25,
           // "approvedTestCount": 15,
       }))
-    }).catch(err => { console.log(err)}) 
-    Axios.get("/dashboard/all-inquiry").then((res) => {
+    }).catch(err => { console.log(err)})
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/all-inquiry`).then((res) => { 
        setState((prevState) => ({
        ...prevState,
        openLeads: res.data.openLeads,
@@ -106,7 +116,8 @@ export default function Dashboard() {
          
      }))
     }).catch(err => { console.log(err)})
-    Axios.get("/dashboard/all-contract").then((res) => {
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/all-contract`).then((res) => {  
       setState((prevState) => ({
        ...prevState,
        totalContracts: res.data.totalContracts,
@@ -124,8 +135,8 @@ export default function Dashboard() {
     }).catch(err => { console.log(err)})
   }, [])
   const getAllBatches = () => {
-    Axios.get(`batches`)
-      .then((n) => {
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/batches`).then((n) => {  
         console.log("nnnn",n)
         let batchArray = [];
         n.data.content.map((event, i) => {
@@ -177,8 +188,8 @@ export default function Dashboard() {
       })
   }
   const getAllEvents = () => {
-    Axios.get("event")
-      .then((n) => {
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/event`).then((n) => {  
         console.log("event",n)
         let eventArray = [];
         n.data.content.map((event, i) => {

@@ -155,15 +155,13 @@ const createcontract = () => {
       basePrice: values.pricing,
       pricing: newarray3
     }
-    console.log("payload", payload)
     if (params.id === "new") {
       axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
       axios.post(`${process.env.REACT_APP_BASE_URL}/contract-tenure/${values.lengths.value}/contract-promotion`, payload).then((res) => {
-        console.log("res", res)
         if (res.status === 201) {
           toast.success("Contract created successfully", { theme: "colored" });
           setTimeout(() => {
-          //  navigate('/settings/allcontracts');
+            navigate('/settings/allcontracts');
           }, 2000);
         }
       }).catch((err) => {

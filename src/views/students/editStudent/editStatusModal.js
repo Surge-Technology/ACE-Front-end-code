@@ -43,6 +43,7 @@ export default function EditStatusModal(props) {
         subLevel.push({value: mapData.id, label: mapData.name})
        })
        Axios.get(`level/${res.data.level.id}/sub-level`).then((response)=>{
+        console.log("res.data.anti",res.data)
           let  allSubLevels = []
         response.data.map((mapdata,index)=>{
               allSubLevels.push( { value: mapdata.id, label: mapdata.name })
@@ -62,7 +63,7 @@ export default function EditStatusModal(props) {
         appvdORanti:{anticipated:res.data.testingAnticipated,approved:res.data.testingApproved,}
     }))
       }).catch(err=>{
-        Swal.fire(err.response.data.message,'Please try again later');
+        Swal.fire("",'Please try again later');
       })
   },[])
   const beltLavelHandleChange= (name, selectedData)=>{
@@ -88,7 +89,10 @@ export default function EditStatusModal(props) {
       }
   }
   const  onSubmitDeactivation=(data)=>{
-      if(data.appvdORanti.anticipated===false && data.appvdORanti.approved===false){ 
+    console.log("submt",data )
+    console.log("submt",data.appvdORanti)
+    //return
+      if(data.anticipated===true){ 
           let payload ={}
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.put(`${process.env.REACT_APP_BASE_URL}/student/${props.studentId}/student-status/testing-anticipated`,payload).then((res)=>{
@@ -100,7 +104,7 @@ export default function EditStatusModal(props) {
           Swal.fire(err.response.data.message,'Please try again later');
         })
     }
-    if(appvdORanti.anticipated===true && appvdORanti.approved===false){ 
+    if(data.approved===true){ 
          let payload ={}
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.put(`${process.env.REACT_APP_BASE_URL}/student/${props.studentId}/student-status/testing-approved`,payload).then((res)=>{
