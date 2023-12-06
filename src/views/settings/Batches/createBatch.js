@@ -52,11 +52,9 @@ const createBatch = () => {
         startDateTime: Yup.date().required("Start Date is required").max(moment().add(6, 'months'), "Start date should't be more than 6 months"),
         endDateTime: Yup.date().required('End date is required'),
       });
-  useEffect(() => {
-    
+  useEffect(() => { 
     Axios.get(`${process.env.REACT_APP_BASE_URL}/sports/all`).then((res) => {
-     console.log("sports/all,",res);
-     setState({
+      setState({
       ...state,
         sport: { value: res.data[0]?res.data[0].id:null, label: res.data[0]?res.data[0].name:null },
         program: { value: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].id:null:null, label: res.data[0]?res.data[0].programName[0]?res.data[0].programName[0].name:null:null },

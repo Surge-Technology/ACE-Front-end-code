@@ -1,5 +1,3 @@
- 
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Col, Card, CardBody, CardFooter, Row, Button ,Spinner} from "reactstrap";
@@ -24,19 +22,15 @@ const PermissionsList = () => {
           ...prevState, 
            permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => { })
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/roles`)
     .then((res) => {
-      console.log("res",res)
-      setState((prevState)=>({
+       setState((prevState)=>({
         ...prevState,
         permissionsList:res.data,loader:false
       }));
     }).catch((err) => {
-      console.log("err",err)  
         Swal.fire(err.response?err.response.data.message:null, 'Please try again later');
     })
   },[])

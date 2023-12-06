@@ -66,8 +66,7 @@ const eventRegister = (props) => {
   }
   const getAllregistredStudents = () => {
     Axios.get(`event/${params.id}/event-registration`).then((res) => {
-      console.log("Registered",res)
-      setRegistredStudents(res.data)
+       setRegistredStudents(res.data)
       if (res.status == 401) {
         Swal.fire({ title: "error", icon: "error", text: "Session Expired" })
         navigate('/login')
@@ -339,11 +338,9 @@ const eventRegister = (props) => {
           </Card>
         </CardBody>
         <Row>
-<center>
-<Button size="md" type="button" id="cancelbutton" onClick={() =>navigate('/events')}>Back</Button>{' '}
-
-</center>
-
+          <center>
+            <Button size="md" type="button" id="cancelbutton" onClick={() =>navigate('/events')}>Back</Button>{' '}
+          </center>
         </Row>
       </Card>
     </>

@@ -9,10 +9,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 const reason =[{value:"Medical",label:"white Belt"},{value:"Other",label:"Other"}]
 const levels =[{value:1,label:"Form"},{value:2,label:"Self Defense"}]
-const deactiveInitialData = {beltLabel:"",subLevel:"",beltLabelOptions:"",anticipated:false,approved:false,subLevelsOptions:"" ,appvdORanti:[]}
+const deactiveInitialData = {beltLabel:"",subLevel:"",beltLabelOptions:"",anticipated:false,approved:false,backendAnticipated:false,backApproved:false,subLevelsOptions:"" }
 export default function EditStatusModal(props) {
     const [deactiveInitialStateData,setState]=useState(deactiveInitialData);
-    const {beltLabel ,subLevel ,beltLabelOptions,anticipated,approved,subLevelsOptions,appvdORanti} = deactiveInitialStateData
+    const {beltLabel ,subLevel ,beltLabelOptions,anticipated,approved,backendAnticipated,backApproved,subLevelsOptions} = deactiveInitialStateData
      const DeactivationSchema = () => Yup.object().shape({
       subLevel: Yup.object().required('Sub Level is required'),
         beltLabel: Yup.object().required('Reason is required'),
@@ -37,14 +37,12 @@ export default function EditStatusModal(props) {
       Swal.fire(err.response.data.message,'Please try again later');
     })
     Axios.get(`student/${props.studentId}/student-status-history`).then((res)=>{
-      console.log("ressssss",res)
-        let subLevel = [];
+         let subLevel = [];
        res.data.subLevel.map((mapData,index)=>{      
         subLevel.push({value: mapData.id, label: mapData.name})
        })
        Axios.get(`level/${res.data.level.id}/sub-level`).then((response)=>{
-        console.log("res.data.anti",res.data)
-          let  allSubLevels = []
+           let  allSubLevels = []
         response.data.map((mapdata,index)=>{
               allSubLevels.push( { value: mapdata.id, label: mapdata.name })
             })
@@ -60,7 +58,8 @@ export default function EditStatusModal(props) {
         beltLabel:{ value: res.data.level.id, label: res.data.level.name },
         subLevel:subLevel[res.data.subLevel.length-1],
         anticipated:res.data.testingAnticipated,approved:res.data.testingApproved,
-        appvdORanti:{anticipated:res.data.testingAnticipated,approved:res.data.testingApproved,}
+         backendAnticipated:res.data.testingAnticipated,
+        backApproved:res.data.testingApproved,
     }))
       }).catch(err=>{
         Swal.fire("",'Please try again later');
@@ -89,10 +88,7 @@ export default function EditStatusModal(props) {
       }
   }
   const  onSubmitDeactivation=(data)=>{
-    console.log("submt",data )
-    console.log("submt",data.appvdORanti)
-    //return
-      if(data.anticipated===true){ 
+      if(backendAnticipated===false && data.anticipated===true){ 
           let payload ={}
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.put(`${process.env.REACT_APP_BASE_URL}/student/${props.studentId}/student-status/testing-anticipated`,payload).then((res)=>{
@@ -104,7 +100,7 @@ export default function EditStatusModal(props) {
           Swal.fire(err.response.data.message,'Please try again later');
         })
     }
-    if(data.approved===true){ 
+    if(backApproved===false&&data.approved===true){ 
          let payload ={}
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.put(`${process.env.REACT_APP_BASE_URL}/student/${props.studentId}/student-status/testing-approved`,payload).then((res)=>{
@@ -119,7 +115,6 @@ export default function EditStatusModal(props) {
           )
         })
     }
-   
     if(!anticipated && !approved){
          let payload = {
           "testingAnticipated" : anticipated,

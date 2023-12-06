@@ -17,7 +17,7 @@ export default function ContractDetailsList() {
       let endDat = moment(someDate).format("YYYY-MM-DD");
       Axios.get(`/dashboard/all-contract?${StartDat}&endDate=${endDat}`).then((res)=>{
         console.log("res",res)
-       setState((prevState)=>({
+        setState((prevState)=>({
           ...prevState, 
           startDate:someDate,
           endDate:someDate,
@@ -49,8 +49,7 @@ export default function ContractDetailsList() {
       let StartDat = moment(startDate).format("YYYY-MM-DD");
       let endDat = moment(endDate).format("YYYY-MM-DD");
       Axios.get(`/dashboard/all-contract?${StartDat}&endDate=${endDat}`).then((res)=>{
-        console.log("res",res)
-       setState((prevState)=>({
+        setState((prevState)=>({
           ...prevState, 
           StudentAttandList:res.data.contractDtos,loader:false
         }))
@@ -68,13 +67,18 @@ export default function ContractDetailsList() {
       })
     }
   }
-  const statusHandleChange =()=>{
-    return(<><Badge color="primary">Active</Badge></>)
-  }
   const nameHandle = (cell, row) => {
-    console.log('ceel',cell,row)
-    return<>{row.contractPromotion.name}</>
+      return<>{row.contractPromotion.name}</>
   }
+const totalFeeHandle = (cell, row) => {
+  return<>{row.pricing.total?row.pricing.total:null}</>
+}
+const FeeHandle = (cell, row) => {
+  return<>{row.pricing.fee?row.pricing.fee:null}</>
+}
+const creationDateHandle = (cell, row) => {
+  return<>{cell? moment(cell).format("YYYY-MM-DD"):null}</>
+}
   return (
     <>
      {loader?<Spinner
@@ -118,11 +122,12 @@ export default function ContractDetailsList() {
                 <Col>
                 <BootstrapTable data={StudentAttandList} hover multiColumnSearch={true} version='4' search>
                   <TableHeaderColumn width="140" dataField='name'  dataSort isKey dataFormat={nameHandle}>Name</TableHeaderColumn>
-                 <TableHeaderColumn width="120" dataField='fee'  dataSort>fee</TableHeaderColumn>
-                  <TableHeaderColumn width="120" dataField='totalFee'    dataSort>Total Fee</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataField='contractStatus'    dataSort>Contract Status</TableHeaderColumn>
+                 <TableHeaderColumn width="120" dataField='fee'  dataFormat={FeeHandle}   dataSort>fee</TableHeaderColumn>
+                  <TableHeaderColumn width="120" dataField='totalFee' dataFormat={totalFeeHandle} dataSort>Total Fee</TableHeaderColumn>
+                  <TableHeaderColumn width="100" dataField='contractStatus'   dataSort>Contract Status</TableHeaderColumn>
                   <TableHeaderColumn width="100" dataField='startDate' dataSort>Start Date</TableHeaderColumn>
                   <TableHeaderColumn width="100" dataField='endDate'   dataSort>End Date</TableHeaderColumn>
+                  <TableHeaderColumn width="100" dataField='creationDate' dataFormat={creationDateHandle}  dataSort>Created Date</TableHeaderColumn>
                    </BootstrapTable>
                 </Col>
               </Row>

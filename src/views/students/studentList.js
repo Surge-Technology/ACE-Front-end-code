@@ -40,9 +40,7 @@ const tableList = (page)=>{
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {   })
     const thead = document.getElementsByTagName("thead");
     thead[0].style.backgroundColor = localStorage.getItem('tableColor');
     thead[1]?thead[1].style.backgroundColor = localStorage.getItem('tableColor'):null;

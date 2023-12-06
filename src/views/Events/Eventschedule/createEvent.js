@@ -137,16 +137,6 @@ const createEvent = () => {
     })
   }
   const eventSubmit = (values) => {
-    console.log("values",values)
-   
-     let customArray = []
-    // values.customEventLoopValues.map((element, i) => {
-    //   customArray.push({
-    //     eventDate: moment(element.startDate).format('YYYY-MM-DD'),
-    //     startTime: moment(element.startTime).format("HH:mm:ss"),
-    //     endTime: moment(element.endTime).format("HH:mm:ss")
-    //   })
-    // })
     let priceArray = []
     values.pricingLoopValues.map((element, i) => {
        priceArray.push({
@@ -167,7 +157,7 @@ const createEvent = () => {
       description: values.description,
       isAllDay: state.alldayCheck,
       isCustomRange: state.customCheck,
-      registrationFee: values.registrationFee,
+      registrationFee: values.registrationFee===''?0:values.registrationFee,
       perDay: values.perdayFee,
       allDayEvent: {
         eventDate: moment(values.startDateAll).format('YYYY-MM-DD'),
@@ -180,7 +170,7 @@ const createEvent = () => {
       description: values.description,
       isAllDay: state.alldayCheck,
       isCustomRange: state.customCheck,
-      registrationFee: values.registrationFee,
+      registrationFee: values.registrationFee===''?0:values.registrationFee,
       perDay: values.perdayFee,
      // customRangeEvent: customArray,
      "customRangeEvent":{
@@ -192,7 +182,6 @@ const createEvent = () => {
       eventPricing: priceArray
     }
     
-    //return;
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     if (state.alldayCheck === true) {
       axios.post(`${process.env.REACT_APP_BASE_URL}/event-type/${values.eventType.value}/event-category/${values.eventCategory.value}/event`, alldaypayload)
@@ -439,84 +428,7 @@ const createEvent = () => {
                             </Col>
                           </Row>
                           </>
-                            // <FieldArray
-                            //   name="customEventLoopValues"
-                            //   render={arrayHelpers => {
-                            //     const customEventLoopValues = values.customEventLoopValues;
-                            //     return (
-                            //       <div>
-                            //         {customEventLoopValues && customEventLoopValues.length > 0 ? customEventLoopValues.map((element, index) => (
-                            //           <div key={index}>
-                            //             <Row className='rowextend1'>
-                            //               <Col md={3}>
-                            //                 <Label  >{index === 0 ? "Date" : ""}<span className="required">*</span></Label>
-                            //                 <DatePicker
-                            //                   name="startDate"
-                            //                   selected={element.startDate ? element.startDate : null}
-                            //                   onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.startDate`, selectedOption)}
-                            //                   onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.startDate`) }}
-                            //                   minDate={new Date()}
-                            //                   placeholderText="mm/dd/yyyy"
-                            //                 />
-                            //                 <ErrorMessage name={`customEventLoopValues.${index}.startDate`} component="div" className='errmsg' />
-                            //               </Col>
-                            //               <Col md={3}>
-                            //                 <FormGroup>
-                            //                   <Label  > {index === 0 ? "Start Time" : ""}<span className="required">*</span></Label>
-                            //                   <DatePicker
-                            //                     name="startTime"
-                            //                     selected={element.startTime ? element.startTime : null}
-                            //                     onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.startTime`, selectedOption)}
-                            //                     onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.startTime`) }}
-                            //                     placeholderText="--:-- --"
-                            //                     showTimeSelect
-                            //                     showTimeSelectOnly
-                            //                     timeCaption="Time"
-                            //                     dateFormat="h:mm aa"
-                            //                   />
-                            //                   <ErrorMessage name={`customEventLoopValues.${index}.startTime`} component="div" className='errmsg' />
-                            //                 </FormGroup>
-                            //               </Col>
-                            //               <Col md={3}>
-                            //                 <FormGroup>
-                            //                   <Label  > {index === 0 ? "End Time" : ""}<span className="required">*</span></Label>
-                            //                   <DatePicker
-                            //                     name="endTime"
-                            //                     selected={element.endTime ? element.endTime : null}
-                            //                     onChange={(selectedOption) => setFieldValue(`customEventLoopValues.${index}.endTime`, selectedOption)}
-                            //                     onBlur={() => { setFieldTouched(`customEventLoopValues.${index}.endTime`) }}
-                            //                     placeholderText="--:-- --"
-                            //                     showTimeSelect
-                            //                     showTimeSelectOnly
-                            //                     timeCaption="Time"
-                            //                     dateFormat="h:mm aa"
-                            //                     minTime={new Date(new Date(element.startTime).getTime() + (15 * 60 * 1000))}
-                            //                     maxTime={new Date().setHours(23, 59, 59)}
-                            //                   />
-                            //                   <ErrorMessage name={`customEventLoopValues.${index}.endTime`} component="div" className='errmsg' />
-                            //                 </FormGroup>
-                            //               </Col>
-                            //               <Col md={3}>
-                            //                 <Button color='success'
-                            //                   onClick={() =>
-                            //                     arrayHelpers.push({ startDate: "", startTime: "", endTime: "" })
-                            //                   }
-                            //                   id="plusbutton" >
-                            //                   <i className="fa fa-plus" aria-hidden="true" id="plusicon"></i>
-                            //                 </Button> &nbsp;
-                            //                 {index ? <Button color='danger' onClick={() => { arrayHelpers.remove(index) }} id="minusbutton">
-                            //                   <i className="fa fa-minus" aria-hidden="true" id="minusicon"></i>
-                            //                 </Button> : null}
-                            //               </Col>
-                            //             </Row>
-                            //           </div>
-                            //         ))
-                            //           : null}
-                            //       </div>
-                            //     );
-                            //   }}
-                            // />
-                            : null}
+                             : null}
                         </Col>
                       </Row>
                       <Row>

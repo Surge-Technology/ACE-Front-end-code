@@ -26,28 +26,26 @@ const createcontract = () => {
   let navigate = useNavigate();
   const params = useParams();
   const initialValues = {
-    programName: contractValues.programName,
-    pricing: contractValues.pricing,
-    lengths: lengths,
-    contractLoopValues: contractLoopValues,
+    programName : contractValues.programName,
+    pricing     : contractValues.pricing,
+    lengths     : lengths,
+    contractLoopValues : contractLoopValues,
   }
   const ContractSchema = () => Yup.object().shape({
-    programName: Yup.string().matches(/^[a-zA-Z0-9@]/, "Special character are not allowed").min(2, 'Too Short!').max(70, 'Too Long!').required('Contract name Required'),
-    pricing: Yup.number().required('Base Price is required'),
-    lengths: Yup.object().required('Length is Required'),
-    contractLoopValues: Yup.array().of(
-      Yup.object().shape({
-        ifperson: Yup.string().required("Member(s) required"),
-        frequency: Yup.object().required('Frequency Required')
-      })
+    programName : Yup.string().matches(/^[a-zA-Z0-9@]/, "Special character are not allowed").min(2, 'Too Short!').max(70, 'Too Long!').required('Contract name Required'),
+    pricing     : Yup.number().required('Base Price is required'),
+    lengths     : Yup.object().required('Length is Required'),
+    contractLoopValues : Yup.array().of(
+            Yup.object().shape({
+              ifperson  : Yup.string().required("Member(s) required"),
+              frequency : Yup.object().required('Frequency Required')
+            })
     )
   });
   useEffect(() => {
     alllengths();
-  //  allfrequencies();
     if (params.id !== "new") {
       Axios.get(`contract-promotion/${params.id}`).then((res) => {
-        console.log("response", res)
         setContractValues({ ...contractValues, programName: res.data.name, pricing: res.data.basePrice })
         setLengths({ value: res.data.tenure.id, label: res.data.tenure.name })
         let backendContractLoopValues = []
@@ -56,10 +54,10 @@ const createcontract = () => {
           backendContractLoopValues.push({ id: key.id, ifperson: key.members, frequency: { value: key.subscriptionFrequency.id, label: key.subscriptionFrequency.name }, then: key.fee, discount: key.discount, amount: key.total })
           setrow.push({id:key.id})
         })
+        allfrequencies({ value: res.data.tenure.id, label: res.data.tenure.name })
         setRowDeleteId(setrow);
         setContractLoopValues(backendContractLoopValues);
-        //for backend
-        let backendContractLoopValues1 = []
+         let backendContractLoopValues1 = []
         res.data.pricing.map((key, index) => {
           backendContractLoopValues1.push({ id: key.id, members: key.members, subscriptionFrequency: { id: key.subscriptionFrequency.id }, fee: key.fee, discount: key.discount, total: key.total })
         })
@@ -95,7 +93,6 @@ const createcontract = () => {
     })
   }
   const contractSubmit = (values) => {
-    console.log(values)
     let newarray = [];
     values.contractLoopValues.map((element, i) => {
       newarray.push({
@@ -108,9 +105,7 @@ const createcontract = () => {
     })
     let newarray1 = [];
     contractLoopValues.map((element, i) => {
-      console.log("if", !element.id)
-      if (element.id === undefined) {
-        console.log("if true")
+       if (element.id === undefined) {
         newarray1.push({
           members: element.ifperson,
           fee: element.then,
@@ -118,11 +113,7 @@ const createcontract = () => {
           subscriptionFrequency: { id: element.frequency.value },
           total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (element.discount)).toFixed(2)
         })
-      }
-      // else{
-      //   console.log("if false")
-      //   newarray1.push(values.contractLoopValues)
-      // }
+      } 
     })
     let newarray3 = [];
     values.contractLoopValues.map((element, i) => {
@@ -140,16 +131,7 @@ const createcontract = () => {
       basePrice: values.pricing,
       pricing: newarray
     }
-    const merged = [...backendValues, ...newarray1];
-    // let pricingValue;
-    // if(backbutton===true){
-    //   console.log("button true")
-    //   pricingValue=newarray3;
-    // }
-    // else{
-    //   console.log("button not true")
-    //   pricingValue=merged;
-    // }
+    
     const updatePayload = {
       name: values.programName,
       basePrice: values.pricing,
@@ -175,8 +157,7 @@ const createcontract = () => {
     }
     else {
       Axios.put(`contract-tenure/${tenureId}/contract-promotion/${params.id}`, updatePayload).then((res) => {
-        console.log(res)
-        if (res.status === 200) {
+         if (res.status === 200) {
           toast.info("Contract updated successfully", { theme: "colored" });
           setTimeout(() => {
             navigate('/settings/allcontracts');
@@ -193,8 +174,7 @@ const createcontract = () => {
     }
   };
   const rowDeleteHandle=(id)=>{
-    console.log("rowid",id);
-    if (params.id !== "new") {
+     if (params.id !== "new") {
         Swal.fire({
           title: 'Are you sure?',
           text: "You won't be able to revert this!",
@@ -208,8 +188,7 @@ const createcontract = () => {
                 Axios.delete(`pricing/${id}/contract-promotion/${params.id}`)
                 .then((response) => {
                   if (response.status == 200) {
-                  
-                  Swal.fire('Record Deleted!', '', 'success')
+                   Swal.fire('Record Deleted!', '', 'success')
                   }
                 }).catch((error) => { 
                 Swal.fire( 'Please try again ' ) 
@@ -284,18 +263,7 @@ const createcontract = () => {
                             name="contractLoopValues"
                             render={arrayHelpers => {
                               const contractLoopValues = values.contractLoopValues;
-                              // console.log(contractLoopValues)
-                              // if (!Array.isArray(contractLoopValues)) return;
-                              // const isExist = contractLoopValues?.includes(char.id)
-                              // if (isExist) {
-                              //   // filter out the char u want to delete
-                              //   const newData = contractLoopValues?.filter(i => i !== char.id)
-                              //   setFieldValue('contractLoopValues', newData)
-                              //   return;
-                              // }
-                              // const newData = contractLoopValues?.concat(char.id);
-                              // setFieldValue('contractLoopValues', newData);
-                              return (
+                               return (
                                 <div>
                                   {contractLoopValues && contractLoopValues.length > 0 ? contractLoopValues.map((element, index) => (
                                     <div key={index}> 
@@ -327,7 +295,7 @@ const createcontract = () => {
                                                   value={element.frequency || ""}
                                                   onChange={(selectedOption) => form.setFieldValue(`contractLoopValues.${index}.frequency`, selectedOption)}
                                                   onBlur={() => { form.setFieldTouched(`contractLoopValues.${index}.frequency`) }}
-                                                  disabled={enrolled && (defaultcount >= (index + 1)) ? true : false}
+                                                  isDisabled={enrolled && (defaultcount >= (index + 1)) ? true : false}
                                                 />
                                               )}
                                             </Field>

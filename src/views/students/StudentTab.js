@@ -10,14 +10,11 @@ import axios from 'axios';
 const studentInitialData= {studPermissions:{canCreate: true, canView: true, canUpdate: true, canDelete: true},
 inquPermissions:{canCreate: true, canView: true, canUpdate: true, canDelete: true}}
 function StudentTab() {
-  
-    // State for current active Tab
     const [currentActiveTab, setCurrentActiveTab] = useState('1');
     const [initialData,setState] = useState(studentInitialData);
     const {studPermissions,inquPermissions} = initialData
     const params = useParams();
-    // Toggle active state for Tab
-    const toggle = tab => {
+      const toggle = tab => {
         if (currentActiveTab !== tab) setCurrentActiveTab(tab);
     }
   useEffect(()=>{
@@ -26,16 +23,13 @@ function StudentTab() {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
-        console.log("menu",res.data.roles[0]["students"]);
-        let studpermission = res.data.roles?res.data.roles[0]["students"]:null;
+         let studpermission = res.data.roles?res.data.roles[0]["students"]:null;
           let inqpermission = res.data.roles?res.data.roles[0]["inquiries"]:null;
         setState((prevState) => ({
           ...prevState, 
           studPermissions:studpermission,inquPermissions:inqpermission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => { })
   },[])
     return (
         <div  >

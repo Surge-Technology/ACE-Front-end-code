@@ -98,60 +98,58 @@ export default function StaffAttendList() {
        color="primary"
       > 
       Loading...
-    </Spinner>:null}
-       {/* <Card > */}
-            <CardBody className='cardbg'>          
-                 <h4><b>Staff Attendance List</b></h4>
-                 <div className='height15'></div>
-              <Row>
-                <Col md={3}>
-                <Label>Start Date</Label>
-                  <DatePicker
-                    name="startDate"
-                    selected={startDate?new Date(startDate):null}
-                    onChange={(date) => dateHandleChange("startDate",date)}
-                    placeholderText="mm/dd/yyyy"
-                  />
-                </Col>
-                <Col md={3}>
-                  <Label>End Date</Label>
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date) => dateHandleChange("endDate",date)}
-                    placeholderText="mm/dd/yyyy"
-                    minDate={startDate} 
-                  />
-                </Col>
-                <Col md={1} style={{marginTop:"30px"}}> 
-                  <Button type="button" onClick={()=>{hoursStudentattendGetData()}}>Hours</Button>
-                </Col>
-                <Col md={2} style={{marginTop:"30px"}}> 
-                  <Button type="button" onClick={()=>{summaryStudentattendGetData()}}>Summary</Button>
-                </Col>
-                <Col md={1} style={{marginTop:"30px"}}>
-                  <Button type="button" onClick={() => navigate("/dashboard")} >Back</Button>
-                </Col>
-              </Row>
-              <hr/>
-              <Row>  
-                <Col>
-                {SummaryORhours ==="summary"? 
-                  <BootstrapTable data={StaffAttandList} hover multiColumnSearch={true} version='4' search>
-                    <TableHeaderColumn width="160" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
-                    <TableHeaderColumn width="130" dataField='date' dataFormat={displayDate} dataSort>Date</TableHeaderColumn>
-                    <TableHeaderColumn width="100" dataField='checkInTime' dataFormat={timeDisplay} dataSort>Check In Time</TableHeaderColumn>
-                    <TableHeaderColumn width="100" dataField='checkOutTime'  dataFormat={timeDisplay}   dataSort>Check Out Time</TableHeaderColumn>
-                    <TableHeaderColumn width="120" dataField='totalWorkingHours' dataFormat={displayhoursHandle} dataSort>Total Hours</TableHeaderColumn>
-                  </BootstrapTable>
-                :<BootstrapTable data={StaffAttandList} hover multiColumnSearch={true} version='4' search>
-                  <TableHeaderColumn width="50" dataAlign='center' dataField=''></TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataAlign='left' dataField='name'  dataSort isKey>Name</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataAlign='left'  dataField='totalHoursInDateRange' dataFormat={displayhoursHandle} dataSort>Total Hours</TableHeaderColumn>
-                </BootstrapTable>}
-                </Col>
-              </Row>
-            </CardBody>
-          {/* </Card> */}
+      </Spinner>:null}
+      <CardBody className='cardbg'>          
+          <h4><b>Staff Attendance List</b></h4>
+          <div className='height15'></div>
+        <Row>
+          <Col md={3}>
+          <Label>Start Date</Label>
+            <DatePicker
+              name="startDate"
+              selected={startDate?new Date(startDate):null}
+              onChange={(date) => dateHandleChange("startDate",date)}
+              placeholderText="mm/dd/yyyy"
+            />
+          </Col>
+          <Col md={3}>
+            <Label>End Date</Label>
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => dateHandleChange("endDate",date)}
+              placeholderText="mm/dd/yyyy"
+              minDate={startDate} 
+            />
+          </Col>
+          <Col md={1} style={{marginTop:"30px"}}> 
+            <Button type="button" onClick={()=>{hoursStudentattendGetData()}}>Hours</Button>
+          </Col>
+          <Col md={2} style={{marginTop:"30px"}}> 
+            <Button type="button" onClick={()=>{summaryStudentattendGetData()}}>Summary</Button>
+          </Col>
+          <Col md={1} style={{marginTop:"30px"}}>
+            <Button type="button" onClick={() => navigate("/dashboard")} >Back</Button>
+          </Col>
+        </Row>
+        <hr/>
+        <Row>  
+          <Col>
+          {SummaryORhours ==="summary"? 
+            <BootstrapTable data={StaffAttandList} hover multiColumnSearch={true} version='4' search>
+              <TableHeaderColumn width="160" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
+              <TableHeaderColumn width="130" dataField='date' dataFormat={displayDate} dataSort>Date</TableHeaderColumn>
+              <TableHeaderColumn width="100" dataField='checkInTime' dataFormat={timeDisplay} dataSort>Check In Time</TableHeaderColumn>
+              <TableHeaderColumn width="100" dataField='checkOutTime'  dataFormat={timeDisplay}   dataSort>Check Out Time</TableHeaderColumn>
+              <TableHeaderColumn width="120" dataField='totalWorkingHours' dataFormat={displayhoursHandle} dataSort>Total Hours</TableHeaderColumn>
+            </BootstrapTable>
+          :<BootstrapTable data={StaffAttandList} hover multiColumnSearch={true} version='4' search>
+            <TableHeaderColumn width="50" dataAlign='center' dataField=''></TableHeaderColumn>
+            <TableHeaderColumn width="100" dataAlign='left' dataField='name'  dataSort isKey>Name</TableHeaderColumn>
+            <TableHeaderColumn width="100" dataAlign='left'  dataField='totalHoursInDateRange' dataFormat={displayhoursHandle} dataSort>Total Hours</TableHeaderColumn>
+          </BootstrapTable>}
+          </Col>
+        </Row>
+      </CardBody> 
     </>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Col, Card, CardBody, CardFooter, Row, Button, Spinner } from "reactstrap";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import './contract.css';
@@ -20,13 +20,12 @@ const allcontracts = () => {
   const tableList = (page) => {
     setState((prevState) => ({ ...prevState, loader: true }))
     Axios.get(`contract-promotion?page=${page - 1}&size=10&sort=id,desc`).then((res) => {
-      console.log("res",res)
-      setState((prevState) => ({
+       setState((prevState) => ({
         ...prevState,
-        allContracts: res.data.content,
-        totalPages: res.data.totalElements,
-        currentPage: res.data.pageNumber + 1,
-        loader: false
+        allContracts : res.data.content,
+        totalPages   : res.data.totalElements,
+        currentPage  : res.data.pageNumber + 1,
+        loader       : false
       }))
       res.data.content.map((tenure, index) => {
         setTenure(tenure.tenure.id)
@@ -66,8 +65,7 @@ Swal.fire({
       Swal.fire('Your Data safe', '');
       }
     })
- }
-    
+ }   
   useEffect(() => {
      const thead = document.getElementsByTagName("thead");
    thead[0].style.backgroundColor = localStorage.getItem('tableColor');
@@ -76,16 +74,16 @@ Swal.fire({
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
-        console.log("menu",res.data.roles[0]["contracts"]);
         let permission = res.data.roles?res.data.roles[0]["contracts"]:null;
+        console.log(res.data.roles);
         setState((prevState) => ({
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {  })
   }, []);
+  console.log("permissions:", permissions)
+
   const contractActionsHandle = (id) => {
     return (
       <span>
@@ -115,9 +113,7 @@ Swal.fire({
   }
   const switchHandleChange1 = (cell, row) => {
     row.activeInactive = cell == true ? "false" : "true";
-    console.log(row);
-    Axios.put(`contract-tenure/${tenure}/contract-promotion/${row.id}`, row).then((res) => {
-      console.log(res)
+     Axios.put(`contract-tenure/${tenure}/contract-promotion/${row.id}`, row).then((res) => {
       if (res.status === 200) {
         tableList();
         toast.info("Contract updated successfully", { theme: "colored" });
@@ -140,20 +136,20 @@ Swal.fire({
           <Row>
             <Col ><h4><strong>Contracts </strong></h4></Col>
             <Col>
-            {permissions.canCreate?<Button color="info" size="sm" className='buttonfloat' style={{ float: "right", backgroundColor: localStorage.getItem('btColor') }} onClick={() => history("/settings/createcontract/new")}>Add Contract</Button>:null}
+              {permissions.canCreate?<Button color="info" size="sm" className='buttonfloat' style={{ float: "right", backgroundColor: localStorage.getItem('btColor') }} onClick={() => history("/settings/createcontract/new")}>Add Contract</Button>:null}
             </Col>
           </Row>
           <Row>
             <Col>
               <Card >
                 <BootstrapTable  data={allContracts}  headerStyle={ { background: 'red' } } keyField="name" search striped hover multiColumnSearch={true} version='4'>
-                  <TableHeaderColumn width="20" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='name' dataSort>Name</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='tenure' dataFormat={nameFetch} dataSort>Duration</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='basePrice' dataSort>Base Price $</TableHeaderColumn>
-                  <TableHeaderColumn width="40" dataAlign='left' dataField='creationDate' dataFormat={dateDisplay} dataSort>Created Date</TableHeaderColumn>
-                  <TableHeaderColumn width="20" dataField="activeInactive" dataFormat={switchHandleChange}>Status</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField="id" dataFormat={(id) => contractActionsHandle(id)} >Action</TableHeaderColumn>
+                  <TableHeaderColumn width="120" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='name' dataSort>Name</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='tenure' dataFormat={nameFetch} dataSort>Duration</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='basePrice' dataSort>Base Price $</TableHeaderColumn>
+                  <TableHeaderColumn width="140" dataAlign='left' dataField='creationDate' dataFormat={dateDisplay} dataSort>Created Date</TableHeaderColumn>
+                  <TableHeaderColumn width="120" dataField="activeInactive" dataFormat={switchHandleChange}>Status</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField="id" dataFormat={(id) => contractActionsHandle(id)} >Action</TableHeaderColumn>
                 </BootstrapTable>
                 <CardFooter>
                   {allContracts.length >= 1 ? <TablePagination totalPages={totalPages} currentPage={currentPage} callbackfunc={onPaginationChange} defaultPageSize={"10"}></TablePagination> : null}

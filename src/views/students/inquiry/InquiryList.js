@@ -18,8 +18,7 @@ const history = useNavigate();
 const tableList = (page)=>{
   setState((prevState)=>({...prevState,loader:true}))
   Axios.get(`inquiry/inquiries?page=${page-1}&size=10&sort=id,desc`).then((res)=>{
-    console.log("res",res)
-     setState((prevState)=>({
+      setState((prevState)=>({
       ...prevState,
       inquiryList:res.data.content,
       totalPages:res.data.totalElements,
@@ -63,29 +62,27 @@ const deleteInquiryHandle=(id)=>{
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
-        console.log("menu",res.data.roles[0]["inquiries"]);
         let permission = res.data.roles?res.data.roles[0]["inquiries"]:null;
+        console.log(res,permission);
         let studpermission = res.data.roles?res.data.roles[0]["students"]:null;
         setState((prevState) => ({
           ...prevState, 
           permissions:permission,studPermissions:studpermission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {      })
     const thead = document.getElementsByTagName("thead");
     thead[0].style.backgroundColor = localStorage.getItem('tableColor');
     thead[1]?thead[1].style.backgroundColor = localStorage.getItem('tableColor'):null;
     thead[2]?thead[2].style.backgroundColor = localStorage.getItem('tableColor'):null;
    tableList("1");
   }, []);
-  const studentsActionsHandle=(cell,row)=>{
-    return (
+  const studentsActionsHandle=(cell,row)=>{ 
+     return (
       <>
         <span>      
         {permissions.canUpdate?    <i className="fa fa-pencil" title='Edit' id="pencilspace" aria-hidden="true" onClick={()=> history(`/studentTabs/CreateInquiry/${row.id}`)} style={{ cursor: 'pointer', fontSize: "15px", color: "green" }}></i>     :null}
        {permissions.canDelete?   <i className="fa fa-trash-o" title='Delete' aria-hidden="true" id="trashspace" onClick={()=>{deleteInquiryHandle(row.id)}} style={{ cursor: 'pointer', fontSize: "15px",padding:"0px 10px 0px 0px", color: "red" }}></i> :null}
-       {studPermissions.canCreate?   <i className="fa fa-user" title='Redirect To Add Student' id="pencilspace" aria-hidden="true" onClick={()=> history(`/studentTabs/students/create`)} style={{ cursor: 'pointer', fontSize: "15px", color: "green" }}></i>     :null}
+       {studPermissions.canCreate? row.inquiryStatus?row.inquiryStatus.name==="Register"?  <i className="fa fa-user" title='Redirect To Add Student' id="pencilspace" aria-hidden="true" onClick={()=> history(`/studentTabs/students/create`)} style={{ cursor: 'pointer', fontSize: "15px", color: "green" }}></i> :null :null :null}
         </span>
       </>
     )
@@ -137,8 +134,8 @@ const deleteInquiryHandle=(id)=>{
                 <TableHeaderColumn width="110" dataField='inquiryServices' dataFormat={displayinquiryServices} dataSort> Services</TableHeaderColumn>
                 <TableHeaderColumn width="110" dataField='inquiryStatus' dataFormat={displayinquiryStatus} dataSort> Status</TableHeaderColumn>
                 <TableHeaderColumn width="110" dataField='inquiryType' dataFormat={displayinquiryType} dataSort> Type</TableHeaderColumn>
-                <TableHeaderColumn width="100" dataField='creationDate' dataFormat={displayDate}  dataSort>Created Date</TableHeaderColumn>
-                <TableHeaderColumn width="60"  dataField="id" dataAlign='center' dataFormat={studentsActionsHandle} isKey>Action</TableHeaderColumn>
+                <TableHeaderColumn width="120" dataField='creationDate' dataFormat={displayDate}  dataSort>Created Date</TableHeaderColumn>
+                <TableHeaderColumn width="100"  dataField="id" dataAlign='center' dataFormat={studentsActionsHandle} isKey>Action</TableHeaderColumn>
             </BootstrapTable>
             <CardFooter> 
             {inquiryList.length>=1?<TablePagination totalPages={totalPages} currentPage={currentPage} callbackfunc={onPaginationChange} defaultPageSize={"10"}></TablePagination>:null}

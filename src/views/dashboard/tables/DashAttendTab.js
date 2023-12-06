@@ -7,12 +7,9 @@ import axios from 'axios';
 import StudentAttandList from './StudentAttandList';
 import StaffAttendList from './StaffAttendList';
 function DashAttendTab() {
-  
-    // State for current active Tab
-    const [currentActiveTab, setCurrentActiveTab] = useState('1'); 
+     const [currentActiveTab, setCurrentActiveTab] = useState('1'); 
     const params = useParams();
-    // Toggle active state for Tab
-    const toggle = tab => {
+     const toggle = tab => {
         if (currentActiveTab !== tab) setCurrentActiveTab(tab);
     }
     useEffect(()=>{

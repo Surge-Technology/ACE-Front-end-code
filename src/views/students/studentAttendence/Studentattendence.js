@@ -32,8 +32,7 @@ const Studentattendence = () => {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}api/program-names`)
       .then((res) => {
-        console.log("program-names",res)
-        let programs = []
+       let programs = []
         res.data.map((key, index) => {
           programs.push({ value: key.id, label: key.name });
         })
@@ -51,6 +50,7 @@ const Studentattendence = () => {
     startDate: state.startDate,
     master: state.master,
     class: state.class,
+    program:state.program
   }
   const setStartDate = (date, values) => {
     values.startDate = date;
@@ -69,25 +69,24 @@ const Studentattendence = () => {
       })
       setClassOptions(batchArray);
       setAttendenceTime("");
-      setStudentAttendenceList([]);
-      setState({ ...state, class: null });
-    }).catch((err) => {
+      }).catch((err) => {
       Swal.fire(err.response.data.message, 'Please try again later');
     })
   }
   const getMastersByprogram =(e,name)=>{
-    //console.log("getMastersByprogram",e,name)
-    //api/program-names/26/users
-      Axios.get(`program-names/${e.value}/users`).then(response => {
-        console.log("resss",response)
-        let staffArray = []
-        response.data.map((key, index) => {
-          staffArray.push({ value: key.id, label: `${key.firstName} ${key.lastName}` });
-        })
-        setState({ ...state });
-        console.log("staffArray",staffArray)
-        setMasterOptions(staffArray);
-        setClassOptions([]);
+       Axios.get(`program-names/${e.value}/users`).then(response => {
+        if(response.status===200){
+            let staffArray = []
+          response.data.map((key, index) => {
+            staffArray.push({ value: key.id, label: `${key.firstName} ${key.lastName}` });
+          })
+          setState({ ...state });
+           setMasterOptions(staffArray);
+          setClassOptions([]);
+          setStudentAttendenceList([]);
+          setSelectrow(false);
+          setSelectrows(false);
+        }
       }).catch((err) => { })
   }
   const getclassId = (data) => { studentDependable(data.value) }
@@ -95,7 +94,6 @@ const Studentattendence = () => {
     state.loader = true;
     setState({ ...state });
     Axios.get(`batch/${id}/student`).then(response => {
-        console.log("ress",response)
         state.loader = false;
         setState({ ...state });
         setAttendenceStartTime(response.data[0].batch.startTime);
@@ -141,6 +139,7 @@ const Studentattendence = () => {
         setStudentDetails(details);
       }
       else {
+        setStudentDetails([]);
       }
     }
   }
@@ -158,14 +157,18 @@ const Studentattendence = () => {
       studentAttendanceTime: attendenceStartTime,
       student: studentDetails
     }
-    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.post(`${process.env.REACT_APP_BASE_URL}/user/${values.master.value}/batch/${values.class.value}/studentAttendance`, payload)
       .then((res) => {
          if (res.status === 201) {
           toast.success("Attendence done successfully", { theme: "colored" });
           setTimeout(() => {
+            setState({ startDate: new Date(), master: {},program:{}, class: {}, loader: false })
             setStudentAttendenceList([]);
-            navigate('/attendence/createstaffattendence/new');
+            setStudentDetails([]);
+            setMasterOptions([]);
+            setClassOptions([]);
+              navigate('/attendence/createstaffattendence/new');
           }, 1000);
         }
       }).catch((err) => {
@@ -186,7 +189,7 @@ const Studentattendence = () => {
       >
         Loading...
       </Spinner> : null}
-      <Card >
+      <Card > 
         <CardBody className='cardbg'>
           <h4><strong>Attendence</strong></h4>
           <Card className='attendencecard' >
@@ -199,22 +202,9 @@ const Studentattendence = () => {
               {({ values, handleChange, handleSubmit, errors, touched, handleBlur, isValid, dirty, setFieldValue }) => (
                 <Form className="add-edit-user-form" onSubmit={handleSubmit}>
                   <Row>
-                    {/* <Col md={2}>
-                      <FormGroup>
-                        <Label for="startDate" >Date</Label>
-                        <DatePicker
-                          className='studentsattendancecolor'
-                          name="startDate"
-                          selected={values.startDate ? new Date(values.startDate) : null}
-                          onChange={(date) => setStartDate(date, values)}
-                          placeholderText="mm/dd/yyyy"
-                          disabled="true"
-                        />
-                      </FormGroup>
-                    </Col> */}
                      <Col md={3}>
                       <FormGroup>
-                      <Label for="program">Program</Label>
+                      <Label for="program">Program</Label>{console.log("values",values)}
                         <Select
                           name="program"
                           value={values.program}
@@ -251,14 +241,8 @@ const Studentattendence = () => {
                         <ErrorMessage name="class" component="div" className='errmsg'></ErrorMessage>
                       </FormGroup>
                     </Col>
-                    {/* <Col md={2}>
-                      <FormGroup>
-                        <Label for="attendenceTime" >Time</Label>
-                        <Input name="attendenceTime" value={attendenceTime} readOnly />
-                      </FormGroup>
-                    </Col> */}
-                    <Col md={2}>
-                      <Button className="markasbutton" type="submit" disabled={selectrow !== true && selectrows !== true ? true : false}>Mark as Attend</Button>
+                      <Col md={2}>
+                      <Button className="markasbutton" type="submit" disabled={studentDetails.length<= 0 ? true : false}>Mark as Attend</Button>
                     </Col>
                   </Row>
                 </Form>
@@ -273,10 +257,10 @@ const Studentattendence = () => {
             <Card className='marginStyleForTablee'>
               <BootstrapTable data={studentAttendenceList} selectRow={selectedRow} keyField="id" search tableContainerClass='studenttablescro' multiColumnSearch="true">
                 <TableHeaderColumn width="5" dataField='id' hidden >unique field</TableHeaderColumn>
-                <TableHeaderColumn width='150' dataField='photo' dataFormat={pictureFormat}>Student</TableHeaderColumn>
-                <TableHeaderColumn dataField='firstName' dataFormat={displayFullName}>Name</TableHeaderColumn>
-                <TableHeaderColumn dataField='gender' >Gender</TableHeaderColumn>
-                <TableHeaderColumn dataField='phone' >Phone</TableHeaderColumn>
+                <TableHeaderColumn width='120' dataField='photo' dataFormat={pictureFormat}>Student</TableHeaderColumn>
+                <TableHeaderColumn width='150' dataField='firstName' dataFormat={displayFullName}>Name</TableHeaderColumn>
+                <TableHeaderColumn width='120' dataField='gender' >Gender</TableHeaderColumn>
+                <TableHeaderColumn width='120' dataField='phone' >Phone</TableHeaderColumn>
               </BootstrapTable>
             </Card>
           </Row>

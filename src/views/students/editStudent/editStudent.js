@@ -236,7 +236,6 @@ export default function editStudent() {
     },[])
     const studentGetApiDataHandle =()=>{
         Axios.get(`student/${params.id}`).then((res)=>{
-            console.log("getBy",res);
              setState((prevState)=>({
                 ...prevState,
                 firstName:res.data.firstName,lastName:res.data.lastName,birthDate:moment(res.data.dob).format("MM/DD/YYYY"),dateJoined:moment(res.data.creationDate).format('MM/DD/YYYY'),
@@ -289,8 +288,7 @@ export default function editStudent() {
                       }))
                     }).catch(err=>{ })
                     Axios.get(`${process.env.REACT_APP_BASE_URL}/sports/all`).then((res) => {
-                        console.log("sports/all,",res);
-                        setState((prevState)=>({
+                         setState((prevState)=>({
                           ...prevState,
                            sportNprogramView:res.data[0]?res.data[0].view:null
                         }))
@@ -431,13 +429,10 @@ export default function editStudent() {
             zipcode   : Yup.string().min(5, 'Must be exactly 5 digits').max(5, 'Must be exactly 5 digits').required("Zipcode is required"),
           });
           const ContractFileHandleChange=(e)=>{
-            // let file =URL.createObjectURL(e.target.files[0]);
-            // setStudentImage(file);
              let formdata = new FormData();
             formdata.append('image', e.target.files[0]);
              axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
             axios.post(`${process.env.REACT_APP_BASE_URL}/files/fileimage/upload`,formdata).then((res)=>{
-              console.log("image",res)
                setState((prevState)=>({
                 ...prevState,
                 contractImageName:res.data.imageName,contractData:e

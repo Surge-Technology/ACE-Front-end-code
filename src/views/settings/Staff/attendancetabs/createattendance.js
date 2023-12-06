@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardBody,TabContent, TabPane, Nav, NavItem, NavLink, Row, Col} from 'reactstrap';
 import classnames from 'classnames';
- import StaffAttendancetab from '../staffattendence/createStaffAttendence';
- import Studentattendancetab from '../studentattendancet/studentattendancetab';
+import StaffAttendancetab from '../staffattendence/createStaffAttendence';
 import axios from 'axios';
 import Studentattendence from 'src/views/students/studentAttendence/Studentattendence';
   
@@ -23,16 +22,13 @@ function createattendance() {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
-        console.log("menu",res.data.roles[0]["students"]);
         let studpermission = res.data.roles?res.data.roles[0]["student_attendences"]:null;
           let staffpermission = res.data.roles?res.data.roles[0]["staff_attendence"]:null;
         setState((prevState) => ({
           ...prevState, 
           studPermissions:studpermission,stafPermissions:staffpermission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {  })
   },[])
     return (
         <div>
@@ -47,7 +43,7 @@ function createattendance() {
                         })}
                         onClick={() => { toggle('1'); }}
                     >
-                       Staff Attendance
+                       <h5><strong>Staff Attendance </strong></h5>
                     </NavLink>
                 </NavItem>:null}
                 {studPermissions.canView?     <NavItem>
@@ -58,14 +54,12 @@ function createattendance() {
                         })}
                         onClick={() => { toggle('2'); }}
                     >
-                    Student Attendance   
+                    <h5><strong> Student Attendance   </strong></h5>
                     </NavLink>
                 </NavItem>:null}
-               
-            </Nav>
+              </Nav>
             </CardBody>
-        
-            <TabContent activeTab={currentActiveTab}>
+          <TabContent activeTab={currentActiveTab}>
             {stafPermissions.canView?  <TabPane tabId="1">
                     <Row>
                         <Col sm="12">
@@ -76,8 +70,7 @@ function createattendance() {
                 {studPermissions.canView?  <TabPane tabId="2">
                     <Row>
                         <Col sm="12">
-                            {/* <Studentattendancetab/> */}
-                            <Studentattendence/>
+                             <Studentattendence/>
                         </Col>
                     </Row>
                 </TabPane>:null}

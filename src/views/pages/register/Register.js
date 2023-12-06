@@ -60,21 +60,21 @@ const Register = () => {
         allstatesList.push({ value: mapdata.id, label: mapdata.name })
       })
       setStateOptions(allstatesList);
-    }).catch(err => { console.log(err) })
+    }).catch(err => {  })
     axios.get(`${process.env.REACT_APP_BASE_URL}/employment-type`).then((res) => {
       let allemploymentList = []
       res.data.content.map((mapdata, index) => {
         allemploymentList.push({ value: mapdata.id, label: mapdata.name })
       })
       setEmploymentTypeOptions(allemploymentList);
-    }).catch(err => { console.log(err) })
+    }).catch(err => {  })
     axios.get(`${process.env.REACT_APP_BASE_URL}/user-type`).then((res) => {
       let allusertypeList = []
       res.data.content.map((mapdata, index) => {
         allusertypeList.push({ value: mapdata.id, label: mapdata.name })
       })
       setUserTypeOptions(allusertypeList);
-    }).catch(err => { console.log(err) })
+    }).catch(err => {  })
   }, []);
   const staffSubmit = (values) => {
     let payload = {

@@ -15,7 +15,7 @@ const StaffList = () => {
     setState((prevState) => ({ ...prevState, loader: true }))
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}users/pagination?page=${page - 1}&size=10&sort=id,desc`).then((res) => {
-      console.log("res",res) 
+       console.log("res",res)
       setState((prevState) => ({
         ...prevState,
         allusersList: res.data.content,
@@ -42,9 +42,7 @@ const StaffList = () => {
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {      })
     tableList("1");
   }, []);
   const onPaginationChange = (page) => {
@@ -64,8 +62,7 @@ const StaffList = () => {
     return (<>{index + 1}</>);
   }
   const userTypeFetch = (cell, row) => {
-    console.log(row.roles[0].roleName)
-    return (<>{row.roles?row.roles[0].roleName:null}</>);
+     return (<>{row.roles?row.roles[0].roleName:null}</>);
   }
   const employmentTypeFetch = (cell, row) => {
     return (<>{row.employmentType?row.employmentType.name:null}</>);
@@ -99,6 +96,7 @@ const StaffList = () => {
                  <TableHeaderColumn width="100" dataAlign='left' dataField='phone' >Phone</TableHeaderColumn>
                   <TableHeaderColumn width="100" dataAlign='left' dataField='user' dataSort dataFormat={userTypeFetch}>User Type</TableHeaderColumn>
                   <TableHeaderColumn width="100" dataAlign='left' dataField='employment' dataSort dataFormat={employmentTypeFetch}>Employment Type</TableHeaderColumn>
+                  <TableHeaderColumn width="80" dataAlign='left' dataField='pin' dataSort  >Pin</TableHeaderColumn>
                   <TableHeaderColumn width="80" dataAlign='left' dataField="id" dataFormat={(id) => staffActionsHandle(id)} >Action</TableHeaderColumn>
                 </BootstrapTable>
                 <CardFooter>

@@ -37,15 +37,12 @@ const BatchList = () => {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
-        console.log("menu",res.data.roles[0]["batches"]);
         let permission = res.data.roles?res.data.roles[0]["batches"]:null;
         setState((prevState) => ({
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {})
     tableList("1");
   }, []);
   const onPaginationChange = (page) => {
@@ -113,13 +110,13 @@ const BatchList = () => {
             <Col>
               <Card >
                 <BootstrapTable data={allbatchs} keyField="sno" search striped hover multiColumnSearch={true} version='4'>
-                  <TableHeaderColumn width="20" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='name' dataSort>Name</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='startDate' dataFormat={dateDisplay} dataSort>Start Date</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='endDate' dataFormat={dateDisplay} dataSort>End Date</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='startTime' dataSort dataFormat={timeDisplay}>Start Time</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='endTime' dataSort dataFormat={timeDisplay}>End Time</TableHeaderColumn>
-                  <TableHeaderColumn width="20" dataAlign='left' dataField="id" dataFormat={(id) => batchActionsHandle(id)} >Action</TableHeaderColumn>
+                  <TableHeaderColumn width="120" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='name' dataSort>Name</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='startDate' dataFormat={dateDisplay} dataSort>Start Date</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='endDate' dataFormat={dateDisplay} dataSort>End Date</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='startTime' dataSort dataFormat={timeDisplay}>Start Time</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='endTime' dataSort dataFormat={timeDisplay}>End Time</TableHeaderColumn>
+                  <TableHeaderColumn width="120" dataAlign='left' dataField="id" dataFormat={(id) => batchActionsHandle(id)} >Action</TableHeaderColumn>
                 </BootstrapTable>
                 <CardFooter>
                   {allbatchs.length >= 1 ? <TablePagination totalPages={totalPages} currentPage={currentPage} callbackfunc={onPaginationChange} defaultPageSize={"10"}></TablePagination> : null}

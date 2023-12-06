@@ -16,34 +16,38 @@ import Logo from '../../../assets/images/logo/surgelogo.jpg';
 import email from "../../../assets/images/avatars/email.png";
 import pass from "../../../assets/images/avatars/pass.png";
 const Login = () => {
-  const [formValues, setFormValues] = useState([{ email: "", password: "", loader: false }]);
+  const [formValues, setFormValues] = useState([{ email: "", password: "", accode: "", loader: false }]);
   const navigate = useNavigate();
   const initialValues = {
-    email: formValues.email,
-    password: formValues.password
+    email    : formValues.email,
+    password : formValues.password,
+    acCode: formValues.accode
   }
   const LoginSchema = () => Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Email Required'),
-    password: Yup.string().required('Password is required').min(8, 'Password must be at least 8 characters').minLowercase(1, 'Password must contain at least 1 lower case letter')
-      .minUppercase(1, 'Password must contain at least 1 upper case letter')
-      .minNumbers(1, 'Password must contain at least 1 number')
-      .minSymbols(1, 'Password must contain at least 1 special character'),
+    email    : Yup.string().email('Invalid email').required('Email Required'),
+    password : Yup.string().required('Password is required').min(8, 'Password must be at least 8 characters').minLowercase(1, 'Password must contain at least 1 lower case letter')
+                  .minUppercase(1, 'Password must contain at least 1 upper case letter')
+                  .minNumbers(1, 'Password must contain at least 1 number')
+                  .minSymbols(1, 'Password must contain at least 1 special character'),
   });
-  useEffect(()=>{
-    // if(!localStorage.getItem('reload')){
-    //   window.location.reload(false);
-    //   localStorage.setItem('reload',true)
-    // }
-  },[])
+ 
   const userLoginSubmit = (e) => {
     setFormValues({ ...formValues, loader: true });
     let userloginRequestPayload = {
-      username: e.email,
-      password: e.password
+      username : e.email,
+      password : e.password,
+      acCode: e.acCode
     }
-    axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login`, userloginRequestPayload)
+
+    localStorage.removeItem('jwTtoken')
+    localStorage.removeItem('useremail')
+    localStorage.removeItem('role')
+    localStorage.removeItem('userid')
+    localStorage.removeItem('username')
+    
+
+    axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login`, userloginRequestPayload, { filterResponse: "filterResponse" })
       .then((res) => {
-        console.log("res", res);
         localStorage.setItem('role', res.data.user.roles[0].name)
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('username', `${res.data.user.firstName}${res.data.user.lastName}`)
@@ -113,10 +117,23 @@ const Login = () => {
                             />
                           </div>
                           <ErrorMessage name="password" render={msg => <div className="errmsg">{msg}</div>} />
+                          <div className="third-input">
+                            <img src={pass} alt="ac" className="loginac" />
+                            <input
+                              type="text"
+                              placeholder="Academy Code"
+                              id="loginname"
+                              name="acCode"
+                              value={values.acCode}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              className={errors.accode && touched.accode ? "input-error" : null}
+                            />
+                          </div>
+                          <ErrorMessage name="acCode" render={msg => <div className="errmsg">{msg}</div>} />
                           <div >
                              <p style={{float:"right",padding:"0px 30px"}}>Forgot your password? <Link className='customLink' to={'/login/forgotpassword'} >Click here</Link></p>
                             <button className='button-login' type='submit'>Login</button>
-                           
                           </div>
                           <h6 className='horizanantalstyle'>Or</h6>
                           <div className='mobilestyle'>

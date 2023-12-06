@@ -64,18 +64,15 @@ function createStudent() {
     }))
   }
   const onSubmit=(values)=>{ 
-    console.log("values",values);
-    console.log("cardPaymentResponse",PaymentData)
-  //  return;
-    // if(PaymentData===""){
-    //   Swal.fire({
-    //     position : 'center',
-    //     icon     : 'info',
-    //     title    : 'Please select payment type..!',
-    //     showConfirmButton: false,
-    //     timer    : 1500
-    //   })
-    // }else{
+     if(PaymentData===""){
+      Swal.fire({
+        position : 'center',
+        icon     : 'info',
+        title    : 'Please select payment type..!',
+        showConfirmButton: false,
+        timer    : 1500
+      })
+    }else{
       setState((prevState)=>({...prevState,loader:true}))
       let payload = {
         "firstName" : values.firstName,
@@ -105,16 +102,7 @@ function createStudent() {
                 "state"       :  { "id":values.gstate===""?values.state.value:values.gstate.value, "name":values.gstate===""?values.state.label:values.gstate.label }  
             }
         },
-        // "contract": {
-        //         "fee"     : values.fee,
-        //         "discount": values.discount,
-        //         "totalFee": values.totalFee,
-        //         "membersAndFrequency": values.memberFrequency.label,
-        //         "startDate": moment(values.startDate).format("YYYY-MM-DD"),
-        //         "endDate"  : moment(values.endDate).format("YYYY-MM-DD"),
-        //         "attachment" : contractImageName
-        // }
-        "contract":{
+       "contract":{
             "pricing":{
               "id":values.member.value,
               "fee":values.fee,
@@ -131,7 +119,6 @@ function createStudent() {
           "attachment": contractImageName,
         }
      }
-     //return
        if(PaymentData.paymentType.label==="AutoPay"){
         payload.autoPay = {
            "accountNumber" : PaymentData.accountNo,
@@ -140,12 +127,7 @@ function createStudent() {
          }
         }
        if(PaymentData.paymentType.label==="Card"){
-        // payload.cardPaymentResponse = {
-        //   "currency": PaymentData.currency.value,
-        //   "description": PaymentData.description,
-        //    "amount" : PaymentData.chargeAmount
-        //  } 
-         payload.usAePayCardPaymentResponse= {
+          payload.usAePayCardPaymentResponse= {
           "amount": PaymentData.chargeAmount, 
           "currency": PaymentData.currency.value,  
           "description": PaymentData.description,
@@ -166,33 +148,22 @@ function createStudent() {
               "checkRoutingNumber": PaymentData.routingNo,
             }
         }
-        
-           console.log("payload",payload)
-          // return
-            axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
-          //  {{url}}/api/sports/20/program/21/batch/197/payment-type/19/contract-promotion/214/contract-status/New/student
-              axios.post(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/payment-type/${PaymentData.paymentType.value}/contract-promotion/${contractNameSelect.value}/contract-status/New/student`,payload).then((res)=>{
+           axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+               axios.post(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/payment-type/${PaymentData.paymentType.value}/contract-promotion/${contractNameSelect.value}/contract-status/New/student`,payload).then((res)=>{
                 toast.success("Student registered successfully", { theme: "colored" })
-               console.log("res",res);
-              //  if(res.data.cardPaymentResponse!=null){
-              //   localStorage.setItem("clientSecret",res.data.cardPaymentResponse.clientSecret)
-              //   setState((prevState)=>({...prevState,stripeModalToggle:!stripeModalToggle}));
-              //  }else{
-                setTimeout(() => {
-                  history("/studentTabs/2");
-                }, 1000);
-              // }
-               setState((prevState)=>({...prevState,loader:false}));
+                  setTimeout(() => {
+                    history("/studentTabs/2");
+                  }, 1000);
+                setState((prevState)=>({...prevState,loader:false}));
              
             }).catch(err=>{
-              console.log("err",err.response)
                 setState((prevState)=>({...prevState,loader:false}));
               Swal.fire(
                       err.response.data.message,
                        'Please try again '
                     )
             })
-   // }
+    }
   }
   const fileHandleChange=(e)=>{
     let file =URL.createObjectURL(e.target.files[0]);
@@ -211,14 +182,11 @@ function createStudent() {
   }
   
   const ContractFileHandleChange=(e)=>{
-    // let file =URL.createObjectURL(e.target.files[0]);
-    // setStudentImage(file);
      let formdata = new FormData();
     formdata.append('image', e.target.files[0]);
      axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.post(`${process.env.REACT_APP_BASE_URL}/files/fileimage/upload`,formdata).then((res)=>{
-      console.log("image",res)
-       setState((prevState)=>({
+        setState((prevState)=>({
         ...prevState,
         contractImageName:res.data.imageName,contractData:e
       })) 
@@ -274,8 +242,7 @@ function createStudent() {
         contractNameOptions:allcontract,startDate:moment().format('MM/DD/YYYY')
       }))
     }).catch(err=>{
-      console.log("Err",err.response)
-      Swal.fire(err.response.data.message,'Please try again later');
+       Swal.fire(err.response.data.message,'Please try again later');
     })
     Axios.get("states").then((res)=>{
         let  allstatesList = []
@@ -303,7 +270,6 @@ function createStudent() {
     })
     setTimeout(()=>{
       Axios.get(`${process.env.REACT_APP_BASE_URL}/sports/all`).then((res) => {
-        console.log("sports/all,",res);
         setState((prevState)=>({
           ...prevState,
            sports: { value: res.data[0]?res.data[0].id:null, label: res.data[0]?res.data[0].name:null },
@@ -344,7 +310,6 @@ function createStudent() {
       }).catch(err=>{ })
     }if(type==="getFee"){
        Axios.get(`contract-promotion/${contractNameSelect.value}`).then((res)=>{
-       // console.log("res",res)
            let lengt = res.data.tenure.name.slice(0, 2);
         let length = parseInt(lengt);
         let startDate = new Date().setUTCHours(0,0,0,0); 
@@ -419,9 +384,7 @@ function createStudent() {
 
       }))
    }
-   
-
-   const sameHasGuardiancheckHandle=(e)=>{
+    const sameHasGuardiancheckHandle=(e)=>{
       if(e.target.checked===true){
         setState((prevState)=>({
           ...prevState,
@@ -657,16 +620,7 @@ function createStudent() {
                      </Col>
                    <Col md={4}>
                       <Row>
-                         {/* <div className="card" style={{marginTop: "16px"}}>
-                        <img className="rounded" src={studentImage != ""?studentImage:previewImage} style={{width:"100%",height:"250px", margin: "4px 0 2px"}}/>
-                        <div className="card-footer cardimgv" >
-                        {studentImage != ""?<Button type="button" color="primary" className='floatl' onClick={(e) =>removeFileHandleChange(e)}  >Remove Photo</Button>:
-                          <span className="btn btn-primary btn-file">
-                              Upload Photo<input type="file" accept=".jpg, .jpeg, .png"  onChange={(e) =>fileHandleChange(e)}/>
-                          </span>} 
-                        </div>
-                      </div>                         */}
-                        <div className="card"  >
+                         <div className="card"  >
                        <img  src={studentImage != ""?studentImage:previewImage} style={{width:"80%",height:"300px",objectFit: "cover", margin: "4px 0 2px",marginLeft:"auto",marginRight:"auto",borderRadius:"50%"}}/>
                         <div className="card-footer cardimgv" >
                         {studentImage != ""?<Button type="button" color="secondary" className='floatl' onClick={(e) =>removeFileHandleChange(e)}  >Remove</Button>: 
@@ -781,9 +735,7 @@ function createStudent() {
                       </CardBody>
                       </Card> 
                         </Row>
-                                        
-                    
-                    </Col>
+                       </Col>
                   </Row>
                 </CardBody>
                 <CardFooter>

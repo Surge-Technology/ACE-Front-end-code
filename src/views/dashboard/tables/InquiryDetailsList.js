@@ -12,20 +12,21 @@ export default function InquiryDetailsList() {
   const {inquiryList,totalPages,currentPage,loader,startDate,endDate} =  studentData;
   const navigate = useNavigate();
   useEffect(()=>{
-    var someDate = new Date();
-    let StartDat = moment(someDate).format("YYYY-MM-DD");
-      let endDat = moment(someDate).format("YYYY-MM-DD");
-      Axios.get(`/dashboard/inquiry/${StartDat}/${endDat}`).then((res)=>{
-        console.log("res",res)
-        setState((prevState)=>({
-          ...prevState, 
-          inquiryList:res.data?res.data:null,
-          loader:false
-        }))
-      }).catch(err=>{
-        Swal.fire( err.response.data.message, 'Please try again '  ) 
-        setState((prevState)=>({...prevState,loader:false}))
-      })
+    // var someDate = new Date();
+    // let StartDat = moment(someDate).format("YYYY-MM-DD");
+    //   let endDat = moment(someDate).format("YYYY-MM-DD");
+    //   Axios.get(`/dashboard/inquiry/${StartDat}/${endDat}`).then((res)=>{
+    //     if(res.status===200||res.status===201){
+    //       setState((prevState)=>({
+    //         ...prevState, 
+    //         inquiryList:res.data?res.data:[],
+    //         loader:false
+    //       }))
+    //     }
+    //   }).catch(err=>{
+    //     Swal.fire( err.response.data.message, 'Please try again '  ) 
+    //     setState((prevState)=>({...prevState,loader:false}))
+    //   })
   },[])
   const dateHandleChange=(name,date)=>{
     if(name==="startDate"){
@@ -48,12 +49,19 @@ export default function InquiryDetailsList() {
       let StartDat = moment(startDate).format("YYYY-MM-DD");
       let endDat = moment(endDate).format("YYYY-MM-DD");
       Axios.get(`/dashboard/inquiry/${StartDat}/${endDat}`).then((res)=>{
-       setState((prevState)=>({
-          ...prevState, 
-          inquiryList:res.data?res.data:null,
-          loader:false
-        }))
-      }).catch(err=>{
+        if(res.status===200||res.status===201){
+          setState((prevState)=>({
+            ...prevState, 
+            inquiryList:res.data?res.data:[],
+            loader:false
+          }))
+        }else{
+          setState((prevState)=>({
+            ...prevState, 
+             loader:false
+          }))
+        }
+       }).catch(err=>{
         Swal.fire( err.response.data.message, 'Please try again '  ) 
         setState((prevState)=>({...prevState,loader:false}))
       })
@@ -114,11 +122,11 @@ export default function InquiryDetailsList() {
               </Row>
               <hr/>
               <Row>
-                <Col>
+                <Col> 
                 <BootstrapTable data={inquiryList} hover multiColumnSearch={true} version='4' search>
                   <TableHeaderColumn width="140" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
                     <TableHeaderColumn width="120" dataField='batch'    dataSort>Class</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataField='MasterName'  dataFormat={statusHandleChange} dataSort>Status</TableHeaderColumn>
+                  {/* <TableHeaderColumn width="100" dataField='MasterName'  dataFormat={statusHandleChange} dataSort>Status</TableHeaderColumn> */}
                   <TableHeaderColumn width="100" dataField='startTime' dataFormat={timeDisplay} dataSort>Start Time</TableHeaderColumn>
                   <TableHeaderColumn width="100" dataField='endTime'  dataFormat={timeDisplay}  dataSort>End Time</TableHeaderColumn>
                   <TableHeaderColumn width="100"  dataField="attendanceCount" dataSort>Attn.count</TableHeaderColumn>

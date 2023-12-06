@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-import { Col, Label, Row,Input, Modal, ModalBody, ModalFooter, ModalHeader, Button,Spinner } from "reactstrap";
+import { Col, Label, Row,Input, Modal, ModalBody, ModalFooter, ModalHeader, Button,Spinner,Tooltip  } from "reactstrap";
 import {  useNavigate } from "react-router-dom"; 
 import "./studentEvent.css";
 import PaymentType from '../../../hoc/paymentType';
@@ -10,11 +10,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import moment from 'moment';
 import CardPay from './CardPay/CardPay';
 const registering = {alldayORcustom:"empty",eventPricing:[],discount:0,eventLength:"",discountOrFee:"",checkbox:[false],studentTypeData:"",eventsList:[],totalFee:"",fee:"",paymentTypeModalToggle:false,PaymentData:"",
-registrationFee:"",perDay:"",selectedEventsLength:[],extraDiscount:"",loader:false,finalTotalFee:0,stripeModalToggle:false}
+registrationFee:"",perDay:"",selectedEventsLength:[],extraDiscount:"",loader:false,finalTotalFee:0,stripeModalToggle:false,tooltipOpen: false}
 export default function StudentEventModal(props) {
   const [eventsData,setState] =useState(registering);
   const {alldayORcustom,eventPricing,discount,discountOrFee,eventLength,checkbox,studentTypeData,eventsList,totalFee,fee,paymentTypeModalToggle,PaymentData,registrationFee,perDay,
-    selectedEventsLength,extraDiscount,loader,finalTotalFee,stripeModalToggle}=eventsData;
+    selectedEventsLength,extraDiscount,loader,finalTotalFee,stripeModalToggle,tooltipOpen}=eventsData;
   const navigate = useNavigate();
    const callBackpaymentData=(e)=>{
       if(e===undefined){
@@ -36,11 +36,7 @@ export default function StudentEventModal(props) {
     useEffect(()=>{
        Axios.get(`event/${props.eventId}`).then((res)=>{
            if(res.data.isCustomRange===true){
-            console.log("res",res)
-         // console.log("res", moment(res.data.customRangeEvent.startTime, ["HH:mm:ss"]).format("hh:mm a"),res)
-
- 
-         const list = []
+          const list = []
          let checkboxData = []
           let date1 = new Date(res.data.customRangeEvent.startDate);  
           let  date2 = new Date(res.data.customRangeEvent.endDate);   
@@ -54,29 +50,7 @@ export default function StudentEventModal(props) {
               checkboxData[i-1] = false
               list.push({"enrollmentDate": moment(date).format("YYYY-MM-DD"), "startTime":eventStartTime,"endTime":  eventEndTime})
             }
-            
-
-
-
-
-
-          // const list = []
-          // let checkboxData = []
-
-          // res.data.customRangeEvent.map((customEvent,index)=>{
-          //   let time = customEvent.startTime.split(":");
-          //   let startTimee = new Date();
-          //   startTimee.setHours(time[0]);
-          //   startTimee.setMinutes(time[1]);
-
-          //   let endTime = customEvent.endTime.split(":");
-          //   let endTimee = new Date();
-          //   endTimee.setHours(endTime[0]);
-          //   endTimee.setMinutes(endTime[1]);
-          //  checkboxData[index] = false
-          //   list.push({"startTimeView":startTimee,"endTimeView":endTimee,"enrollmentDate": customEvent.enrollmentDate, "startTime": customEvent.startTime,"endTime":  customEvent.endTime})
-          // })
-          let length = []
+           let length = []
           res.data.eventPricing.map((lengt,index)=>{
             length.push(lengt.totalDays);
           })
@@ -110,13 +84,12 @@ export default function StudentEventModal(props) {
           }))
         }
       }).catch(err=>{   })
-    },[])
+     },[])
     const checkboxHandleChange = (e)=>{ 
       let eventSelected = selectedEventsLength;
        e.target.checked?(eventSelected.push(e.target.name)):(eventSelected.pop(e.target.name));
        let amouunt = e.target.checked?fee+perDay:fee-perDay;
-       console.log("amount",amouunt)
-       let checked = checkbox;
+        let checked = checkbox;
        if(checked.length<e.target.name){
         checked[e.target.name] = e.target.value
        }else{
@@ -124,7 +97,7 @@ export default function StudentEventModal(props) {
        } 
        setState((prevState)=>({
         ...prevState,
-         checkbox:checked,fee:amouunt,selectedEventsLength:eventSelected,totalFee:amouunt
+         checkbox:checked,fee:amouunt,selectedEventsLength:eventSelected,totalFee:amouunt,extraDiscount:""
       }))
       eventPricing.map((mapPricing,index)=>{
        
@@ -134,13 +107,14 @@ export default function StudentEventModal(props) {
              setState((prevState)=>({
               ...prevState,
               discountOrFee:mapPricing.discountOrFee.name,discount:mapPricing.discount,
-              totalFee:amouunt-((amouunt/ 100) * mapPricing.discount),finalTotalFee:amouunt-((amouunt/ 100) * mapPricing.discount)
+              totalFee:amouunt-((amouunt/ 100) * mapPricing.discount),finalTotalFee:amouunt-((amouunt/ 100) * mapPricing.discount),
+              extraDiscount:""
             }))
           }
           if(mapPricing.discountOrFee.name==="Fee $"){
              setState((prevState)=>({
               ...prevState,
-              discountOrFee:mapPricing.discountOrFee.name,discount:mapPricing.discount,totalFee:amouunt-mapPricing.discount,finalTotalFee:amouunt-mapPricing.discount
+              discountOrFee:mapPricing.discountOrFee.name,discount:mapPricing.discount,totalFee:amouunt-mapPricing.discount,finalTotalFee:amouunt-mapPricing.discount,extraDiscount:""
             }))
           }
         }
@@ -152,12 +126,14 @@ export default function StudentEventModal(props) {
                       ...prevState,
                       discountOrFee:mapPricing.discountOrFee.name,discount:mapPricing.discount,
                       totalFee:amouunt-((amouunt/ 100) * mapPricing.discount),finalTotalFee:amouunt-((amouunt/ 100) * mapPricing.discount),
+                      extraDiscount:""
                     }))
           }
           if(mapPricing.discountOrFee.name==="Fee $"){
              setState((prevState)=>({
               ...prevState,
-              discountOrFee:mapPricing.discountOrFee.name,discount:mapPricing.discount,totalFee:amouunt-mapPricing.discount,finalTotalFee:amouunt-mapPricing.discount
+              discountOrFee:mapPricing.discountOrFee.name,discount:mapPricing.discount,totalFee:amouunt-mapPricing.discount,finalTotalFee:amouunt-mapPricing.discount,
+              extraDiscount:""
             }))
           }
         }
@@ -228,11 +204,7 @@ export default function StudentEventModal(props) {
             }
             }
           if(PaymentData.paymentType.label==="Card"){
-            // payload.cardPaymentResponse = {
-            //   "amount": PaymentData.chargeAmount,
-            //   "currency": PaymentData.currency.value,
-            //   "description": PaymentData.description
-            // } 
+            
             payload.usAePayCardPaymentResponse= {
               "amount": PaymentData.chargeAmount, 
               "currency": PaymentData.currency.value,  
@@ -243,15 +215,7 @@ export default function StudentEventModal(props) {
             }
           }
           if(PaymentData.paymentType.label==="Cheque"){
-            // payload.chequePayment = {
-            //   "payeeName"    : PaymentData.payeeName,
-            //   "chequeNumber" : PaymentData.chequeNo,
-            //   "date"         : moment(PaymentData.date).format("YYYY-MM-DD"),
-            //   "chargeAmount" : PaymentData.chargeAmount,
-            //  "frontPictureAttachment":PaymentData.frontPictureAttachment,
-            //  "backPictureAttachment":PaymentData.backPictureAttachment
-            // }
-            payload.usAePayChequePayment = {
+             payload.usAePayChequePayment = {
               "payeeName"    : PaymentData.payeeName,
               "chequeNumber" : PaymentData.chequeNo,
               "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
@@ -262,7 +226,6 @@ export default function StudentEventModal(props) {
               "checkRoutingNumber": PaymentData.routingNo,
             }
           }
-          console.log("payload",payload)
               axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
             axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/payment-type/${PaymentData.paymentType.value}/event-registration`,payload).then((res)=>{
                toast.success("Registered successfully", { theme: "colored" })
@@ -318,8 +281,6 @@ export default function StudentEventModal(props) {
           "backPictureAttachment":PaymentData.backPictureAttachment
          }
        }
-       console.log("existingstudentPayload",existingstudentPayload)
- ///custom-range-event/578/student/325/payment-type/19/event-registration
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
        axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/student/${props.studentTypeData.currentStudentId}/payment-type/${PaymentData.paymentType.value}/event-registration`,existingstudentPayload).then((res)=>{
          toast.success("Registered successfully", { theme: "colored" })
@@ -331,17 +292,19 @@ export default function StudentEventModal(props) {
         setTimeout(() => {
           navigate(`/events/eventregister/${props.eventId}`)
          }, 1000); 
-       }
-               
+       }           
      }).catch(err=>{
         setState((prevState)=>({...prevState,loader:false}))
-       Swal.fire(
+          Swal.fire(
                err.response.data.message,
                 'Please try again '
              )
-     })
+        })
       }
     }
+  }
+  const toggle=()=> {
+    setState((prevState)=>({...prevState,tooltipOpen: !tooltipOpen}))
   }
   return (
     <>
@@ -351,7 +314,7 @@ export default function StudentEventModal(props) {
       > 
       Loading...
     </Spinner>:null} 
-    <ToastContainer /> 
+    <ToastContainer />  
     <Modal isOpen={stripeModalToggle} toggle={()=>stripeModalToggleHandle()} backdrop="static" centered>
         <ModalHeader toggle={()=>stripeModalToggleHandle()} >Card payment</ModalHeader>
         <ModalBody>
@@ -368,25 +331,36 @@ export default function StudentEventModal(props) {
              <h5><strong>Events Dates</strong></h5>
             <div className='height15'></div>
                 <Row style={{height:"250px",overflow:"auto"}}>
-                    <Col>   
+                    {/* <Col> 
+                      {
+                        eventsList.length===1?<>
+                          { eventsList.map((mapData,index)=>{
+                              return(<div style={{marginLeft:"20px"}} key={index}>
+                                  <Input type="checkbox"  name={index} value={checkbox[index]} onChange={checkboxHandleChange} checked={true}/> <Label check > 
+                                  <span style={{margin:"0px 0px 0px 26px"}}>{mapData.enrollmentDate} <span style={{fontSize:"12px",padding:"0px 0px 0px 10px"}}> {moment(mapData.startTimeView).format("hh:mm a")} - {moment(mapData.endTimeView).format("hh:mm a")}</span></span></Label>
+                              </div>)
+                          })}
+                        </>:
+                        <>
+                            { eventsList.map((mapData,index)=>{
+                              return(<div style={{marginLeft:"20px"}} key={index}>
+                                  <Input type="checkbox"  name={index} value={checkbox[index]} onChange={checkboxHandleChange} /> <Label check > 
+                                  <span style={{margin:"0px 0px 0px 26px"}}>{mapData.enrollmentDate} <span style={{fontSize:"12px",padding:"0px 0px 0px 10px"}}> {moment(mapData.startTimeView).format("hh:mm a")} - {moment(mapData.endTimeView).format("hh:mm a")}</span></span></Label>
+                              </div>)
+                            })}
+                        </>
+                      }  
+                    </Col> */}
+                      <Col>   
                     { eventsList.map((mapData,index)=>{
                     return(<div style={{marginLeft:"20px"}} key={index}> 
-                                {/* <Input type="checkbox" name="guardianCheckbox" value={guardianCheckbox} onChange={sameHasGuardiancheckHandle}  /> <Label check > <span style={{margin:"0px 0px 0px 26px"}}>{mapData.event}</span></Label> */}
-                                <Input type="checkbox"  name={index} value={checkbox[index]} onChange={checkboxHandleChange} /> <Label check > 
+                                 <Input type="checkbox"  name={index} value={checkbox[index]} onChange={checkboxHandleChange} /> <Label check > 
                                 <span style={{margin:"0px 0px 0px 26px"}}>{mapData.enrollmentDate} <span style={{fontSize:"12px",padding:"0px 0px 0px 10px"}}> {moment(mapData.startTimeView).format("hh:mm a")} - {moment(mapData.endTimeView).format("hh:mm a")}</span></span></Label>
                             </div>)
                      })}
                     </Col>
                 </Row> 
-                {/* <Row>
-                    <Col md={8}>
-                        <strong>Fee :{fee} - {discount} {discountOrFee} - <input name="extraDiscount" type="number"  value={extraDiscount} onChange={extraDiscountHandleChange} /> = {finalTotalFee}</strong>  
-                    </Col>
-                    <Col md={4}>
-                        <Button type="button" color='primary'  size="sm" disabled={selectedEventsLength.length>0?false:true} onClick={()=>{modelToggleHandle()}} >Pay</Button>
-                    </Col>
-                </Row>   */}
-                <Row>
+                  <Row>
                   <Col md={3}>
                      Registration Fee = <b>{registrationFee}</b>
                   </Col>
@@ -395,14 +369,20 @@ export default function StudentEventModal(props) {
                   </Col>
                   <Col md={6}>
                   Registration Fee + Per Day Fee = Fee : <b>{registrationFee + perDay}</b>
-                  </Col>
+                  <span style={{textDecoration: "underline", color:"blue",cursor:"pointer",paddingLeft:"10px" }} href="#" id="TooltipExample">Example</span>
+                    <Tooltip placement="right" isOpen={tooltipOpen} target="TooltipExample" toggle={()=>toggle()}>
+                      If event is in one day, Registration Fee + Per Day Fee = total fee.<br/>
+                      If else event is more than one day, Registration Fee + Per Day Fee + Per Day Fee ....etc = total fee
+                    </Tooltip>
+                  </Col> 
                 </Row>
+                <hr/>
                 <Row>
-                  <Col md={3}><strong>Fee - {discount} {discountOrFee}</strong></Col>
+                  <Col md={3}><strong>Total Fee - {discount} {discountOrFee}</strong></Col>
                   <Col md={3}><strong> Additional discount</strong></Col>
-                  <Col md={3}><strong>Total Fee</strong></Col>
+                  <Col md={3}><strong>Final Fee</strong></Col>
                 </Row> 
-                <Row>
+                <Row> 
                 <Col md={2}><Input type="text" value={totalFee} disabled/></Col>
                 <Col md={1}><span style={{padding:"32%",fontSize:"22px"}}>-</span></Col>
                 <Col md={2}><Input name="extraDiscount" type="number"  value={extraDiscount} onChange={extraDiscountHandleChange} /></Col>

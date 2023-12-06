@@ -5,27 +5,26 @@ import Monthlyevents from './monthlyevents';
 import Weeklybatches from './weeklybatch';
 import Axios from "../../hoc/axiosConfig";
 import { CChartPie,CChartBar,CChartLine,CChartPolarArea ,CChartDoughnut} from '@coreui/react-chartjs'
-import Swal from 'sweetalert2';
-import './dashboard.css';
+import Swal from 'sweetalert2'; 
 import axios from 'axios';
 const dashboardState = {
-  "totalStudents": 0,
-  "activeStudents": 0,
-  "newRegistrations": 0,
-  "inactiveStudents": 0,
-  "activeContracts": 0,
+  "totalStudents"    : 0,
+  "activeStudents"   : 0,
+  "newRegistrations" : 0,
+  "inactiveStudents" : 0,
+  "activeContracts"  : 0,
   "inactiveContracts": 0,
-  activeStudentCount: 0, currentMonthAttendance: 0, inactiveStudentCount: 0, sevenDayAttendance: 0,
+  activeStudentCount : 0, currentMonthAttendance : 0, inactiveStudentCount: 0, sevenDayAttendance: 0,
   permanentStaffCount: 0, temporaryStaffCount: 0, staffsevenDayAttendance: 0, staffcurrentMonthAttendance: 0, 
   testingActiveStudentCount: 0, eligibleTestCount: 0,approvedTestCount:0, chartData: "",
-  openLeads :0,
+  openLeads : 0,
   openTrials : 0,
-  totalInquiries :  0,
-  totalContracts :  0,
-  totalRenewals :   0,
-  totalUpgrades:   0,
-  renewalPercentage:0,
-  upgradePercentage:0,
+  totalInquiries : 0,
+  totalContracts : 0,
+  totalRenewals : 0,
+  totalUpgrades : 0,
+  renewalPercentage : 0,
+  upgradePercentage : 0,
 } 
 export default function Dashboard() {
   const [batchTimings, setBatchTimings] = useState([])
@@ -45,7 +44,7 @@ export default function Dashboard() {
     getAllEvents();
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/student`).then((res) => {
-       setState((prevState) => ({
+        setState((prevState) => ({
        ...prevState,
        "totalStudents": res.data.totalStudents,
        "activeStudents": res.data.activeStudents,
@@ -53,92 +52,66 @@ export default function Dashboard() {
        "inactiveStudents": res.data.inactiveStudents,
        "activeContracts": res.data.activeContracts,
        "inactiveContracts":res.data.inactiveContracts,
-      // "totalStudents":40,
-      // "activeStudents":22,
-      // "newRegistrations": 2,
-      // "inactiveStudents": 7,
-      // "activeContracts": 18,
-      // "inactiveContracts": 2
      }))
     }).catch(err => { console.log(err)})
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/student-attendances/count`).then((res) => {
       setState((prevState) => ({
         ...prevState,
-        activeStudentCount: res.data.activeStudentCount,
-         currentMonthAttendance: res.data.currentMonthAttendance,
-        inactiveStudentCount: res.data.inactiveStudentCount,
-         sevenDayAttendance: res.data.sevenDayAttendance,
-        // "activeStudentCount": 30,
-        // "inactiveStudentCount": 3,
-        // "sevenDayAttendance": 34,
-        // "currentMonthAttendance": 34
+        activeStudentCount      : res.data.activeStudentCount,
+         currentMonthAttendance : res.data.currentMonthAttendance,
+        inactiveStudentCount    : res.data.inactiveStudentCount,
+         sevenDayAttendance     : res.data.sevenDayAttendance,
       }))
-    }).catch(err => { console.log(err)})
-    let employmentType = localStorage.getItem('employmentType')
-    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    }).catch(err => {  })
+     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/staff-attendances/count`).then((res) => {
         setState((prevState) => ({
         ...prevState,
-        permanentStaffCount: res.data.permanentStaffCount,
-         temporaryStaffCount: res.data.temporaryStaffCount,
-        staffsevenDayAttendance: res.data.sevenDayAttendance, 
-        staffcurrentMonthAttendance: res.data.currentMonthAttendance,
-        // "permanentStaffCount": 30,
-        // "temporaryStaffCount": 10,
-        // "staffsevenDayAttendance": 20,
-        // "staffcurrentMonthAttendance": 90
+        permanentStaffCount  : res.data.permanentStaffCount,
+         temporaryStaffCount : res.data.temporaryStaffCount,
+        staffsevenDayAttendance     : res.data.sevenDayAttendance, 
+        staffcurrentMonthAttendance : res.data.currentMonthAttendance,
       }))
-    }).catch(err => { console.log(err)})
+    }).catch(err => {  })
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/level-testing/count`).then((res) => {
        setState((prevState) => ({
         ...prevState,
-        testingActiveStudentCount: res.data.activeStudentCount,
-         eligibleTestCount: res.data.eligibleTestCount,
-         approvedTestCount: res.data.approvedTestCount,
-
-          // "testingActiveStudentCount": 40,
-          // "eligibleTestCount": 25,
-          // "approvedTestCount": 15,
+        testingActiveStudentCount : res.data.activeStudentCount,
+         eligibleTestCount : res.data.eligibleTestCount,
+         approvedTestCount : res.data.approvedTestCount,
       }))
-    }).catch(err => { console.log(err)})
+    }).catch(err => { })
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/all-inquiry`).then((res) => { 
        setState((prevState) => ({
        ...prevState,
-       openLeads: res.data.openLeads,
+        openLeads: res.data.openLeads,
         openTrials: res.data.openTrials,
         totalInquiries: res.data.totalInquiries,
-      //  openLeads :12,
-      //  openTrials : 8,
-      //  totalInquiries :  20
-         
      }))
-    }).catch(err => { console.log(err)})
+    }).catch(err => {
+      if (err.response.status === 401) {
+        Swal.fire('401 session expired..!', 'Please re-login');
+      }
+    })
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/all-contract`).then((res) => {  
       setState((prevState) => ({
        ...prevState,
-       totalContracts: res.data.totalContracts,
-        totalRenewals: res.data.totalRenewals,
-        totalUpgrades: res.data.totalUpgrades,
-       renewalPercentage: res.data.renewalPercentage,
-       upgradePercentage: res.data.upgradePercentage,
-      //  totalContracts :  25,
-      //  totalRenewals :   16,
-      //  totalUpgrades:   11,
-      //  renewalPercentage:11,
-      //  upgradePercentage:25,
-         
+       totalContracts : res.data.totalContracts,
+        totalRenewals : res.data.totalRenewals,
+        totalUpgrades : res.data.totalUpgrades,
+       renewalPercentage : res.data.renewalPercentage,
+       upgradePercentage : res.data.upgradePercentage,
      }))
-    }).catch(err => { console.log(err)})
+    }).catch(err => { })
   }, [])
   const getAllBatches = () => {
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/batches`).then((n) => {  
-        console.log("nnnn",n)
-        let batchArray = [];
+         let batchArray = [];
         n.data.content.map((event, i) => {
           let startDate = event.startDate.split("-");
           let startTime = event.startTime.split(':');
@@ -168,17 +141,17 @@ export default function Dashboard() {
               sendDateAndTime.setSeconds(endTime[2]);
               startingPoint.setDate(startingPoint.getDate() + 1);
               batchArray.push({
-                'title': event.name,
-                'start': estartDateAndTime,
-                'end': sendDateAndTime,
+                'title' : event.name,
+                'start' : estartDateAndTime,
+                'end'   : sendDateAndTime,
               })
             }
           }
           else {
             batchArray.push({
-              'title': event.name,
-              'start': startDateAndTime,
-              'end': endDateAndTime,
+              'title' : event.name,
+              'start' : startDateAndTime,
+              'end'   : endDateAndTime,
             })
           }
         })
@@ -190,8 +163,8 @@ export default function Dashboard() {
   const getAllEvents = () => {
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/event`).then((n) => {  
-        console.log("event",n)
-        let eventArray = [];
+     // console.log("n",n)
+         let eventArray = [];
         n.data.content.map((event, i) => {
           if (event.isAllDay == true) {
             let startDate = event.allDayEvent.eventDate.split("-");
@@ -207,9 +180,9 @@ export default function Dashboard() {
             endDateAndTime.setMinutes(endTime[1]);
             endDateAndTime.setSeconds(endTime[2]);
             eventArray.push({
-              'title': event.name,
-              'start': startDateAndTime,
-              'end': endDateAndTime
+              'title' : event.name,
+              'start' : startDateAndTime,
+              'end'   : endDateAndTime
             })
           }
           if (event.isCustomRange == true) {
@@ -227,9 +200,9 @@ export default function Dashboard() {
               endDateAndTime.setMinutes(endTime[1]);
               endDateAndTime.setSeconds(endTime[2]);
               eventArray.push({
-                'title': event.name,
-                'start': startDateAndTime,
-                'end': endDateAndTime
+                'title' : event.name,
+                'start' : startDateAndTime,
+                'end'   : endDateAndTime
               })
             })
           }
@@ -250,7 +223,7 @@ export default function Dashboard() {
               <i className="fa fa-arrow-circle-right dashicon" aria-hidden="true" onClick={() => navigate("/dashboard/TestingEligibilityList")} ></i>
             </CardHeader>
             <CardBody className='cardbg'>
-                  <div style={{ width: "260px"}}>  
+                  <div  >  
                   <CChartPie
                   style={{cursor:"pointer"}}
                     data={{
@@ -276,7 +249,7 @@ export default function Dashboard() {
               <i className="fa fa-arrow-circle-right dashicon" aria-hidden="true" onClick={() => navigate("/dashboard/ContractDetailsList")} ></i>
             </CardHeader>
             <CardBody className='cardbg'>
-                <div style={{ width: "260px"}}> 
+                <div  > 
                  <CChartPolarArea
                  style={{cursor:"pointer"}}
                   data={{
@@ -300,7 +273,7 @@ export default function Dashboard() {
               <i className="fa fa-arrow-circle-right dashicon" aria-hidden="true" onClick={() => navigate("/dashboard/InquiryDetailsList")} ></i>
             </CardHeader>
             <CardBody className='cardbg'>
-                <div style={{ width: "260px"}}>  
+                <div >  
                  <CChartDoughnut
                  style={{cursor:"pointer"}}
                       data={{
@@ -323,9 +296,9 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <span className="dashheader">Student Statistics</span>
-              <i className="fa fa-arrow-circle-right dashicon" aria-hidden="true" onClick={() => navigate("/studentTabs/1")} ></i>
+              {/* <i className="fa fa-arrow-circle-right dashicon" aria-hidden="true" onClick={() => navigate("/studentTabs/2")} ></i> */}
             </CardHeader>
-            <CardBody className='cardbg' >
+            <CardBody className='cardbg scrl' >
              <CChartBar
               data={{
                 labels: ['Total Students', 'Active Students', 'New Registrations', 'Inactive Students','Active Contracts','Inactive Contracts'],
@@ -349,7 +322,7 @@ export default function Dashboard() {
               <span className="dashheader">Student & Staff Attendance</span>
               <i className="fa fa-arrow-circle-right dashicon" aria-hidden="true" onClick={() => { navigate('/dashboard/StudentANDstaffAttendenceTab') }}></i>
             </CardHeader>
-            <CardBody className='cardbg'>
+            <CardBody className='cardbg scrl'>
             <CChartLine
               data={{
                 labels: ['Active Count', 'Inactive Count', 'Seven Days', 'Current Month', 'Temporary Staff'],
@@ -384,7 +357,7 @@ export default function Dashboard() {
             <CardHeader>
               <span className="dashheader">Weekly batch/class Schedule</span>
             </CardHeader>
-            <CardBody className='cardbg' >
+            <CardBody className='cardbg scrl' >
               <div style={{ height: 290, overflowY: "scroll" }}>
                 <Weeklybatches events={batchTimings} />
               </div>
@@ -396,7 +369,7 @@ export default function Dashboard() {
             <CardHeader>
               <span className="dashheader">Monthly on-going Event Schedule</span>
             </CardHeader>
-            <CardBody className='cardbg'>
+            <CardBody className='cardbg scrl'>
                 <Monthlyevents events={eventTimings} /> 
             </CardBody>
           </Card>

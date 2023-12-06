@@ -46,8 +46,7 @@ export default function TestingEligibilityList() {
               <Row>
                 <Col md={3}>
                   <Label>Choose a level Testing Date :</Label>
-                  {/* <Input type="date" onChange={getDatafromDateChange} />   */}
-                  <DatePicker
+                   <DatePicker
                     name="chossenDate"
                     selected={chossenDate?new Date(chossenDate):null}
                     onChange={(date) => getDatafromDateChange("chossenDate",date)}

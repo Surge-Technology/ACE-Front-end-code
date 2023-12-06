@@ -78,7 +78,7 @@ const createStaff = () => {
           .minUppercase(1, 'Password must contain at least 1 upper case letter')
           .minNumbers(1, 'Password must contain at least 1 number')
           .minSymbols(1, 'Password must contain at least 1 special character'),
-        pin: Yup.string().min(4, 'Must be exactly 4 digits').max(5, 'Must be exactly 4 digits').required("Pin is required"),
+      //  pin: Yup.string().min(4, 'Must be exactly 4 digits').max(5, 'Must be exactly 4 digits').required("Pin is required"),
         address: Yup.string().min(2, 'Too Short!').required('Address is required'),
         city: Yup.string().required("City is required"),
         state: Yup.object().required("State is required"),
@@ -94,7 +94,7 @@ const createStaff = () => {
         phoneNumber: Yup.string().min(10, 'Minimum 10 digits!').max(14, 'Maximum 14 digits!').required("Phone number is required"),
         employmentType: Yup.object().required('Employment type is required'),
         userType: Yup.object().required('User type is required'),
-        pin: Yup.string().min(4, 'Must be exactly 4 digits').max(5, 'Must be exactly 4 digits').required("Pin is required"),
+      //  pin: Yup.string().min(4, 'Must be exactly 4 digits').max(5, 'Must be exactly 4 digits').required("Pin is required"),
         login: Yup.string().required('Login is required'),
         address: Yup.string().min(2, 'Too Short!').required('Address is required'),
         city: Yup.string().required("City is required"),
@@ -121,13 +121,12 @@ const createStaff = () => {
     })
     if (params.id !== "new") {
       Axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/user/${params.id}`).then((res) => {
-        console.log("getbyid",res)
-        let user = res.data;
+         let user = res.data;
         setState({
           ...state,
           firstName: user.firstName,
           lastName: user.lastName,
-          pin: user.pin,
+        //  pin: user.pin,
           dateOfBirth: moment(user.dob).format("MM/DD/YYYY"),
           phoneNumber: user.phone, email: user.email,
            employmentType: { value: user.employmentType.id, label: user.employmentType.name },
@@ -149,13 +148,11 @@ const createStaff = () => {
       })
        setStateOptions(allstatesList);
     }).catch(err => {
-      console.log("err",err)
-      Swal.fire('Please try again ')
+       Swal.fire('Please try again ')
     })
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/roles`).then((res) => {
       let allusertypeList = []; 
-      console.log("data",res)
-      res.data.map((mapdata, index) => {
+       res.data.map((mapdata, index) => {
         allusertypeList.push({ value: mapdata.id, label: mapdata.roleName });
       })
       setUserTypeOptions(allusertypeList);
@@ -168,44 +165,11 @@ const createStaff = () => {
       }
     })
   }, []);
-  // const getuserId = (data) => {
-  //   if (data.value === 1) {
-  //     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/employment-type`).then((res) => {
-  //       setEmploymentTypeOptions([{ value: res.data[0].id, label: res.data[0].name }]);
-  //       //setState({employmentType:null})
-  //     }).catch((err) => {
-  //       if (err.response.status === 401) {
-  //         Swal.fire('401 session expired..!', 'Please re-login');
-  //       }
-  //       else {
-  //         Swal.fire('Oops, something went wrong. Please try again later');
-  //       }
-  //     })
-  //   }
-  //   else {
-  //     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/employment-type`).then((res) => {
-  //       let allemploymentList = [];
-  //       res.data.map((mapdata, index) => {
-  //         allemploymentList.push({ value: mapdata.id, label: mapdata.name });
-  //       })
-  //       setEmploymentTypeOptions(allemploymentList);
-  //       //setState({employmentType:null})
-  //     }).catch((err) => {
-  //       if (err.response.status === 401) {
-  //         Swal.fire('401 session expired..!', 'Please re-login');
-  //       }
-  //       else {
-  //         Swal.fire('Oops, something went wrong. Please try again later');
-  //       }
-  //     })
-  //   }
-  // }
   const setDateHere = (date, values) => {
     values.dateOfBirth = date;
     setState({ ...values });
   }
-  const staffSubmit = (values) => {
-      
+  const staffSubmit = (values) => {    
     let payload = {
          firstName: values.firstName,
       lastName: values.lastName,
@@ -214,7 +178,7 @@ const createStaff = () => {
       email: values.email,
       login: values.login,
       password: values.password,
-      pin: values.pin,
+     // pin: values.pin,
        address: {
         addressLine1: values.address,
         addressLine2: values.address2,
@@ -227,19 +191,16 @@ const createStaff = () => {
       }
   }
      if (params.id === "new") {
-      //auth/register/roles/1/employment-type/10
-      axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/register/roles/${values.userType.value}/employment-type/${values.employmentType.value}`, payload)
+       axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/register/roles/${values.userType.value}/employment-type/${values.employmentType.value}`, payload)
         .then((res) => {
-          console.log("res",res)
-          if (res.status === 201) {
+           if (res.status === 201) {
             toast.success(`User created successfully`, { theme: "colored" });
             setTimeout(() => {
               navigate('/userTabs/2');
             }, 2000);
           }
         }).catch((err) => {
-          console.log("err",err.response)
-          if (err.response.status === 401) {
+           if (err.response.status === 401) {
             Swal.fire('401 session expired..!', 'Please re-login');
           }
           else {
@@ -388,9 +349,9 @@ const createStaff = () => {
                             <ErrorMessage name="login" component="div" className='errmsg'></ErrorMessage>
                           </FormGroup>
                         </Col>
-                        <Col md={3}>
+                        <Col md={6}>
                           <FormGroup>
-                            <Label  >Password</Label>
+                            <Label  >Password <span className="required">*</span></Label>
                             <Input type="password"
                               name="password"
                               value={values.password}
@@ -401,7 +362,7 @@ const createStaff = () => {
                             <ErrorMessage name="password" component="div" className='errmsg'></ErrorMessage>
                           </FormGroup>
                         </Col>
-                        <Col md={3}>
+                        {/* <Col md={3}>
                           <FormGroup>
                             <Label  >Pin<span className="required">*</span></Label>
                             <Input type="text"
@@ -412,7 +373,7 @@ const createStaff = () => {
                               invalid={touched.pin && !!errors.pin} />
                             <ErrorMessage name="pin" component="div" className='errmsg'></ErrorMessage>
                           </FormGroup>
-                        </Col>
+                        </Col> */}
                       </Row>
                       <Row>
                         <FormGroup>
@@ -430,19 +391,14 @@ const createStaff = () => {
                       </Row>
                       <Row>
                         <FormGroup>
-                          {/* <Label for="address2">Address 2
-                          <span className="required">*</span>
-                          </Label> */}
-                          <Input
+                         <Input
                             name="address2"
                             value={values.address2}
                             type="text"
                             onChange={(handleChange, fieldHandleChange)}
                             onBlur={handleBlur}
-                          // invalid={touched.address2 && !!errors.address2} />
-                          />
-                          {/* <ErrorMessage name="address2" component="div" className='errmsg'></ErrorMessage> */}
-                        </FormGroup>
+                           />
+                         </FormGroup>
                       </Row>
                       <Row>
                         <Col md={4}>

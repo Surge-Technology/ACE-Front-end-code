@@ -39,9 +39,7 @@ export default function certificationsList() {
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {      })
     tableList("1");
    }, []);
    const displayBeltNameHandle=(cell,row)=>{

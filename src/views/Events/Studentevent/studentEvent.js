@@ -103,13 +103,7 @@ export default function studentEvent() {
         ...prevState,      
         [name]:value
       }))
-    }
-    // const fieldHandleChange= (data)=>{
-    //   setStudeventData((prevState)=>({
-    //     ...prevState,
-    //     [data.target.name]:data.target.value
-    //   })) 
-    // }
+    } 
     const fieldHandleChange=(e)=>{
       const { name, value } = e.target;
       if(name ==="phone"){

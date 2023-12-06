@@ -83,20 +83,16 @@ function CreateInquiry() {
         "referEmail": e.referedEmail,
         "uploadUrl" : e.uploadUrlName
       }
-      console.log("paylo",payload)
-     // return
-      if(params.id==="new"){
+       if(params.id==="new"){
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.post(`${process.env.REACT_APP_BASE_URL}/inquiry/marketing-source/${e.MarketingSources.value}/inquiry-type/${e.inquiryType.value}/inquiry-status/${e.inquiryStatus.value}/inquiry-services/${e.services.value}`,payload).then((res)=>{
           toast.success("Registered successfully", { theme: "colored" })
-         console.log("res",res)
-         setState((prevState)=>({...prevState,loader:false}));
+          setState((prevState)=>({...prevState,loader:false}));
         setTimeout(() => {
           Navigate("/studentTabs/1");
         }, 1000);
       }).catch(err=>{
-        console.log("err",err.response)
-          setState((prevState)=>({...prevState,loader:false}));
+           setState((prevState)=>({...prevState,loader:false}));
         Swal.fire(
                 err.response.data.message,
                  'Please try again '
@@ -107,13 +103,11 @@ function CreateInquiry() {
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.put(`${process.env.REACT_APP_BASE_URL}/inquiry/marketing-source/${e.MarketingSources.value}/inquiry-type/${e.inquiryType.value}/inquiry-status/${e.inquiryStatus.value}/inquiry-services/${e.services.value}/inquiry/${params.id}`,payload).then((res)=>{
           toast.success("Updated successfully", { theme: "colored" })
-         console.log("res",res)
-         setState((prevState)=>({...prevState,loader:false}));
+          setState((prevState)=>({...prevState,loader:false}));
         setTimeout(() => {
           Navigate("/studentTabs/1");
         }, 1000);
       }).catch(err=>{
-        console.log("err",err.response)
           setState((prevState)=>({...prevState,loader:false}));
         Swal.fire(
                 err.response.data.message,
@@ -136,8 +130,7 @@ function CreateInquiry() {
       Swal.fire(err.response.data.message,'Please try again later');
     })
     Axios.get("inquiry-type").then((res)=>{
-      console.log("res",res)
-      let  typeOptions = []
+       let  typeOptions = []
          res.data.map((mapdata,index)=>{
           typeOptions.push( { value: mapdata.id, label: mapdata.name })
          })
@@ -149,7 +142,6 @@ function CreateInquiry() {
       Swal.fire(err.response.data.message,'Please try again later');
     })
     Axios.get("inquiry-status").then((res)=>{
-      console.log("res",res)
       let  StatusOptions = []
          res.data.map((mapdata,index)=>{
           StatusOptions.push( { value: mapdata.id, label: mapdata.name })
@@ -162,8 +154,7 @@ function CreateInquiry() {
       Swal.fire(err.response.data.message,'Please try again later');
     })
     Axios.get("inquiry-services").then((res)=>{
-      console.log("res",res)
-      let  servicesList = []
+       let  servicesList = []
          res.data.map((mapdata,index)=>{
           servicesList.push( { value: mapdata.id, label: mapdata.name })
          })
@@ -176,9 +167,8 @@ function CreateInquiry() {
     })
     if(params.id!=="new"){
       Axios.get(`inquiry/${params.id}`).then((res)=>{
-        console.log("get",res)
-       
-        setState((prevState)=>({
+        console.log("res",res)
+         setState((prevState)=>({
           ...prevState,
         "firstName" : res.data.firstName,
         "lastName"  : res.data.lastName,
@@ -187,8 +177,8 @@ function CreateInquiry() {
         "Location"  : res.data.academyLocation,
         "datetim"   : res.data.datetime,
         "notes"      : res.data.note,
-        "referredBy": res.data.referedBy,
-        "referEmail": res.data.referedEmail,
+        "referedBy": res.data.referredBy,
+        "referedEmail": res.data.referEmail,
         "uploadUrl" : res.data.uploadUrlName,
        "MarketingSources": { value: res.data.marketingSource.id, label: res.data.marketingSource.name },
         inquiryType : { value: res.data.inquiryType.id, label: res.data.inquiryType.name },
@@ -205,7 +195,7 @@ function CreateInquiry() {
        let text = event.target.value;
       const myArray = text.split(" ");
           Axios.get(`/referral?firstName=${myArray[0]}&lastName=${myArray[1]}`).then((res)=>{
-            setState((prevState)=>({
+             setState((prevState)=>({
             ...prevState,
             referedEmail:res.data.length>0?res.data[0].email:""
           }))
@@ -224,7 +214,6 @@ function CreateInquiry() {
     formdata.append('image', e.target.files[0]);
      axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.post(`${process.env.REACT_APP_BASE_URL}/files/fileimage/upload`,formdata).then((res)=>{
-      console.log("image",res)
        setState((prevState)=>({
         ...prevState,
         uploadUrlName:res.data.imageName,
@@ -320,28 +309,14 @@ function CreateInquiry() {
                         </Col>
                         <Col md={6}>
                             <Label > Date</Label>
-                            {/* <DatePicker
-                              name="startDate"
-                              selected={values.startDate?new Date(values.startDate):null}
-                              onChange={(e)=>{setFieldValue("startDate",e)}}
-                              onBlur={handleBlur}
-                              placeholderText="mm/dd/yyyy"
-                            /> */}
-                             <DatePicker
+                               <DatePicker
                               name="startDate"
                               selected={values.startDate ? new Date(values.startDate) : null}
                               onChange={date => dateHandleChange("startDate",date)}
                              //onChange={(e)=>{setFieldValue("startDate",e)}}
                               showTimeSelect
                               dateFormat="Pp"
-                              //   minTime={new Date()}
-                              //  maxTime={new Date().setHours(23, 59, 59)}
-                              // showTimeSelect
-                              // showTimeSelectOnly
-                              // timeIntervals={5}
-                              // timeCaption="Time"
-                              // dateFormat="h:mm aa"
-                            />
+                              />
                         </Col>
                     </Row>
                     <Row>
@@ -370,7 +345,7 @@ function CreateInquiry() {
                         <span className="btn btn-primary btn-file">
                              Upload <input type="file"   onChange={(e) =>uploadFileHandleChange(e)}/>
                           </span>
-                          {uploadUrlName}
+                          <span> {uploadUrlName?<b style={{color:"green"}}>Successfully Uploaded</b>:null}</span>
                         </Col>:null:null}
                       </Row>:
                       <Row> 
@@ -383,7 +358,7 @@ function CreateInquiry() {
                         <span className="btn btn-primary btn-file">
                               Upload <input type="file"   onChange={(e) =>uploadFileHandleChange(e)}/>
                           </span>
-                          {uploadUrlName}
+                          <span> {uploadUrlName?<b style={{color:"green"}}>Successfully Uploaded</b>:null}</span>
                         </Col>:null:null}
                       </Row>}
                  </CardBody>

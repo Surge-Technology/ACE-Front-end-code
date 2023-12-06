@@ -43,9 +43,7 @@ const allAttendenceLists = () => {
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {  })
     tableList("1");
   }, []);
   const onPaginationChange = (page) => {

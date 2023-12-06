@@ -40,7 +40,7 @@
 .loginOuter {
 	position: absolute;
 	max-width: 1000px;
-	max-height: 500px;
+	max-height: 545px;
 	padding: 20px 15px 0px;
 	-webkit-backdrop-filter: blur(8px);
 	backdrop-filter: blur(8px);
@@ -327,7 +327,7 @@
 	position: absolute;
 	padding: 9px 0 0 20px !important;
 }
-.loginpass {
+.loginpass,.loginac {
 	height: 35px !important;
 	position: absolute;
 	padding: 9px 0 0 20px !important;
@@ -354,7 +354,7 @@
 	padding-left: 50px;
 	font-size: 18px;
 }
-.second-input {
+.second-input ,.third-input{
 	padding-top: 20px;
 }
 .button-login {

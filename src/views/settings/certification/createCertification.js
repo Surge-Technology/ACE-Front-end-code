@@ -174,7 +174,7 @@ const createCertification = () => {
                         </Col>
                       </Row>
                       <Row>
-                        <Col md={12}>
+                        <Col md={4}>
                           <Label for="preview">Preview </Label>
                             <div className="App">
                               <div id="downloadWrapper">

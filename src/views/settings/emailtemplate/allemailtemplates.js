@@ -38,15 +38,12 @@ const allemailtemplates = () => {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
-        console.log("menu",res.data.roles[0]["email_templates"]);
-        let permission = res.data.roles?res.data.roles[0]["email_templates"]:null;
+         let permission = res.data.roles?res.data.roles[0]["email_templates"]:null;
         setState((prevState) => ({
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {      })
     const thead = document.getElementsByTagName("thead");
     thead[0].style.backgroundColor = localStorage.getItem('tableColor');
     thead[1]?thead[1].style.backgroundColor = localStorage.getItem('tableColor'):null;
@@ -120,12 +117,12 @@ const allemailtemplates = () => {
             <Col>
               <Card >
                 <BootstrapTable data={allemailtemplatesList} keyField="sno" search striped hover multiColumnSearch={true} version='4'>
-                  <TableHeaderColumn width="20" dataAlign='left' dataField='sno' dataFormat={indexFormat} >S No</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='name'  >Name</TableHeaderColumn>
-                  <TableHeaderColumn width="50" dataAlign='left' dataField='subject' >Subject</TableHeaderColumn>
-                  <TableHeaderColumn width="40" dataAlign='left' dataField='createdBy' dataSort>Email</TableHeaderColumn>
-                  <TableHeaderColumn width="40" dataAlign='left' dataField='creationDate' dataFormat={dateDisplay} dataSort>Created Date</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField="id" dataFormat={(id) => emailtemplateActionsHandle(id)} >Action</TableHeaderColumn>
+                  <TableHeaderColumn width="120" dataAlign='left' dataField='sno' dataFormat={indexFormat} >S No</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='name'  >Name</TableHeaderColumn>
+                  <TableHeaderColumn width="150" dataAlign='left' dataField='subject' >Subject</TableHeaderColumn>
+                  <TableHeaderColumn width="140" dataAlign='left' dataField='createdBy' dataSort>Email</TableHeaderColumn>
+                  <TableHeaderColumn width="140" dataAlign='left' dataField='creationDate' dataFormat={dateDisplay} dataSort>Created Date</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField="id" dataFormat={(id) => emailtemplateActionsHandle(id)} >Action</TableHeaderColumn>
                 </BootstrapTable>
                 <CardFooter>
                   {allemailtemplatesList.length >= 1 ? <TablePagination totalPages={totalPages} currentPage={currentPage} callbackfunc={onPaginationChange} defaultPageSize={"10"}></TablePagination> : null}

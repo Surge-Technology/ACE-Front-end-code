@@ -9,13 +9,10 @@ import axios from 'axios';
 const usertabInitialData= {usersPermissions:{canCreate: true, canView: true, canUpdate: true, canDelete: true},
 permPermissions:{canCreate: true, canView: true, canUpdate: true, canDelete: true}}
 function userTabs() {
-  
-    // State for current active Tab
     const [currentActiveTab, setCurrentActiveTab] = useState('1');
     const [initialData,setState] = useState(usertabInitialData);
     const {usersPermissions,permPermissions} = initialData
     const params = useParams();
-    // Toggle active state for Tab
     const toggle = tab => {
         if (currentActiveTab !== tab) setCurrentActiveTab(tab);
     }
@@ -31,17 +28,14 @@ function userTabs() {
               ...prevState, 
               usersPermissions:userspermission,permPermissions:permissions
             }))
-          }).catch((err) => {
-            console.log("err",err)
-          })
+          }).catch((err) => {  })
       },[])
     return (
         <div  >
         <Card>
             <CardBody className='cardbg'>
             <Nav tabs>
-            
-             {permPermissions.canView?   <NavItem>
+              {permPermissions.canView?   <NavItem>
                     <NavLink
                         className={classnames({
                             active:
@@ -80,8 +74,7 @@ function userTabs() {
                         <StaffList/>
                         </Col>
                     </Row>
-                </TabPane>:null} 
-               
+                </TabPane>:null}          
             </TabContent>
             </Card>
         </div >

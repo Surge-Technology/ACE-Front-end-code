@@ -41,9 +41,7 @@ const eventsList = () => {
           ...prevState, 
           permissions:permission
         }))
-      }).catch((err) => {
-        console.log("err",err)
-      })
+      }).catch((err) => {  })
     tableList("1");
   }, []);
   const onPaginationChange = (page) => {
@@ -85,14 +83,14 @@ const eventsList = () => {
             <Col>
               <Card >
                 <BootstrapTable data={eventList} keyField="name" search striped hover multiColumnSearch={true} version='4'>
-                  <TableHeaderColumn width="20" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='name'  >Title</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='eventType' dataFormat={typeFetch} >Event Type</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='registrationFee'  >Registration Fee $</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='perDay'  >Event Fee $</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField='isAllDay' dataFormat={boolenHandleChange} >All Day</TableHeaderColumn>
-                  <TableHeaderColumn width="40" dataAlign='left' dataField='isCustomRange' dataFormat={boolenHandleChange}>Custom Range</TableHeaderColumn>
-                  <TableHeaderColumn width="30" dataAlign='left' dataField="id" dataFormat={(id) => eventActionsHandle(id)} >Action</TableHeaderColumn>
+                  <TableHeaderColumn width="120" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='name'  >Title</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='eventType' dataFormat={typeFetch} >Event Type</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='registrationFee'  >Registration Fee $</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='perDay'  >Event Fee $</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField='isAllDay' dataFormat={boolenHandleChange} >All Day</TableHeaderColumn>
+                  <TableHeaderColumn width="140" dataAlign='left' dataField='isCustomRange' dataFormat={boolenHandleChange}>Custom Range</TableHeaderColumn>
+                  <TableHeaderColumn width="130" dataAlign='left' dataField="id" dataFormat={(id) => eventActionsHandle(id)} >Action</TableHeaderColumn>
                 </BootstrapTable>
                 <CardFooter>
                   {eventList.length >= 1 ? <TablePagination totalPages={totalPages} currentPage={currentPage} callbackfunc={onPaginationChange} defaultPageSize={"10"}></TablePagination> : null}

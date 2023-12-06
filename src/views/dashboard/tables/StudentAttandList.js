@@ -42,8 +42,7 @@ export default function StudentAttandList() {
     }
   }
   const studentattendGetData=()=>{
-    
-    if(startDate!=="" && endDate !== ""){
+     if(startDate!=="" && endDate !== ""){
       setState((prevState)=>({...prevState,loader:true}))
       let StartDat = moment(startDate).format("YYYY-MM-DD");
       let endDat = moment(endDate).format("YYYY-MM-DD");
@@ -65,8 +64,7 @@ export default function StudentAttandList() {
         timer: 1500
       })
     }
-  }
-  
+  } 
   const absentCount = (cell, row) => {
     let date1 = new Date(startDate);  
     let date2 = new Date(endDate);   
@@ -85,50 +83,48 @@ export default function StudentAttandList() {
       > 
       Loading...
     </Spinner>:null}
-       {/* <Card > */}
-            <CardBody className='cardbg'>          
-                 <h4><b>Student Attendance List</b></h4>
-                 <div className='height15'></div>
-              <Row>
-                <Col md={3}>
-                <Label>Start Date</Label>
-                  <DatePicker
-                    name="startDate"
-                    selected={startDate?new Date(startDate):null}
-                    onChange={(date) => dateHandleChange("startDate",date)}
-                    placeholderText="mm/dd/yyyy"
-                  />
-                </Col>
-                <Col md={3}>
-                  <Label>End Date</Label>
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date) => dateHandleChange("endDate",date)}
-                    placeholderText="mm/dd/yyyy"
-                    minDate={startDate} 
-                  />
-                </Col>
-                <Col md={2} style={{marginTop:"30px"}}> 
-                  <Button type="button" onClick={()=>{studentattendGetData()}}>Search</Button>
-                </Col>
-                <Col md={2} style={{marginTop:"30px"}}>
-                  <Button type="button" onClick={() => navigate("/dashboard")} >Back</Button>
-                </Col>
-              </Row>
-              <hr/>
-              <Row>
-                <Col>
-                <BootstrapTable data={StudentAttandList} hover multiColumnSearch={true} version='4' search>
-                  <TableHeaderColumn width="140" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
-                  <TableHeaderColumn width="180" dataField='masterName' dataSort>Master Name</TableHeaderColumn>
-                  <TableHeaderColumn width="120" dataField='program'  dataSort>Program</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataAlign='center' dataField="attendanceCount" dataSort>Attn.Count</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataAlign='center' dataField='endTime'  dataFormat={absentCount}  dataSort>Absent Count</TableHeaderColumn>
-                </BootstrapTable>
-                </Col>
-              </Row>
-            </CardBody>
-          {/* </Card> */}
+        <CardBody className='cardbg'>          
+            <h4><b>Student Attendance List</b></h4>
+            <div className='height15'></div>
+          <Row>
+            <Col md={3}>
+            <Label>Start Date</Label>
+              <DatePicker
+                name="startDate"
+                selected={startDate?new Date(startDate):null}
+                onChange={(date) => dateHandleChange("startDate",date)}
+                placeholderText="mm/dd/yyyy"
+              />
+            </Col>
+            <Col md={3}>
+              <Label>End Date</Label>
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => dateHandleChange("endDate",date)}
+                placeholderText="mm/dd/yyyy"
+                minDate={startDate} 
+              />
+            </Col>
+            <Col md={2} style={{marginTop:"30px"}}> 
+              <Button type="button" onClick={()=>{studentattendGetData()}}>Search</Button>
+            </Col>
+            <Col md={2} style={{marginTop:"30px"}}>
+              <Button type="button" onClick={() => navigate("/dashboard")} >Back</Button>
+            </Col>
+          </Row>
+          <hr/>
+          <Row>
+            <Col>
+            <BootstrapTable data={StudentAttandList} hover multiColumnSearch={true} version='4' search>
+              <TableHeaderColumn width="140" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
+              <TableHeaderColumn width="180" dataField='masterName' dataSort>Master Name</TableHeaderColumn>
+              <TableHeaderColumn width="120" dataField='program'  dataSort>Program</TableHeaderColumn>
+              <TableHeaderColumn width="100" dataAlign='center' dataField="attendanceCount" dataSort>Attn.Count</TableHeaderColumn>
+              <TableHeaderColumn width="100" dataAlign='center' dataField='endTime'  dataFormat={absentCount}  dataSort>Absent Count</TableHeaderColumn>
+            </BootstrapTable>
+            </Col>
+          </Row>
+        </CardBody> 
     </>
   )
 }
