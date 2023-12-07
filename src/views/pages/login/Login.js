@@ -38,12 +38,6 @@ const Login = () => {
       password : e.password,
       acCode: e.acCode
     }
-
-    localStorage.removeItem('jwTtoken')
-    localStorage.removeItem('useremail')
-    localStorage.removeItem('role')
-    localStorage.removeItem('userid')
-    localStorage.removeItem('username')
     
 
     axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login`, userloginRequestPayload, { filterResponse: "filterResponse" })
