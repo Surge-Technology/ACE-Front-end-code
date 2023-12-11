@@ -210,6 +210,7 @@ export default function editStudent() {
         })
         Axios.get("contract-status/contract").then((res)=>{
                   let  allcontractStatus = []
+                  console.log("Status", res)
                     res.data.map((mapdata,index)=>{
                         allcontractStatus.push( { value: mapdata.name, label: mapdata.name })
                     })

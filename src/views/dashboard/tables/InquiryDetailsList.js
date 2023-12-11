@@ -7,27 +7,12 @@ import Swal from 'sweetalert2';
 import DatePicker from "react-datepicker";
 import moment from 'moment/moment';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 export default function InquiryDetailsList() {
   const [studentData, setState] = useState(StudentAttandinitialData);
   const {inquiryList,totalPages,currentPage,loader,startDate,endDate} =  studentData;
   const navigate = useNavigate();
-  useEffect(()=>{
-    // var someDate = new Date();
-    // let StartDat = moment(someDate).format("YYYY-MM-DD");
-    //   let endDat = moment(someDate).format("YYYY-MM-DD");
-    //   Axios.get(`/dashboard/inquiry/${StartDat}/${endDat}`).then((res)=>{
-    //     if(res.status===200||res.status===201){
-    //       setState((prevState)=>({
-    //         ...prevState, 
-    //         inquiryList:res.data?res.data:[],
-    //         loader:false
-    //       }))
-    //     }
-    //   }).catch(err=>{
-    //     Swal.fire( err.response.data.message, 'Please try again '  ) 
-    //     setState((prevState)=>({...prevState,loader:false}))
-    //   })
-  },[])
+  
   const dateHandleChange=(name,date)=>{
     if(name==="startDate"){
       setState((prevState)=>({
@@ -48,11 +33,15 @@ export default function InquiryDetailsList() {
       setState((prevState)=>({...prevState,loader:true}))
       let StartDat = moment(startDate).format("YYYY-MM-DD");
       let endDat = moment(endDate).format("YYYY-MM-DD");
-      Axios.get(`/dashboard/inquiry/${StartDat}/${endDat}`).then((res)=>{
+      axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");;
+      //axios.put(`${process.env.REACT_APP_BASE_URL}/sports/
+      //api/dashboard/inquiry?startDate=2023-10-05&endDate=2023-12-06
+      axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/inquiry?startDate=${StartDat}&endDate=${endDat}`).then((res)=>{
+        console.log("res", res)
         if(res.status===200||res.status===201){
           setState((prevState)=>({
             ...prevState, 
-            inquiryList:res.data?res.data:[],
+            inquiryList:res.data.inquiryDtos,
             loader:false
           }))
         }else{
@@ -62,7 +51,6 @@ export default function InquiryDetailsList() {
           }))
         }
        }).catch(err=>{
-        Swal.fire( err.response.data.message, 'Please try again '  ) 
         setState((prevState)=>({...prevState,loader:false}))
       })
     }else{
@@ -75,11 +63,20 @@ export default function InquiryDetailsList() {
       })
     }
   }
-  const statusHandleChange =()=>{
-    return(<><Badge color="primary">Active</Badge></>)
+  const displayFullName = (cell, row) => {
+    return (<span>{row?`${row.firstName} ${row.lastName}`:null}</span>)
   }
-  const timeDisplay = (cell, row) => {
-    return cell !== null && cell !== undefined ? moment(cell, ["HH:mm"]).format("hh:mm a") : "";
+  const displayDate = (date)=>{
+    return(<>{moment(date).format("MM/DD/YYYY")}</>)
+  }
+  const displayinquiryServices = (cell, row) => {
+    return (<span>{row.inquiryServices? row.inquiryServices.name :null}</span>)
+  }
+  const displayinquiryStatus = (cell, row) => {
+    return (<span>{row.inquiryStatus? row.inquiryStatus.name :null}</span>)
+  }
+  const displayinquiryType = (cell, row) => {
+    return (<span>{row.inquiryType? row.inquiryType.name :null}</span>)
   }
   return (
     <>
@@ -124,12 +121,13 @@ export default function InquiryDetailsList() {
               <Row>
                 <Col> 
                 <BootstrapTable data={inquiryList} hover multiColumnSearch={true} version='4' search>
-                  <TableHeaderColumn width="140" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
-                    <TableHeaderColumn width="120" dataField='batch'    dataSort>Class</TableHeaderColumn>
-                  {/* <TableHeaderColumn width="100" dataField='MasterName'  dataFormat={statusHandleChange} dataSort>Status</TableHeaderColumn> */}
-                  <TableHeaderColumn width="100" dataField='startTime' dataFormat={timeDisplay} dataSort>Start Time</TableHeaderColumn>
-                  <TableHeaderColumn width="100" dataField='endTime'  dataFormat={timeDisplay}  dataSort>End Time</TableHeaderColumn>
-                  <TableHeaderColumn width="100"  dataField="attendanceCount" dataSort>Attn.count</TableHeaderColumn>
+                <TableHeaderColumn width="140" dataField='firstName' dataFormat={displayFullName} dataSort isKey>Name</TableHeaderColumn>
+                <TableHeaderColumn width="160" dataField='email' dataSort>Email</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='phone'  dataSort>Phone</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='inquiryServices' dataFormat={displayinquiryServices} dataSort> Services</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='inquiryStatus' dataFormat={displayinquiryStatus} dataSort> Status</TableHeaderColumn>
+                <TableHeaderColumn width="110" dataField='inquiryType' dataFormat={displayinquiryType} dataSort> Type</TableHeaderColumn>
+                <TableHeaderColumn width="120" dataField='creationDate' dataFormat={displayDate}  dataSort>Created Date</TableHeaderColumn>
                 </BootstrapTable>
                 </Col>
               </Row>

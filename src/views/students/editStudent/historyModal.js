@@ -13,12 +13,12 @@ export default function HistoryModal(props) {
       let historyListData = []
      res.data.map((historyMapdata)=>{
       historyListData.push({name : historyMapdata.contractPromotion.name,
-        membersAndFrequency : historyMapdata.membersAndFrequency,
+        membersAndFrequency : historyMapdata.pricing.members +" & " + historyMapdata.pricing.subscriptionFrequency.name,
         startDate : historyMapdata.startDate,
         endDate   : historyMapdata.endDate,
-        totalFee  : historyMapdata.totalFee,
-        fee       : historyMapdata.fee,
-        discount  : historyMapdata.discount,
+        totalFee  : historyMapdata.pricing.total,
+        fee       : historyMapdata.pricing.fee,
+        discount  : historyMapdata.pricing.discount,
         creationDate : historyMapdata.creationDate,
       })
      })
