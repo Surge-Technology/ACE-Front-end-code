@@ -3,7 +3,7 @@ import { Formik, Form, ErrorMessage } from 'formik';
 import * as Yup from "yup";
 import YupPassword from 'yup-password';
 YupPassword(Yup)
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Spinner,Row, Col } from 'reactstrap';
 import './login.css'
 import { Link } from 'react-router-dom';
@@ -16,12 +16,16 @@ import Logo from '../../../assets/images/logo/surgelogo.jpg';
 import email from "../../../assets/images/avatars/email.png";
 import pass from "../../../assets/images/avatars/pass.png";
 const Login = () => {
-  const [formValues, setFormValues] = useState([{ email: "", password: "", accode: "", loader: false }]);
+  // accode: "",
+  const { additionalValue } = useParams();
+  const [formValues, setFormValues] = useState([{ email: "", password: "", loader: false }]);
   const navigate = useNavigate();
+  localStorage.setItem('accode', additionalValue)
+
   const initialValues = {
     email    : formValues.email,
-    password : formValues.password,
-    acCode: formValues.accode
+    password : formValues.password //,
+    //acCode: formValues.accode
   }
   const LoginSchema = () => Yup.object().shape({
     email    : Yup.string().email('Invalid email').required('Email Required'),
@@ -35,12 +39,11 @@ const Login = () => {
     setFormValues({ ...formValues, loader: true });
     let userloginRequestPayload = {
       username : e.email,
-      password : e.password,
-      acCode: e.acCode
+      password : e.password //,
+//      acCode: e.acCode
     }
-    
 
-    axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login`, userloginRequestPayload, { filterResponse: "filterResponse" })
+    axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login/${additionalValue}`, userloginRequestPayload, { filterResponse: "filterResponse" })
       .then((res) => {
         localStorage.setItem('role', res.data.user.roles[0].name)
         localStorage.setItem('token', res.data.token)
@@ -111,7 +114,7 @@ const Login = () => {
                             />
                           </div>
                           <ErrorMessage name="password" render={msg => <div className="errmsg">{msg}</div>} />
-                          <div className="third-input">
+                          {/* <div className="third-input">
                             <img src={pass} alt="ac" className="loginac" />
                             <input
                               type="text"
@@ -124,7 +127,7 @@ const Login = () => {
                               className={errors.accode && touched.accode ? "input-error" : null}
                             />
                           </div>
-                          <ErrorMessage name="acCode" render={msg => <div className="errmsg">{msg}</div>} />
+                          <ErrorMessage name="acCode" render={msg => <div className="errmsg">{msg}</div>} /> */}
                           <div >
                              <p style={{float:"right",padding:"0px 30px"}}>Forgot your password? <Link className='customLink' to={'/login/forgotpassword'} >Click here</Link></p>
                             <button className='button-login' type='submit'>Login</button>

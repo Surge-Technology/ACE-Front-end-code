@@ -24,7 +24,9 @@ const AppHeaderDropdown = () => {
   const role = localStorage.getItem("role");
   const logout = () => {
     localStorage.clear();
-    navigate('/login')
+    //navigate('/login')
+    const url = additionalValue ? `/login/${additionalValue}` : '/login';
+    navigate(url);
   }
   const backGrdcolr=()=>{
     const collection = document.getElementsByTagName("body");

@@ -26,6 +26,7 @@ class App extends Component {
         <Suspense fallback={loading}>
           <Routes>
             <Route exact path="/login" name="Login Page" element={<Login />} />
+            <Route path="/login/:additionalValue?" name="Login Page" element={<Login />} />
             <Route exact path="/login/forgotpassword" name="Forgot Password" element={<Forgotpassword/>}/>
             <Route exact path="/login/resetpassword/:id" name="Reset Password" element={<Resetpassword/>}/>
             <Route exact path="/register" name="Register Page" element={<Register />} />

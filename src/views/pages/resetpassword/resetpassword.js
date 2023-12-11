@@ -44,7 +44,11 @@ const resetpassword = () => {
         formValues.loader = false;
         setFormValues({ ...formValues });
         setTimeout(() => {
-          navigate("/login");
+          //navigate('/login')
+          const additionalValue = localStorage.getItem("accode");
+          const url = additionalValue ? `/login/${additionalValue}` : '/login';
+          navigate(url);
+          
         }, 1000);
       }
     }).catch((err) => {

@@ -102,13 +102,17 @@ const Register = () => {
         if (res.status === 201) {
           toast.success(`User ${res.data.roles[0].name} created successfully`, { theme: "colored" })
           setTimeout(() => {
-            navigate('/login')
+            //navigate('/login')
+            const additionalValue = localStorage.getItem("accode");
+            const url = additionalValue ? `/login/${additionalValue}` : '/login';
+            navigate(url);
           }, 2000);
         }
       }).catch((err) => {
         Swal.fire(err.response.data.message, "Please try again")
       })
   }
+  const additionalValue = localStorage.getItem("accode");
   return (
     <>
       <ToastContainer />
@@ -317,7 +321,7 @@ const Register = () => {
                           </Row>
                         </CardBody>
                         <CardFooter id='cardfootercolor'>
-                          <Button outline size="md" type="button" id="cancelbutton" onClick={() => navigate("/login")}>Sign In</Button>{' '}
+                          <Button outline size="md" type="button" id="cancelbutton" onClick={() => navigate(`/login/${additionalValue}`)}>Sign In</Button>{' '}
                           <Button outline color="info" size='md' id="savebutton" type="submit">Sign Up</Button>{' '}
                         </CardFooter>
                       </Form>

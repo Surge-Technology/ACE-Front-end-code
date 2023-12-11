@@ -32,7 +32,11 @@ const allcontracts = () => {
       })
       if (res.status == 401) {
         Swal.fire({ title: "error", icon: "error", text: "Session Expired" })
-        navigate('/login')
+          // navigate('/login')
+          const additionalValue = localStorage.getItem("accode");
+          const url = additionalValue ? `/login/${additionalValue}` : '/login';
+          navigate(url);
+        
       }
     }).catch(err => {
       Swal.fire(err.response.data.message, 'Please try again ')
