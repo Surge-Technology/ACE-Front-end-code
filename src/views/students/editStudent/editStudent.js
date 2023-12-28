@@ -99,7 +99,7 @@ export default function editStudent() {
                 }
             }
         }
-        axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");;
+        axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
             axios.put(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/student/${params.id}/update-student`,payload).then((res)=>{
              toast.success("Student updated successfully", { theme: "colored" })
             setTimeout(() => {
@@ -237,6 +237,7 @@ export default function editStudent() {
     },[])
     const studentGetApiDataHandle =()=>{
         Axios.get(`student/${params.id}`).then((res)=>{
+            console.log("getbyid",res)
              setState((prevState)=>({
                 ...prevState,
                 firstName:res.data.firstName,lastName:res.data.lastName,birthDate:moment(res.data.dob).format("MM/DD/YYYY"),dateJoined:moment(res.data.creationDate).format('MM/DD/YYYY'),

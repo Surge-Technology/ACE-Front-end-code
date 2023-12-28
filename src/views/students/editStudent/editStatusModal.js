@@ -24,7 +24,9 @@ export default function EditStatusModal(props) {
           }))
     }
   useEffect(()=>{
-    Axios.get(`level/student/${props.studentId}`).then((res)=>{
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/level/student/${props.studentId}`).then((res)=>{
+      console.log("res",res);
     let  allBatches = []
         res.data.map((mapdata,index)=>{
           allBatches.push( { value: mapdata.id, label: mapdata.name })
@@ -34,14 +36,18 @@ export default function EditStatusModal(props) {
             beltLabelOptions:allBatches
         }))
     }).catch(err=>{
-      Swal.fire(err.response.data.message,'Please try again later');
+      console.log("err",err)
+     // Swal.fire(err.response.data.message,'Please try again later');
     })
-    Axios.get(`student/${props.studentId}/student-status-history`).then((res)=>{
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/student/${props.studentId}/student-status-history`).then((res)=>{
+      console.log("studentstatus",res)
          let subLevel = [];
        res.data.subLevel.map((mapData,index)=>{      
         subLevel.push({value: mapData.id, label: mapData.name})
        })
-       Axios.get(`level/${res.data.level.id}/sub-level`).then((response)=>{
+       axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+       axios.get(`${process.env.REACT_APP_BASE_URL}/level/${res.data.level.id}/sub-level`).then((response)=>{
            let  allSubLevels = []
         response.data.map((mapdata,index)=>{
               allSubLevels.push( { value: mapdata.id, label: mapdata.name })
@@ -51,7 +57,8 @@ export default function EditStatusModal(props) {
                 subLevelsOptions:allSubLevels
             }))
         }).catch(err=>{
-          Swal.fire(err.response.data.message,'Please try again later');
+          console.log("err",err)
+         // Swal.fire(err.response.data.message,'Please try again later');
         })
        setState((prevState)=>({
         ...prevState,
@@ -62,12 +69,14 @@ export default function EditStatusModal(props) {
         backApproved:res.data.testingApproved,
     }))
       }).catch(err=>{
-        Swal.fire("",'Please try again later');
+      //  Swal.fire("",'Please try again later');
       })
   },[])
   const beltLavelHandleChange= (name, selectedData)=>{
       if(name==="beltLabel"){
-        Axios.get(`level/${selectedData.value}/sub-level`).then((res)=>{
+        axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+       axios.get(`${process.env.REACT_APP_BASE_URL}/level/${selectedData.value}/sub-level`).then((res)=>{
+        console.log("res",res)
            let  allSubLevel = []
               res.data.map((mapdata,index)=>{
                 allSubLevel.push( { value: mapdata.id, label: mapdata.name })
@@ -77,7 +86,8 @@ export default function EditStatusModal(props) {
                   subLevelsOptions:allSubLevel,beltLabel:selectedData,subLevel:{},anticipated:false,approved:false
               }))
           }).catch(err=>{
-            Swal.fire(err.response.data.message,'Please try again later');
+            console.log("err",err);
+           // Swal.fire(err.response.data.message,'Please try again later');
           })
       }
       if(name==="subLevel"){

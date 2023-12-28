@@ -16,16 +16,15 @@ import Logo from '../../../assets/images/logo/surgelogo.jpg';
 import email from "../../../assets/images/avatars/email.png";
 import pass from "../../../assets/images/avatars/pass.png";
 const Login = () => {
-  // accode: "",
   const { additionalValue } = useParams();
   const [formValues, setFormValues] = useState([{ email: "", password: "", loader: false }]);
   const navigate = useNavigate();
+  console.log("acCode", additionalValue);
   localStorage.setItem('accode', additionalValue)
 
   const initialValues = {
     email    : formValues.email,
     password : formValues.password //,
-    //acCode: formValues.accode
   }
   const LoginSchema = () => Yup.object().shape({
     email    : Yup.string().email('Invalid email').required('Email Required'),
@@ -40,10 +39,9 @@ const Login = () => {
     let userloginRequestPayload = {
       username : e.email,
       password : e.password //,
-//      acCode: e.acCode
     }
-
-    axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login/${additionalValue}`, userloginRequestPayload, { filterResponse: "filterResponse" })
+    console.log("additionValue", additionalValue, userloginRequestPayload)
+    axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login/${additionalValue}`, userloginRequestPayload)
       .then((res) => {
         localStorage.setItem('role', res.data.user.roles[0].name)
         localStorage.setItem('token', res.data.token)
@@ -59,6 +57,7 @@ const Login = () => {
         }
       }).catch((err) => {
         setFormValues({ ...formValues, loader: false });
+        console.log("err", err)
         toast.error("Invalid Credentials", { theme: "colored" })
       })
   }

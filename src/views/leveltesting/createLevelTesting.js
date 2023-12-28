@@ -51,12 +51,15 @@ const createLevelTesting = () => {
     values.startDate = date;
     setState({ ...values });
     let dat = moment(date).format("YYYY-MM-DD")
-    Axios.get(`student-statuses/${dat}`).then(response => {
-      if(response.status===200){
+    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/student-statuses/${dat}`).then(response => {
+    console.log("res",response)  
+    if(response.status===200){
       setStudentAttendenceList(response.data);
      }
     }).catch((err) => {
-      Swal.fire(err , 'Please try again later');
+      //console.log("err",err.response)
+     Swal.fire(err.response.data.message , 'Please try again later');
     })
   } 
   const selectedRow = {

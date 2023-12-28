@@ -10,10 +10,7 @@ const DefaultLayout = () => {
 
     let token =localStorage.getItem('token');
     if(token<10){
-    //  navigate('/login')
-    const additionalValue = localStorage.getItem("accode");
-    const url = additionalValue ? `/login/${additionalValue}` : '/login';
-    navigate(url);
+      navigate('/login/')
    }  
    }, []);
    

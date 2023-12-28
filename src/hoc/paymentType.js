@@ -41,10 +41,10 @@ export default function PaymentType(props) {
         let formdata = data
         formdata.frontPictureAttachment = frontPictureAttachment;
         formdata.backPictureAttachment = backPictureAttachment
-        if (paymentType.label === "Cheque" && frontAndBackPictureAttachments === "") {
+        if (paymentType.label === "Cheque" && frontPictureAttachment === "") {
             Swal.fire("Upload Front Picture", 'Cheque')
         }
-        if (paymentType.label === "Cheque" && frontAndBackPictureAttachments === "") {
+        if (paymentType.label === "Cheque" && backPictureAttachment === "") {
             Swal.fire("Upload Back Picture", 'Cheque')
         } else {
             if (props.contractDetails !== undefined) {
@@ -103,6 +103,7 @@ export default function PaymentType(props) {
                         "checkRoutingNumber": data.routingNo,
                     }
                 }
+                console.log("payload", payload)
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You want to update!",
@@ -197,26 +198,31 @@ export default function PaymentType(props) {
     const fileHandleChange = (e) => {
         setState((prevState) => ({ ...prevState, loader: true }));
         let formdata = new FormData();
-      
+
         for (let i = 0; i < e.target.files.length; i++) {
-          formdata.append('files', e.target.files[i]);
+            formdata.append('frontImage', e.target.files[1]);
+            formdata.append('backImage', e.target.files[0]);
         }
-      
         axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-        axios.post(`${process.env.REACT_APP_BASE_URL}/files/cheque-images/upload`, formdata)
-          .then((res) => {
-            setState((prevState) => ({
-              ...prevState,
-              frontAndBackPictureAttachments: res.data.map(image => image.fromtImageName),
-              frontAndBackPictureAttachments: res.data.map(image => image.backImageName),
-              loader: false
-            }))
-          })
-          .catch(err => {
-            setState((prevState) => ({ ...prevState, loader: false }));
-            Swal.fire(err.response.data.message, 'Please try again later');
-          })
-      }
+        axios.post(`${process.env.REACT_APP_BASE_URL}/files/cheque-images/upload`, formdata, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then((res) => {
+                console.log("res", res)
+                setState((prevState) => ({
+                    ...prevState,
+                    backPictureAttachment: res.data.backImageName,
+                    frontPictureAttachment: res.data.frontImageName,
+                    loader: false
+                }))
+            })
+            .catch(err => {
+                setState((prevState) => ({ ...prevState, loader: false }));
+                Swal.fire(err.response.data.message, 'Please try again later');
+            })
+    }
     return (
         <>
             <ToastContainer />
@@ -394,18 +400,14 @@ export default function PaymentType(props) {
                                             </Row>
                                             <Row>
                                                 <Col md={6}>
-                                                    <Row>
-                                                        <Col>
-                                                            <Label><span>Front and Back Picture Attachment</span></Label>
-                                                            <span className="btn btn-primary btn-file">
-                                                                Upload Images <input type="file" onChange={(e) => fileHandleChange(e)} multiple />
-                                                            </span>
-                                                        </Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <span> {frontAndBackPictureAttachments.length > 0 ? <b style={{ color: "green" }}>Successfully Uploaded</b> : null}</span>
-                                                    </Row>
+                                                    <Label><span>Front and Back Picture Attachment</span></Label>
+                                                    <span className="btn btn-primary btn-file">
+                                                        Upload Images <input type="file" onChange={(e) => fileHandleChange(e)} multiple />
+                                                    </span>
                                                 </Col>
+                                            </Row>
+                                            <Row>
+                                                <span> {backPictureAttachment ? <b style={{ color: "green", paddingTop: "20px" }}>Successfully Uploaded</b> : null}</span>
                                             </Row>
                                         </>
                                         : null}

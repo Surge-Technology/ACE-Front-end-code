@@ -22,11 +22,13 @@ const AppHeaderDropdown = () => {
   const navigate = useNavigate()
   const username = localStorage.getItem("username");
   const role = localStorage.getItem("role");
+  const additionalValue = localStorage.getItem("accode");
   const logout = () => {
     localStorage.clear();
     //navigate('/login')
     const url = additionalValue ? `/login/${additionalValue}` : '/login';
     navigate(url);
+    window.location.reload();
   }
   const backGrdcolr=()=>{
     const collection = document.getElementsByTagName("body");
