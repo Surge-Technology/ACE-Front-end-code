@@ -271,6 +271,7 @@ export default function Dashboard() {
             <CardBody className='cardbg'>
               <div  >
                 <CChartPolarArea
+                  
                   style={{ cursor: "pointer" }}
                   data={{
                     labels: ['Total Contracts : ' + totalContracts, 'Total Renewals : ' + totalRenewals, 'Total Upgrades : ' + totalUpgrades, 'Renewal Percentage : ' + renewalPercentage, 'Upgrade Percentage : ' + upgradePercentage],
@@ -280,6 +281,18 @@ export default function Dashboard() {
                         backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
                       },
                     ],
+                  }}
+                  options={{
+                    plugins: {
+                      legend: {
+                        labels: {
+                          position: 'bottom',
+                        },
+                        fill: {
+                          opacity: 0.8
+                        },
+                      }
+                    },
                   }}
                 />
               </div>

@@ -51,7 +51,10 @@ export default function ContractDetailsList() {
       Axios.get(`/dashboard/all-contract?${StartDat}&endDate=${endDat}`).then((res)=>{
         setState((prevState)=>({
           ...prevState, 
-          StudentAttandList:res.data.contractDtos,loader:false
+          StudentAttandList:res.data.contractDtos,
+          totalPages:res.data.totalElements,
+          currentPage:res.data.pageNumber+1,
+          loader:false
         }))
       }).catch(err=>{
         Swal.fire( err.response.data.message, 'Please try again '  ) 

@@ -89,10 +89,10 @@ const StaffList = () => {
             {permissions.canCreate?   <Button outline color="info" size="sm" className='buttonfloat' onClick={() => history("/staff/createstaff/new")}>Add User </Button>:null}
             </Col>
           </Row>
-          <Row>
+          <Row> 
             <Col>
               <Card >
-                <BootstrapTable data={allusersList} keyField="sno" search striped hover multiColumnSearch={true} version='4'>
+                <BootstrapTable data={allusersList} keyField="sno" search striped hover multiColumnSearch={true} pagination={true} version='4'>
                   <TableHeaderColumn width="00" dataAlign='left' dataField='sno' dataFormat={indexFormat} dataSort>S No</TableHeaderColumn>
                   <TableHeaderColumn width="160" dataAlign='left' dataField='name' dataFormat={displayFullName} >Name</TableHeaderColumn>
                  <TableHeaderColumn width="160" dataAlign='left' dataField='email' dataSort>Email</TableHeaderColumn>

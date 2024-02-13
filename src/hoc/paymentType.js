@@ -12,7 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import moment from 'moment/moment';
 import CardApp from './cardPayment/cardApp';
 let card = { cardType: "", expireDate: "", cardNumber: "", pin: "", currency: "", description: "" };
-let cheque = { date: "", payeeName: "", chequeNo: "", accountNo: "", routingNo: "" };
+let cheque = { date: "", payeeName: "", chequeNo: "" };
 let autoPay = { accountNo: "", routingNo: "" };
 let initialPaymentData = {
     cardType: "", expireDate: "", cardNumber: "", pin: "",
@@ -99,8 +99,8 @@ export default function PaymentType(props) {
                         "amount": data.chargeAmount,
                         "frontPictureAttachment": data.frontPictureAttachment,
                         "backPictureAttachment": data.backPictureAttachment,
-                        "checkAccountNumber": data.accountNo,
-                        "checkRoutingNumber": data.routingNo,
+                        // "checkAccountNumber": data.accountNo,
+                        // "checkRoutingNumber": data.routingNo,
                     }
                 }
                 console.log("payload", payload)
@@ -198,11 +198,17 @@ export default function PaymentType(props) {
     const fileHandleChange = (e) => {
         setState((prevState) => ({ ...prevState, loader: true }));
         let formdata = new FormData();
-
-        for (let i = 0; i < e.target.files.length; i++) {
-            formdata.append('frontImage', e.target.files[1]);
+        console.log("image",e.target.files)
+        console.log("image",e.target.files.length)
+        if(e.target.files.length===1){
             formdata.append('backImage', e.target.files[0]);
+        }else{
+            for (let i = 0; i < e.target.files.length; i++) {
+                formdata.append('frontImage', e.target.files[1]);
+                formdata.append('backImage', e.target.files[0]);
+            }
         }
+      setTimeout(() => {
         axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
         axios.post(`${process.env.REACT_APP_BASE_URL}/files/cheque-images/upload`, formdata, {
             headers: {
@@ -219,9 +225,12 @@ export default function PaymentType(props) {
                 }))
             })
             .catch(err => {
+                console.log("err",err)
                 setState((prevState) => ({ ...prevState, loader: false }));
                 Swal.fire(err.response.data.message, 'Please try again later');
             })
+      }, 1000);
+       
     }
     return (
         <>
@@ -386,7 +395,7 @@ export default function PaymentType(props) {
 
                                                 </Col>
                                             </Row>
-                                            <Row>
+                                            {/* <Row>
                                                 <Col md={6}>
                                                     <Label> Account No  <span className='colorRed'>*</span></Label>
                                                     <Input name="accountNo" type="number" value={values.accountNo} onChange={handleChange} onBlur={handleBlur} invalid={touched.accountNo && !!errors.accountNo} />
@@ -397,7 +406,7 @@ export default function PaymentType(props) {
                                                     <Input name="routingNo" type="number" value={values.routingNo} onChange={handleChange} onBlur={handleBlur} invalid={touched.routingNo && !!errors.routingNo} />
                                                     <ErrorMessage name="routingNo" component="div" className='errmsg'></ErrorMessage>
                                                 </Col>
-                                            </Row>
+                                            </Row> */}
                                             <Row>
                                                 <Col md={6}>
                                                     <Label><span>Front and Back Picture Attachment</span></Label>

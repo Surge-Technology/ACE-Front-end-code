@@ -144,8 +144,8 @@ function createStudent() {
               "amount" : PaymentData.chargeAmount,
               "frontPictureAttachment":PaymentData.frontPictureAttachment,
               "backPictureAttachment":PaymentData.backPictureAttachment,
-              "checkAccountNumber": PaymentData.accountNo,
-              "checkRoutingNumber": PaymentData.routingNo,
+              // "checkAccountNumber": PaymentData.accountNo,
+              // "checkRoutingNumber": PaymentData.routingNo,
             }
         }
            axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");

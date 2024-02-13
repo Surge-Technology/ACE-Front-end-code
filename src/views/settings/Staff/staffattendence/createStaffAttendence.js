@@ -154,7 +154,7 @@ const createStaffAttendence = () => {
         console.log("post", res)
         if (res.status === 201) {
           Swal.fire(
-            'Good job!',
+            'Attendance Marked!',
             'Staff In time entered successfully',
             'success'
           )
