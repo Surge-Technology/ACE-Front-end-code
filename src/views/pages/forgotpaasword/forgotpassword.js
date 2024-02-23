@@ -94,7 +94,7 @@ const forgotpassword = () => {
                                                         </div>
                                                         <div className="login-button">
                                                             <button className='button-login' type='submit'>Send</button>
-                                                            <p><Link className='customLink' to={'/login'} >Back</Link></p>
+                                                            <p><Link className='customLink' to={'/login/'+academyCode} >Back</Link></p>
                                                         </div>
                                                     </div>
                                                 </Row>
