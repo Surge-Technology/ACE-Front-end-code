@@ -8,7 +8,6 @@ const instance = axios.create({
 //let token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYW5pQGdtYWlsLmNvbSIsImV4cCI6MTY3NDE1MDUxNiwiaWF0IjoxNjc0MTMyNTE2fQ.iUjf7VthLeRVJ9Pk1i1L-M2jBfRqxaVrzcArNXthBolHozbhTeR1ieIEZrjnNjEs2e9fje-oysfm_aMNZhEmiw"
 instance.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
 //instance.defaults.headers.common['Authorization'] =  "Bearer " + token;
-console.log("localStorage.getItem",localStorage.getItem("token"))
 instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 instance.interceptors.response.use(function (config) {

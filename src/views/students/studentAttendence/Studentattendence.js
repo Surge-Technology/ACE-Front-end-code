@@ -204,7 +204,7 @@ const Studentattendence = () => {
                   <Row>
                      <Col md={3}>
                       <FormGroup>
-                      <Label for="program">Program</Label>{console.log("values",values)}
+                      <Label for="program">Program</Label>
                         <Select
                           name="program"
                           value={values.program}

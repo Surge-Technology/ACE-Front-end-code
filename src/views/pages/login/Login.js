@@ -21,7 +21,7 @@ const Login = () => {
   const navigate = useNavigate();
   localStorage.setItem('accode', additionalValue)
   const acCode = localStorage.getItem('accode')
-  console.log("getting accode",acCode)
+ 
 
   const initialValues = {
     email    : formValues.email,
@@ -41,7 +41,7 @@ const Login = () => {
       username : e.email,
       password : e.password //,
     }
-    console.log("additionValue", additionalValue, userloginRequestPayload)
+    // console.log("additionValue", additionalValue, userloginRequestPayload)
     axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login/${additionalValue}`, userloginRequestPayload)
       .then((res) => {
         localStorage.setItem('role', res.data.user.roles[0].name)

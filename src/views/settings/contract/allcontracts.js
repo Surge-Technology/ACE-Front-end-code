@@ -79,14 +79,12 @@ Swal.fire({
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
         let permission = res.data.roles?res.data.roles[0]["contracts"]:null;
-        console.log(res.data.roles);
         setState((prevState) => ({
           ...prevState, 
           permissions:permission
         }))
       }).catch((err) => {  })
   }, []);
-  console.log("permissions:", permissions)
 
   const contractActionsHandle = (id) => {
     return (

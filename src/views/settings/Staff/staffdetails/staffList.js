@@ -15,7 +15,6 @@ const StaffList = () => {
     setState((prevState) => ({ ...prevState, loader: true }))
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}users/pagination?page=${page - 1}&size=10&sort=id,desc`).then((res) => {
-       console.log("res",res)
       setState((prevState) => ({
         ...prevState,
         allusersList: res.data.content,

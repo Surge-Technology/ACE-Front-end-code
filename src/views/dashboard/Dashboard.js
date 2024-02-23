@@ -223,7 +223,7 @@ export default function Dashboard() {
                 'start': startDateAndTime,
                 'end': endDateAndTime
               })
-              console.log("223", eventArray)
+              // console.log("223", eventArray)
             })
           }, 1000)
 

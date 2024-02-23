@@ -63,7 +63,7 @@ const deleteInquiryHandle=(id)=>{
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/users/${userid}`)
       .then((res) => {
         let permission = res.data.roles?res.data.roles[0]["inquiries"]:null;
-        console.log(res,permission);
+        // console.log(res,permission);
         let studpermission = res.data.roles?res.data.roles[0]["students"]:null;
         setState((prevState) => ({
           ...prevState, 
