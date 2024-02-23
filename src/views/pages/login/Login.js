@@ -19,8 +19,9 @@ const Login = () => {
   const { additionalValue } = useParams();
   const [formValues, setFormValues] = useState([{ email: "", password: "", loader: false }]);
   const navigate = useNavigate();
-  console.log("acCode", additionalValue);
   localStorage.setItem('accode', additionalValue)
+  const acCode = localStorage.getItem('accode')
+  console.log("getting accode",acCode)
 
   const initialValues = {
     email    : formValues.email,
@@ -128,7 +129,7 @@ const Login = () => {
                           </div>
                           <ErrorMessage name="acCode" render={msg => <div className="errmsg">{msg}</div>} /> */}
                           <div >
-                             <p style={{float:"right",padding:"0px 30px"}}>Forgot your password? <Link className='customLink' to={'/login/forgotpassword'} >Click here</Link></p>
+                             <p style={{float:"right",padding:"0px 30px"}}>Forgot your password? <Link className='customLink' to={'/login/forgotpassword/'+additionalValue} >Click here</Link></p>
                             <button className='button-login' type='submit'>Login</button>
                           </div>
                           <h6 className='horizanantalstyle'>Or</h6>

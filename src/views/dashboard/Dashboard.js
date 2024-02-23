@@ -36,6 +36,8 @@ export default function Dashboard() {
     openLeads, openTrials, totalInquiries, totalContracts, totalRenewals, totalUpgrades, renewalPercentage, upgradePercentage } = dashboardIntialState
   const random = () => Math.round(Math.random() * 100)
   const navigate = useNavigate();
+
+
   useEffect(() => {
     if (!localStorage.getItem('reload')) {
       window.location.reload(false);
@@ -278,7 +280,14 @@ export default function Dashboard() {
                     datasets: [
                       {
                         data: [totalContracts, totalRenewals, totalUpgrades, renewalPercentage, upgradePercentage],
-                        backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
+                       // backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
+                       backgroundColor: [
+                        'rgba(255, 99, 132, 0.3)', 
+                        'rgba(75, 192, 192, 0.3)', 
+                        'rgba(255, 206, 86, 0.3)', 
+                        'rgba(231, 233, 237, 0.3)', 
+                        'rgba(54, 162, 235, 0.3)' 
+                      ]
                       },
                     ],
                   }}

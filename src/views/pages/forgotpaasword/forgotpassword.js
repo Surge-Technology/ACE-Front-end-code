@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from "yup";
 import '../login/login.css'
@@ -15,19 +15,21 @@ import Logo from '../../../assets/images/logo/surgelogo.jpg';
 import pic from "../../../assets/images/avatars/email.png";
 import forgotpasswordImage from "../../../assets/images/avatars/passwordmail.jpg"
 const forgotpassword = () => {
+    const { academyCode } = useParams();
+
     const [modal, setModal] = useState(false)
     const [email, setEmail] = useState("")
     const initialValue = {
-        email: email
+        username: email
     }
     const forgotPasswordSchema = () => Yup.object().shape({
         email: Yup.string().email('Invalid email').required('Email Required'),
     });
     const forgotpasswordSubmit = (e) => {
         let payload = {
-            email: e.email
+            username: e.email
         }
-        axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/forgot-password`, payload).then()
+        axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/forgot-password/${academyCode}`, payload).then()
             .catch((err) => { Swal.fire('Oops, something went wrong. Please try again later'); })
         setModal(!modal)
     }

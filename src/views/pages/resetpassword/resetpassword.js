@@ -18,6 +18,7 @@ YupPassword(Yup)
 // video
 const resetpassword = () => {
   const [formValues, setFormValues] = useState([{ password: "", confirmPassword: "", loader: false }]);
+  const { academyCode } = useParams();
   const initialValues = {
     password: formValues.password,
     confirmPassword: formValues.confirmPassword,
@@ -35,10 +36,10 @@ const resetpassword = () => {
     formValues.loader = true;
     setFormValues({ ...formValues });
     let payload = {
-      token: params.id,
-      newPassword: values.password
+      username: params.id,
+      password: values.password
     }
-    axios.put(`${process.env.REACT_APP_BASE_URL_BASE}auth/reset-Password`, payload).then((res) => {
+    axios.put(`${process.env.REACT_APP_BASE_URL_BASE}auth/reset-Password/${academyCode}`, payload).then((res) => {
       if (res.status === 200) {
         toast.success("Your password successfully updated.", { theme: "colored" });
         formValues.loader = false;
