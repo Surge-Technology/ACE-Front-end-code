@@ -21,7 +21,11 @@ const createemailtemplate = () => {
   const TemplateSchema = () => Yup.object().shape({
     templateName: Yup.string().min(2, 'Too Short!').required('Template name Required'),
     templateSubject: Yup.string().min(2, 'Too Short!').required('Template subject Required'),
-    emailBody: Yup.string().min(2, 'Too Short!').required('Email body Required'),
+    emailBody: Yup.string().min(2, 'Too Short!').required('Email body Required').test(
+      "Email Template",
+      "Template body length is too long",
+      emailBody => emailBody.length <= 255
+    ),
     emailType: Yup.object().required('Email type Required'),
   });
   useEffect(() => {
@@ -146,7 +150,8 @@ const createemailtemplate = () => {
                                 value={values.templateName}
                                 id="templateName"
                                 placeholder="Template name "
-                                onChange={(handleChange,fieldHandleChange)}
+                                onChangeCapture={handleChange}
+                                onChange={(fieldHandleChange)}
                                 onBlur={handleBlur}
                                 className={errors.templateName && touched.templateName ? "input-error" : null}
                                 bsSize="lg" />
@@ -172,7 +177,8 @@ const createemailtemplate = () => {
                                 value={values.templateSubject}
                                 id="templateSubject"
                                 placeholder="Subject"
-                                onChange={(handleChange,fieldHandleChange)}
+                                onChangeCapture={handleChange}
+                                onChange={(fieldHandleChange)}
                                 onBlur={handleBlur}
                                 bsSize="lg" />
                               <ErrorMessage name="templateSubject" component="div" className='errmsg'></ErrorMessage>
@@ -187,7 +193,8 @@ const createemailtemplate = () => {
                                 value={values.emailBody}
                                 id="emailBody"
                                 placeholder='Body content here...'
-                                onChange={(handleChange,fieldHandleChange)}
+                                onChangeCapture={handleChange}
+                                onChange={(fieldHandleChange)}
                                 onBlur={handleBlur}
                                 rows="6" />
                               <ErrorMessage name="emailBody" component="div" className='errmsg'></ErrorMessage>
@@ -200,7 +207,8 @@ const createemailtemplate = () => {
                                 type="file"
                                 name="templateFile"
                                 value={values.templateFile}
-                                onChange={(handleChange,attachmentHandleChange)}
+                                onChangeCapture={handleChange}
+                                onChange={(attachmentHandleChange)}
                                 id="templateFile" />
                             </FormGroup>
                           </Row>

@@ -118,7 +118,7 @@ export default function StudentAttandList() {
             <BootstrapTable data={StudentAttandList} hover multiColumnSearch={true} version='4' search>
               <TableHeaderColumn width="140" dataField='name'  dataSort isKey>Name</TableHeaderColumn>
               <TableHeaderColumn width="180" dataField='masterName' dataSort>Master Name</TableHeaderColumn>
-              <TableHeaderColumn width="120" dataField='program'  dataSort>Program</TableHeaderColumn>
+              <TableHeaderColumn width="120" dataField='program'  dataSort>Style</TableHeaderColumn>
               <TableHeaderColumn width="100" dataAlign='center' dataField="attendanceCount" dataSort>Attn.Count</TableHeaderColumn>
               <TableHeaderColumn width="100" dataAlign='center' dataField='endTime'  dataFormat={absentCount}  dataSort>Absent Count</TableHeaderColumn>
             </BootstrapTable>

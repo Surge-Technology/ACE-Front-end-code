@@ -13,6 +13,7 @@ import Select from 'react-select';
 import Swal from 'sweetalert2';
 import DatePicker from "react-datepicker";
 import emptyimage from "../../assets/images/avatars/userempty.jpg";
+import { CSpinner } from '@coreui/react';
 let dateToday = moment(new Date()).format("YYYY-MM-DD");
 const createLevelTesting = () => {
   const [state, setState] = useState({ startDate: new Date(), master: null,program:null, class: null, loader: false });
@@ -23,6 +24,8 @@ const createLevelTesting = () => {
   const [attendenceStartTime, setAttendenceStartTime] = useState("");
   const [studentAttendenceList, setStudentAttendenceList] = useState([]);
   const [studentDetails, setStudentDetails] = useState([]);
+  const [showLoading, setShowLoading] = useState('');
+
    const navigate = useNavigate();
   useEffect(() => {
      axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
@@ -53,13 +56,12 @@ const createLevelTesting = () => {
     let dat = moment(date).format("YYYY-MM-DD")
     axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/student-statuses/${dat}`).then(response => {
-    console.log("res",response)  
     if(response.status===200){
       setStudentAttendenceList(response.data);
      }
     }).catch((err) => {
       //console.log("err",err.response)
-     Swal.fire(err.response.data.message , 'Please try again later');
+     Swal.fire('No Student to promote');
     })
   } 
   const selectedRow = {
@@ -104,6 +106,7 @@ const createLevelTesting = () => {
     )
   }
   const attendenceSubmit = (values) => {
+    setShowLoading(true);
      let payload = []
       studentDetails.map((mapdat,index)=>{
           payload.push({
@@ -113,18 +116,22 @@ const createLevelTesting = () => {
           })
       })
         setTimeout(() => {
-        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+          //setShowLoading(true);
+    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.post(`${process.env.REACT_APP_BASE_URL}/level-testing/promote`, payload)
       .then((res) => {
+        setShowLoading(false);
          if (res.status === 201) {
-          toast.success("Successfully", { theme: "colored" });
           setStudentDetails([])
+          toast.success("Successfully", { theme: "colored" });
         }
       }).catch((err) => {
         if (err.response.status === 401) {
+          setShowLoading(false);
           Swal.fire('401 session expired..!', 'Please re-login');
         }
         else {
+           setShowLoading(false);
            Swal.fire(err.response.data.message,'Please try again later');
         }
       })
@@ -189,6 +196,11 @@ const createLevelTesting = () => {
                         <Button   type="submit" disabled={studentDetails.length<=0 ? true : false}>Promote</Button>
                       </FormGroup>
                     </Col>
+                  </Row>
+                  <Row>
+                    <div  className='d-flex justify-content-center'>
+                      { showLoading ? <CSpinner color='success' style={{width: '3rem', height: '3rem'}}  /> : null }
+                    </div>
                   </Row>
                 </Form>
               )}

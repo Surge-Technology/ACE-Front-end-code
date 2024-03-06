@@ -8,10 +8,10 @@ export default function ValidationSchema() {
         lastName  : Yup.string().matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed").required("Last Name is required"),
         birthDate : Yup.string().required("Birth Date is required").test(
           "DOB",
-          "Age must be at least 5 years",
-          (date) => moment().diff(moment(date), "years") > 5
+          "Age must be at least 3 years",
+          (date) => moment().diff(moment(date), "years") >= 3
         ),
-        gender    : Yup.object().required("Gender is required"),
+        //gender    : Yup.object().required("Gender is required"),
         address   : Yup.string().required("Address is required"),
          city     : Yup.string().matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed").required("City is required"),
         state     : Yup.object().required("State is required"),

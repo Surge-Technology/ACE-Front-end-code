@@ -144,7 +144,8 @@ const Studentattendence = () => {
     }
   }
   const pictureFormat = (picture) => {
-    let studentPicture = picture === null ? emptyimage : `${process.env.REACT_APP_BASE_URL_BASE}auth/student/image/${picture}`;
+    
+    let studentPicture = emptyimage; // picture === null ? emptyimage : `${process.env.REACT_APP_BASE_URL_BASE}auth/student/image/${picture}`;
     return (
       <Media>
         <Media src={studentPicture} id="mediastyle" />
@@ -204,7 +205,7 @@ const Studentattendence = () => {
                   <Row>
                      <Col md={3}>
                       <FormGroup>
-                      <Label for="program">Program</Label>
+                      <Label for="program">Style</Label>
                         <Select
                           name="program"
                           value={values.program}
@@ -259,7 +260,7 @@ const Studentattendence = () => {
                 <TableHeaderColumn width="5" dataField='id' hidden >unique field</TableHeaderColumn>
                 <TableHeaderColumn width='120' dataField='photo' dataFormat={pictureFormat}>Student</TableHeaderColumn>
                 <TableHeaderColumn width='150' dataField='firstName' dataFormat={displayFullName}>Name</TableHeaderColumn>
-                <TableHeaderColumn width='120' dataField='gender' >Gender</TableHeaderColumn>
+                {/* <TableHeaderColumn width='120' dataField='gender' >Gender</TableHeaderColumn> */}
                 <TableHeaderColumn width='120' dataField='phone' >Phone</TableHeaderColumn>
               </BootstrapTable>
             </Card>

@@ -333,7 +333,7 @@ export default function PaymentType(props) {
                                             </Col>
                                             <Col md={6}>
                                                 <Label > Pin  <span className='colorRed'>*</span> </Label>
-                                                <Input name="pin" type="number" value={values.pin} placeholder="XXX" onChange={handleChange} onBlur={handleBlur} invalid={touched.pin && !!errors.pin} />
+                                                <Input name="pin" type="password" value={values.pin} placeholder="XXX" onChange={handleChange} onBlur={handleBlur} invalid={touched.pin && !!errors.pin} />
                                                 <ErrorMessage name="pin" component="div" className='errmsg'></ErrorMessage>
                                             </Col>
                                         </Row>

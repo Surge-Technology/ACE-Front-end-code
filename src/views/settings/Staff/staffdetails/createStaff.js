@@ -254,7 +254,8 @@ const createStaff = () => {
                               name="firstName"
                               placeholder="First name"
                               value={values.firstName}
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               invalid={touched.firstName && !!errors.firstName} />
                             <ErrorMessage name="firstName" component="div" className='errmsg'></ErrorMessage>
@@ -268,7 +269,8 @@ const createStaff = () => {
                               name="lastName"
                               placeholder="Last name"
                               value={values.lastName}
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               invalid={touched.lastName && !!errors.lastName} />
                             <ErrorMessage name="lastName" component="div" className='errmsg'></ErrorMessage>
@@ -294,7 +296,8 @@ const createStaff = () => {
                             <Input type="text"
                               name="phoneNumber"
                               value={values.phoneNumber}
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               invalid={touched.phoneNumber && !!errors.phoneNumber} />
                             <ErrorMessage name="phoneNumber" component="div" className='errmsg'></ErrorMessage>
@@ -309,7 +312,8 @@ const createStaff = () => {
                               name="email"
                               value={values.email}
                               defaultValue=""
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               invalid={touched.email && !!errors.email} />
                             <ErrorMessage name="email" component="div" className='errmsg'></ErrorMessage>
@@ -343,7 +347,8 @@ const createStaff = () => {
                             <Input type="text"
                               name="login"
                               value={values.login}
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               invalid={touched.login && !!errors.login} />
                             <ErrorMessage name="login" component="div" className='errmsg'></ErrorMessage>
@@ -355,7 +360,8 @@ const createStaff = () => {
                             <Input type="password"
                               name="password"
                               value={values.password}
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               disabled={params.id === "new" ? false : true}
                             />
@@ -383,7 +389,8 @@ const createStaff = () => {
                             value={values.address}
                             type="text"
                             placeholder='Address here...'
-                            onChange={(handleChange, fieldHandleChange)}
+                            onChangeCapture={handleChange}
+                            onChange={(fieldHandleChange)}
                             onBlur={handleBlur}
                             invalid={touched.address && !!errors.address} />
                           <ErrorMessage name="address" component="div" className='errmsg'></ErrorMessage>
@@ -395,7 +402,8 @@ const createStaff = () => {
                             name="address2"
                             value={values.address2}
                             type="text"
-                            onChange={(handleChange, fieldHandleChange)}
+                            onChangeCapture={handleChange}
+                            onChange={(fieldHandleChange)}
                             onBlur={handleBlur}
                            />
                          </FormGroup>
@@ -406,7 +414,8 @@ const createStaff = () => {
                             <Label  > City<span className="required">*</span></Label>
                             <Input type="text" name="city"
                               value={values.city}
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               invalid={touched.city && !!errors.city} />
                             <ErrorMessage name="city" component="div" className='errmsg'></ErrorMessage>
@@ -427,7 +436,8 @@ const createStaff = () => {
                             <Label  > Zipcode<span className="required">*</span></Label>
                             <Input type="number" name="zipcode"
                               value={values.zipcode}
-                              onChange={(handleChange, fieldHandleChange)}
+                              onChangeCapture={handleChange}
+                              onChange={(fieldHandleChange)}
                               onBlur={handleBlur}
                               invalid={touched.zipcode && !!errors.zipcode} />
                             <ErrorMessage name="zipcode" component="div" className='errmsg'></ErrorMessage>

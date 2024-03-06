@@ -6,7 +6,7 @@ import Select from 'react-select';
 import PaymentType from '../../../hoc/paymentType';
 import ValidationSchema from './ValidationSchema';
 import Axios from "../../../hoc/axiosConfig";
-import student1 from "../../../assets/images/avatars/student.jpg";
+import studentImg from "../../../assets/images/avatars/studentImg.jpg";
 import Swal from 'sweetalert2';
 import moment from 'moment/moment';
 import axios from 'axios';
@@ -15,7 +15,7 @@ import DatePicker from "react-datepicker";
 import CardApp from 'src/hoc/cardPayment/cardApp';
 
 let initialData = {
- firstName:"",lastName:"",birthDate:"",gender:'',address:"",address2:"",city:"",state:"",zipcode:"",
+ firstName:"",lastName:"",birthDate:"",address:"",address2:"",city:"",state:"",zipcode:"",
   gfirstName:"",glastName:"",gaddress:"",gaddress2:"",gcity:"",gstate:"",gzipcode:"",email:"",phone:"",
  contractNameSelect:"",paymentTypeModalToggle:false,
   memberFrequency:"",fee:"",totalFee:"",discount:"",status:"New",sports:"",programName:"",batch:"",contractNameOptions:"",
@@ -24,7 +24,7 @@ let initialData = {
 }
 function createStudent() { 
   const [initialStudentFields,setState] = useState(initialData);
-    const {firstName,lastName,birthDate,gender,address,address2,city,state,zipcode,
+    const {firstName,lastName,birthDate,address,address2,city,state,zipcode,
       gfirstName,glastName,gaddress,gaddress2,gcity,gstate,gzipcode,email,phone,
        contractNameSelect,paymentTypeModalToggle,
       memberFrequency,fee,totalFee,discount,status,sports,programName,batch,contractNameOptions,
@@ -33,7 +33,7 @@ function createStudent() {
       member,memberOptions,sportNprogramView} =initialStudentFields;
   const [studentImage, setStudentImage] = useState("");
   let history = useNavigate();
-  let previewImage = student1;
+  let previewImage = studentImg;
   
   const fieldHandleChange=(e)=>{
     const { name, value } = e.target;
@@ -64,21 +64,21 @@ function createStudent() {
     }))
   }
   const onSubmit=(values)=>{ 
-     if(PaymentData===""){
-      Swal.fire({
-        position : 'center',
-        icon     : 'info',
-        title    : 'Please select payment type..!',
-        showConfirmButton: false,
-        timer    : 1500
-      })
-    }else{
+    //  if(PaymentData===""){
+    //   Swal.fire({
+    //     position : 'center',
+    //     icon     : 'info',
+    //     title    : 'Please select payment type..!',
+    //     showConfirmButton: false,
+    //     timer    : 1500
+    //   })
+    // }else{
       setState((prevState)=>({...prevState,loader:true}))
       let payload = {
         "firstName" : values.firstName,
         "lastName"  : values.lastName,
         "dob"       : moment(values.birthDate).format("YYYY-MM-DD"),
-        "gender"    : values.gender.value,
+        // "gender"    : values.gender.value,
         "photo"     : studentImageNameForApi!==""?studentImageNameForApi:null,
         "sameAsStudent" : guardianCheckbox,
         "phone"     : values.phone,
@@ -119,37 +119,37 @@ function createStudent() {
           "attachment": contractImageName,
         }
      }
-       if(PaymentData.paymentType.label==="AutoPay"){
-        payload.autoPay = {
-           "accountNumber" : PaymentData.accountNo,
-           "routingNumber" :  PaymentData.routingNo,
-           "chargeAmount"  : PaymentData.chargeAmount
-         }
-        }
-       if(PaymentData.paymentType.label==="Card"){
-          payload.usAePayCardPaymentResponse= {
-          "amount": PaymentData.chargeAmount, 
-          "currency": PaymentData.currency.value,  
-          "description": PaymentData.description,
-          "cardNumber": PaymentData.cardNumber,
-          "cardExpiryDate":moment(PaymentData.expireDate).format("YYYY-MM-DD"),
-          "cardCode": PaymentData.pin
-        }
-       }
-       if(PaymentData.paymentType.label==="Cheque"){
-           payload.usAePayChequePayment = {
-              "payeeName"    : PaymentData.payeeName,
-              "chequeNumber" : PaymentData.chequeNo,
-              "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
-              "amount" : PaymentData.chargeAmount,
-              "frontPictureAttachment":PaymentData.frontPictureAttachment,
-              "backPictureAttachment":PaymentData.backPictureAttachment,
-              // "checkAccountNumber": PaymentData.accountNo,
-              // "checkRoutingNumber": PaymentData.routingNo,
-            }
-        }
+      //  if(PaymentData.paymentType.label==="AutoPay"){
+      //   payload.autoPay = {
+      //      "accountNumber" : PaymentData.accountNo,
+      //      "routingNumber" :  PaymentData.routingNo,
+      //      "chargeAmount"  : PaymentData.chargeAmount
+      //    }
+      //   }
+      //  if(PaymentData.paymentType.label==="Card"){
+      //     payload.usAePayCardPaymentResponse= {
+      //     "amount": PaymentData.chargeAmount, 
+      //     "currency": PaymentData.currency.value,  
+      //     "description": PaymentData.description,
+      //     "cardNumber": PaymentData.cardNumber,
+      //     "cardExpiryDate":moment(PaymentData.expireDate).format("YYYY-MM-DD"),
+      //     "cardCode": PaymentData.pin
+      //   }
+      //  }
+      //  if(PaymentData.paymentType.label==="Cheque"){
+      //      payload.usAePayChequePayment = {
+      //         "payeeName"    : PaymentData.payeeName,
+      //         "chequeNumber" : PaymentData.chequeNo,
+      //         "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
+      //         "amount" : PaymentData.chargeAmount,
+      //         "frontPictureAttachment":PaymentData.frontPictureAttachment,
+      //         "backPictureAttachment":PaymentData.backPictureAttachment,
+      //         // "checkAccountNumber": PaymentData.accountNo,
+      //         // "checkRoutingNumber": PaymentData.routingNo,
+      //       }
+      //   }
            axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
-               axios.post(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/payment-type/${PaymentData.paymentType.value}/contract-promotion/${contractNameSelect.value}/contract-status/New/student`,payload).then((res)=>{
+               axios.post(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/contract-promotion/${contractNameSelect.value}/contract-status/New/student`,payload).then((res)=>{
                 toast.success("Student registered successfully", { theme: "colored" })
                   setTimeout(() => {
                     history("/studentTabs/2");
@@ -163,7 +163,7 @@ function createStudent() {
                        'Please try again '
                     )
             })
-    }
+    //}
   }
   const fileHandleChange=(e)=>{
     let file =URL.createObjectURL(e.target.files[0]);
@@ -210,16 +210,25 @@ function createStudent() {
       Swal.fire({
         position: 'center',
         icon: 'info',
-        title: 'Please select contract first..!',
+        //title: 'Please select contract first..!',
+        title: 'Payment Method for the client not integrated',
         showConfirmButton: false,
         timer: 1500
       })
     }else{
-      setState((prevState)=>({
-        ...prevState,
-        paymentTypeModalToggle:!paymentTypeModalToggle
-      })) 
-    }     
+      Swal.fire({
+        position: 'center',
+        icon: 'info',
+        //title: 'Please select contract first..!',
+        title: 'Payment Method for the client not integrated',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    //   setState((prevState)=>({
+    //     ...prevState,
+    //     paymentTypeModalToggle:!paymentTypeModalToggle
+    //   })) 
+     }     
   }
   const callBackpaymentData=(e)=>{
      if(e==="payment"){
@@ -451,12 +460,12 @@ function createStudent() {
                     <Row>  
                         <Col md={4}>
                           <Label > First Name <span className='colorRed'>*</span></Label>
-                            <Input name="firstName" type="text" value={values.firstName} onBlur={handleBlur} onChange={(handleChange,fieldHandleChange)} invalid={touched.firstName &&   !!errors.firstName } />
+                            <Input name="firstName" type="text" value={values.firstName} onBlur={handleBlur} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.firstName &&   !!errors.firstName } />
                           <ErrorMessage name="firstName" component="div"  className='errmsg'></ErrorMessage>
                         </Col>
                         <Col md={5}>
                           <Label > Last Name <span className='colorRed'>*</span></Label>
-                          <Input type="text" name="lastName" value={values.lastName} onBlur={handleBlur} onChange={(handleChange,fieldHandleChange)} invalid={touched.lastName &&!!errors.lastName } />
+                          <Input type="text" name="lastName" value={values.lastName} onBlur={handleBlur} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.lastName &&!!errors.lastName } />
                           <FormFeedback>{errors.lastName}</FormFeedback>
                         </Col>
                         <Col md={3}>
@@ -472,7 +481,7 @@ function createStudent() {
                         </Col>
                       </Row>
                       <Row>
-                        <Col md={3}>
+                        {/* <Col md={3}>
                           <Label > Gender <span className='colorRed'>*</span> </Label>
                            <Select
                               name="gender"
@@ -482,21 +491,21 @@ function createStudent() {
                               { value: 'Other', label: 'Other' },]}
                             />
                             <ErrorMessage name="gender" component="div"  className='errmsg'></ErrorMessage>
-                        </Col>
+                        </Col> */}
                         <Col md={9}>
                           <Label > Address <span className='colorRed'>*</span></Label>
-                         <Input name="address" type="text" value={values.address} onChange={(handleChange,fieldHandleChange)} invalid={touched.address &&   !!errors.address } />
+                         <Input name="address" type="text" value={values.address} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.address &&   !!errors.address } />
                           <FormFeedback>{errors.address}</FormFeedback>
                         </Col>
                         <div className='height15'></div>
                         <Col>
-                           <Input name="address2" type="text" value={values.address2} onChange={(handleChange,fieldHandleChange)}  />
+                           <Input name="address2" type="text" value={values.address2} onChangeCapture={handleChange} onChange={(fieldHandleChange)}  />
                         </Col>
                       </Row>
                       <Row>
                         <Col md={5}>
                           <Label > City <span className='colorRed'>*</span> </Label>
-                          <Input name="city" type="text" value={values.city} onChange={(handleChange,fieldHandleChange)} invalid={touched.city &&   !!errors.city } />
+                          <Input name="city" type="text" value={values.city} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.city &&   !!errors.city } />
                           <FormFeedback>{errors.city}</FormFeedback>
                         </Col>
                         <Col md={4}>
@@ -511,7 +520,7 @@ function createStudent() {
                         </Col>
                         <Col md={3}>
                           <Label > Zipcode <span className='colorRed'>*</span> </Label>
-                           <Input name="zipcode" type="number" value={values.zipcode} onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur} invalid={touched.zipcode &&   !!errors.zipcode } />
+                           <Input name="zipcode" type="number" value={values.zipcode} onChangeCapture={handleChange} onChange={(fieldHandleChange)} onBlur={handleBlur} invalid={touched.zipcode &&   !!errors.zipcode } />
                           <FormFeedback>{errors.zipcode}</FormFeedback>
                         </Col>
                       </Row>
@@ -521,12 +530,12 @@ function createStudent() {
                       <Row>
                         <Col md={6}>
                           <Label > First Name  <span className='colorRed'>*</span> </Label>
-                             <Input name="gfirstName" type="text" value={values.gfirstName} onChange={(handleChange,fieldHandleChange)} invalid={touched.gfirstName &&   !!errors.gfirstName } />
+                             <Input name="gfirstName" type="text" value={values.gfirstName} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.gfirstName &&   !!errors.gfirstName } />
                           <FormFeedback>{errors.gfirstName}</FormFeedback>
                         </Col>
                         <Col md={6}>
                           <Label > Last Name  <span className='colorRed'>*</span></Label>
-                           <Input name="glastName" type="text" value={values.glastName} onChange={(handleChange,fieldHandleChange)} invalid={touched.glastName &&   !!errors.glastName } />
+                           <Input name="glastName" type="text" value={values.glastName} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.glastName &&   !!errors.glastName } />
                           <FormFeedback>{errors.glastName}</FormFeedback>
                         </Col>
                       </Row><div className='height15'></div>
@@ -537,20 +546,20 @@ function createStudent() {
                       <Row>
                         <Col md={12}>
                         <Label > Address </Label>
-                           <Input name="gaddress" type="text" value={values.gaddress} disabled={guardianCheckbox?true:false} onChange={(handleChange,fieldHandleChange)} invalid={touched.gaddress &&   !!errors.gaddress } />
+                           <Input name="gaddress" type="text" value={values.gaddress} disabled={guardianCheckbox?true:false} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.gaddress &&   !!errors.gaddress } />
                           <FormFeedback>{errors.gaddress}</FormFeedback>
                         </Col>
                       </Row>
                       <div className='height15'></div>
                        <Row>
                         <Col>
-                            <Input name="gaddress2" type="text" value={values.gaddress2} disabled={guardianCheckbox?true:false} onChange={(handleChange,fieldHandleChange)} />
+                            <Input name="gaddress2" type="text" value={values.gaddress2} disabled={guardianCheckbox?true:false} onChangeCapture={handleChange} onChange={(fieldHandleChange)} />
                         </Col>
                       </Row>
                       <Row>
                         <Col md={5}>
                           <Label > City </Label>
-                           <Input name="gcity" type="text" value={values.gcity} disabled={guardianCheckbox?true:false} onChange={(handleChange,fieldHandleChange)} invalid={touched.gcity &&   !!errors.gcity } />
+                           <Input name="gcity" type="text" value={values.gcity} disabled={guardianCheckbox?true:false} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.gcity &&   !!errors.gcity } />
                           <FormFeedback>{errors.gcity}</FormFeedback>
                         </Col>
                         <Col md={4}>
@@ -566,19 +575,19 @@ function createStudent() {
                         </Col>
                         <Col md={3}>
                           <Label > Zipcode </Label>
-                           <Input name="gzipcode" type="number" value={values.gzipcode} disabled={guardianCheckbox?true:false} onChange={(handleChange,fieldHandleChange)} invalid={touched.gzipcode &&   !!errors.gzipcode } />
+                           <Input name="gzipcode" type="number" value={values.gzipcode} disabled={guardianCheckbox?true:false} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.gzipcode &&   !!errors.gzipcode } />
                           <FormFeedback>{errors.gzipcode}</FormFeedback>
                         </Col>
                       </Row>
                       <Row>
                         <Col md={7}> 
                           <Label > Email  <span className='colorRed'>*</span> </Label>
-                          <Input name="email" type="text" value={values.email} onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur} invalid={touched.email &&   !!errors.email } />
+                          <Input name="email" type="text" value={values.email} onChangeCapture={handleChange} onChange={(fieldHandleChange)} onBlur={handleBlur} invalid={touched.email &&   !!errors.email } />
                           <FormFeedback>{errors.email}</FormFeedback>
                         </Col>
                         <Col md={5}>
                           <Label > Phone <span className='colorRed'>*</span> </Label>
-                          <Input name="phone" type="text" value={values.phone} onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur} invalid={touched.phone &&   !!errors.phone } />
+                          <Input name="phone" type="text" value={values.phone} onChangeCapture={handleChange} onChange={(fieldHandleChange)} onBlur={handleBlur} invalid={touched.phone &&   !!errors.phone } />
                           <FormFeedback>{errors.phone}</FormFeedback>
                         </Col>
                       </Row>

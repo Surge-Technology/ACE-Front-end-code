@@ -28,10 +28,18 @@ export default function StudentEventModal(props) {
      modelToggleHandle()
    }
    const modelToggleHandle =()=>{
-      setState((prevState)=>({
-          ...prevState,
-          paymentTypeModalToggle:!paymentTypeModalToggle
-        }))    
+    Swal.fire({
+      position: 'center',
+      icon: 'info',
+      //title: 'Please select contract first..!',
+      title: 'Payment Method for the client not integrated.',
+      showConfirmButton: false,
+      timer: 1500
+    })
+      // setState((prevState)=>({
+      //     ...prevState,
+      //     paymentTypeModalToggle:!paymentTypeModalToggle
+      //   }))    
     }
     useEffect(()=>{
        Axios.get(`event/${props.eventId}`).then((res)=>{
@@ -157,15 +165,15 @@ export default function StudentEventModal(props) {
     }))
   }
   const submitEventData=()=>{ 
-    if(PaymentData===""){
-      Swal.fire({
-        position : 'center',
-        icon     : 'info',
-        title    : 'Please select payment type..!',
-        showConfirmButton: false,
-        timer    : 1500
-      })
-    }else{
+    // if(PaymentData===""){
+    //   Swal.fire({
+    //     position : 'center',
+    //     icon     : 'info',
+    //     title    : 'Please select payment type..!',
+    //     showConfirmButton: false,
+    //     timer    : 1500
+    //   })
+    // }else{
       setState((prevState)=>({...prevState,loader:true}))
        if(props.studentTypeData.currentStudentId===""){
         //gueststudent
@@ -196,38 +204,38 @@ export default function StudentEventModal(props) {
           },
           "customRangeEventEnrollmentDate":  eventEnrollmentData,
           }
-          if(PaymentData.paymentType.label==="AutoPay"){
-            payload.autoPay = {
-              "accountNumber" : PaymentData.accountNo,
-              "routingNumber" :  PaymentData.routingNo,
-              "chargeAmount"  : PaymentData.chargeAmount
-            }
-            }
-          if(PaymentData.paymentType.label==="Card"){
+          // if(PaymentData.paymentType.label==="AutoPay"){
+          //   payload.autoPay = {
+          //     "accountNumber" : PaymentData.accountNo,
+          //     "routingNumber" :  PaymentData.routingNo,
+          //     "chargeAmount"  : PaymentData.chargeAmount
+          //   }
+          //   }
+          // if(PaymentData.paymentType.label==="Card"){
             
-            payload.usAePayCardPaymentResponse= {
-              "amount": PaymentData.chargeAmount, 
-              "currency": PaymentData.currency.value,  
-              "description": PaymentData.description,
-              "cardNumber": PaymentData.cardNumber,
-              "cardExpiryDate":moment(PaymentData.expireDate).format("YYYY-MM-DD"),
-              "cardCode": PaymentData.pin
-            }
-          }
-          if(PaymentData.paymentType.label==="Cheque"){
-             payload.usAePayChequePayment = {
-              "payeeName"    : PaymentData.payeeName,
-              "chequeNumber" : PaymentData.chequeNo,
-              "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
-              "amount" : PaymentData.chargeAmount,
-              "frontPictureAttachment":PaymentData.frontPictureAttachment,
-              "backPictureAttachment":PaymentData.backPictureAttachment,
-              "checkAccountNumber": PaymentData.accountNo,
-              "checkRoutingNumber": PaymentData.routingNo,
-            }
-          }
+          //   payload.usAePayCardPaymentResponse= {
+          //     "amount": PaymentData.chargeAmount, 
+          //     "currency": PaymentData.currency.value,  
+          //     "description": PaymentData.description,
+          //     "cardNumber": PaymentData.cardNumber,
+          //     "cardExpiryDate":moment(PaymentData.expireDate).format("YYYY-MM-DD"),
+          //     "cardCode": PaymentData.pin
+          //   }
+          // }
+          // if(PaymentData.paymentType.label==="Cheque"){
+          //    payload.usAePayChequePayment = {
+          //     "payeeName"    : PaymentData.payeeName,
+          //     "chequeNumber" : PaymentData.chequeNo,
+          //     "date"         : moment( PaymentData.date).format("YYYY-MM-DD"),
+          //     "amount" : PaymentData.chargeAmount,
+          //     "frontPictureAttachment":PaymentData.frontPictureAttachment,
+          //     "backPictureAttachment":PaymentData.backPictureAttachment,
+          //     "checkAccountNumber": PaymentData.accountNo,
+          //     "checkRoutingNumber": PaymentData.routingNo,
+          //   }
+          // }
               axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
-            axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/payment-type/${PaymentData.paymentType.value}/event-registration`,payload).then((res)=>{
+            axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/event-registration`,payload).then((res)=>{
                toast.success("Registered successfully", { theme: "colored" })
               setState((prevState)=>({...prevState,loader:false}))
               if(res.data.cardPaymentResponse!=null){
@@ -257,32 +265,32 @@ export default function StudentEventModal(props) {
           "totalFee": finalTotalFee,
           "customRangeEventEnrollmentDate": eventEnrollmentData,
       }
-      if(PaymentData.paymentType.label==="AutoPay"){
-        existingstudentPayload.autoPay = {
-           "accountNumber" : PaymentData.accountNo,
-           "routingNumber" :  PaymentData.routingNo,
-           "chargeAmount"  : PaymentData.chargeAmount
-         }
-        }
-       if(PaymentData.paymentType.label==="Card"){
-        existingstudentPayload.cardPaymentResponse = {
-             "amount": PaymentData.chargeAmount,
-            "currency": PaymentData.currency.value,
-            "description": PaymentData.description
-         } 
-       }
-       if(PaymentData.paymentType.label==="Cheque"){
-        existingstudentPayload.chequePayment = {
-           "payeeName"    : PaymentData.payeeName,
-           "chequeNumber" : PaymentData.chequeNo,
-           "date"         : moment(PaymentData.date).format("YYYY-MM-DD"),
-           "chargeAmount" : PaymentData.chargeAmount,
-          "frontPictureAttachment":PaymentData.frontPictureAttachment,
-          "backPictureAttachment":PaymentData.backPictureAttachment
-         }
-       }
+      // if(PaymentData.paymentType.label==="AutoPay"){
+      //   existingstudentPayload.autoPay = {
+      //      "accountNumber" : PaymentData.accountNo,
+      //      "routingNumber" :  PaymentData.routingNo,
+      //      "chargeAmount"  : PaymentData.chargeAmount
+      //    }
+      //   }
+      //  if(PaymentData.paymentType.label==="Card"){
+      //   existingstudentPayload.cardPaymentResponse = {
+      //        "amount": PaymentData.chargeAmount,
+      //       "currency": PaymentData.currency.value,
+      //       "description": PaymentData.description
+      //    } 
+      //  }
+      //  if(PaymentData.paymentType.label==="Cheque"){
+      //   existingstudentPayload.chequePayment = {
+      //      "payeeName"    : PaymentData.payeeName,
+      //      "chequeNumber" : PaymentData.chequeNo,
+      //      "date"         : moment(PaymentData.date).format("YYYY-MM-DD"),
+      //      "chargeAmount" : PaymentData.chargeAmount,
+      //     "frontPictureAttachment":PaymentData.frontPictureAttachment,
+      //     "backPictureAttachment":PaymentData.backPictureAttachment
+      //    }
+      //  }
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
-       axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/student/${props.studentTypeData.currentStudentId}/payment-type/${PaymentData.paymentType.value}/event-registration`,existingstudentPayload).then((res)=>{
+       axios.post(`${process.env.REACT_APP_BASE_URL}/custom-range-event/${props.eventId}/student/${props.studentTypeData.currentStudentId}/event-registration`,existingstudentPayload).then((res)=>{
          toast.success("Registered successfully", { theme: "colored" })
        setState((prevState)=>({...prevState,loader:false}))
        if(res.data.cardPaymentResponse!=null){
@@ -301,7 +309,7 @@ export default function StudentEventModal(props) {
              )
         })
       }
-    }
+    //}
   }
   const toggle=()=> {
     setState((prevState)=>({...prevState,tooltipOpen: !tooltipOpen}))

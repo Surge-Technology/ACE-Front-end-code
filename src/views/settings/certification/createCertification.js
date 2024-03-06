@@ -64,7 +64,11 @@ const createCertification = () => {
   const ValidationSchema = () => Yup.object().shape({
     programName: Yup.string().required('Program Name is Required'),
     selectAwards: Yup.object().required('Awards is Required'),
-     bodyCopy: Yup.string().required('Body is Required'),
+     bodyCopy: Yup.string().required('Body is Required').test(
+      "Template Body",
+      "Template body length is too long",
+      bodyCopy => bodyCopy.length <=255
+     ),
   });
   const fileHandleChange=(e)=>{
      let file =URL.createObjectURL(e.target.files[0]);
@@ -103,8 +107,34 @@ const createCertification = () => {
          imageName:res.data.backgroundPhoto,
          bodyCopy:res.data.templateBody, 
        }))
-       setStudentImage(process.env.REACT_APP_BASE_URL_BASE+"auth/certificate/image/"+res.data.backgroundPhoto)
-        }).catch(err=>{
+       
+      //  setStudentImage(process.env.REACT_APP_BASE_URL_BASE+"auth/certificate/image/"+res.data.backgroundPhoto)
+      if (res.data.backgroundPhoto !== "" && res.data.backgroundPhoto !== null ) {
+        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+        Axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/certificate/image/${res.data.backgroundPhoto}`, { responseType: 'arraybuffer' })
+            .then((response) => {
+                // Check if the response status is successful (200)
+                if (response.status === 200) {
+                    const imageData = btoa(
+                        new Uint8Array(response.data).reduce(
+                            (data, byte) => data + String.fromCharCode(byte),
+                            ''
+                        )
+                    );
+                    // Set the base data as the image source
+                    setStudentImage(`data:${response.headers['content-type'].toLowerCase()};base64,${imageData}`);
+
+                    console.log("Certificate Image Data:", response);
+                } else {
+                    // Handle other response statuses (if needed)
+                    console.error("Failed to fetch image:", response.statusText);
+                }
+            })
+            .catch(err => {
+                console.log('error loading image');
+                Swal.fire(err.response.data.message, 'Please try again later');
+            })}
+    }).catch(err=>{
         Swal.fire( err.response.data.message, 'Please try again '  ) 
       })
     }
@@ -146,7 +176,7 @@ const createCertification = () => {
                       <Row>
                         <Col md={12}>
                         <Label for="programName"> Program Name </Label>
-                          <Input name="programName" type="text" value={values.programName} onChange={(e)=>(FieldHandleChange("programName",e))}/>
+                          <Input name="programName" type="text" value={values.programName} onChangeCapture={handleChange} onChange={(e)=>(FieldHandleChange("programName",e))}/>
                           <ErrorMessage name="programName" component="div"  className='errmsg'></ErrorMessage>
                         </Col>
                       </Row>
@@ -169,7 +199,7 @@ const createCertification = () => {
                       <Row>
                         <Col md={12}>
                           <Label for="bodyCopy">Body Copy </Label>
-                          <Input  name="bodyCopy"  type="textarea" value={values.bodyCopy} onChange={(e)=>(FieldHandleChange("bodyCopy",e))} placeholder='content display in certification...'  rows="2 " />  
+                          <Input  name="bodyCopy"  type="textarea" value={values.bodyCopy} onChangeCapture={handleChange} onChange={(e)=>(FieldHandleChange("bodyCopy",e))} placeholder='content display in certification...'  rows="2 " />  
                           <ErrorMessage name="bodyCopy" component="div"  className='errmsg'></ErrorMessage>
                         </Col>
                       </Row>

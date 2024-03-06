@@ -248,24 +248,24 @@ function CreateInquiry() {
                     <Row> 
                       <Col md={6}>
                           <Label > First Name <span className='colorRed'>*</span></Label>
-                          <Input name="firstName" type="text" value={values.firstName} onBlur={handleBlur} placeholder='Enter First Name' onChange={(handleChange,fieldHandleChange)}/>
+                          <Input name="firstName" type="text" value={values.firstName} onBlur={handleBlur} placeholder='Enter First Name' onChangeCapture={handleChange} onChange={(fieldHandleChange)}/>
                         <ErrorMessage name="firstName" component="div"  className='errmsg'></ErrorMessage>
                       </Col>
                       <Col md={6}>
                         <Label > Last Name <span className='colorRed'>*</span></Label>
-                        <Input type="text" name="lastName" value={values.lastName} onBlur={handleBlur} placeholder='Enter Last Name' onChange={(handleChange,fieldHandleChange)}/>
+                        <Input type="text" name="lastName" value={values.lastName} onBlur={handleBlur} placeholder='Enter Last Name' onChangeCapture={handleChange} onChange={(fieldHandleChange)}/>
                         <ErrorMessage name="lastName" component="div"  className='errmsg'></ErrorMessage>
                       </Col>
                     </Row>
                     <Row> 
                       <Col md={6}>
                       <Label > Phone <span className='colorRed'>*</span> </Label>
-                          <Input name="phone" type="text" value={values.phone} placeholder='Enter Phone Number' onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur}/>
+                          <Input name="phone" type="text" value={values.phone} placeholder='Enter Phone Number'onChangeCapture={handleChange} onChange={(fieldHandleChange)} onBlur={handleBlur}/>
                          <ErrorMessage name="phone" component="div"  className='errmsg'></ErrorMessage>
                       </Col>
                       <Col md={6}>
                       <Label > Email  <span className='colorRed'>*</span> </Label>
-                          <Input name="email" type="text" value={values.email} placeholder='Enter Email' onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur}/>
+                          <Input name="email" type="text" value={values.email} placeholder='Enter Email' onChangeCapture={handleChange} onChange={(fieldHandleChange)} onBlur={handleBlur}/>
                           <ErrorMessage name="email" component="div"  className='errmsg'></ErrorMessage>
                       </Col>
                     </Row>
@@ -304,7 +304,7 @@ function CreateInquiry() {
                     <Row>
                       <Col md={6}>
                         <Label > Location <span className='colorRed'>*</span> </Label>
-                            <Input name="Location" type="text" value={values.Location} onChange={(handleChange,fieldHandleChange)} placeholder='Enter Location' onBlur={handleBlur}/>
+                            <Input name="Location" type="text" value={values.Location} onChangeCapture={handleChange} onChange={(fieldHandleChange)} placeholder='Enter Location' onBlur={handleBlur}/>
                           <ErrorMessage name="Location" component="div"  className='errmsg'></ErrorMessage>
                         </Col>
                         <Col md={6}>
@@ -334,11 +334,11 @@ function CreateInquiry() {
                    {MarketingSources.label==="Refer By Friend"?   <Row>
                         <Col md={5}>
                           <Label > Refered by  </Label>
-                          <Input name="referedBy" type="text" value={referedBy} placeholder="ex: James Smith"  onBlur={(e)=>referedNameHandle(e,"referedBy")} onChange={(handleChange,fieldHandleChange)} />
+                          <Input name="referedBy" type="text" value={referedBy} placeholder="ex: James Smith"  onBlur={(e)=>referedNameHandle(e,"referedBy")} onChangeCapture={handleChange} onChange={(fieldHandleChange)} />
                         </Col>
                         <Col md={5}>
                           <Label > Email</Label> 
-                           <Input name="referedEmail" type="text" value={referedEmail} placeholder="ex: Jamesmith@gmail.com" onChange={(handleChange,fieldHandleChange)}   />
+                           <Input name="referedEmail" type="text" value={referedEmail} placeholder="ex: Jamesmith@gmail.com" onChangeCapture={handleChange} onChange={(fieldHandleChange)}   />
                         </Col>
                      {inquiryStatus?inquiryStatus.label==="Trial Class"?<Col md={2}>
                         <Label > Consent Form</Label>
@@ -351,7 +351,7 @@ function CreateInquiry() {
                       <Row> 
                         <Col md={10}>
                         <Label > Notes</Label>
-                          <Input  type="textarea" name="notes" value={values.notes} onChange={(handleChange,fieldHandleChange)} placeholder='Enter some extra information...'  rows="3" />  
+                          <Input  type="textarea" name="notes" value={values.notes} onChangeCapture={handleChange} onChange={(fieldHandleChange)} placeholder='Enter some extra information...'  rows="3" />  
                         </Col>
                         {inquiryStatus?inquiryStatus.label==="Trial Class"?  <Col md={2}>
                         <Label > Consent Form</Label>

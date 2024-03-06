@@ -102,7 +102,7 @@ export default function EditStatusModal(props) {
           let payload ={}
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.put(`${process.env.REACT_APP_BASE_URL}/student/${props.studentId}/student-status/testing-anticipated`,payload).then((res)=>{
-          toast.success("Anticipated Successfully", { theme: "colored" })
+          toast.success("Marked as Anticipated", { theme: "colored" })
           setTimeout(() => {
             props.callBackmodel("editStatus");
         }, 1000);      
@@ -114,7 +114,7 @@ export default function EditStatusModal(props) {
          let payload ={}
         axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
         axios.put(`${process.env.REACT_APP_BASE_URL}/student/${props.studentId}/student-status/testing-approved`,payload).then((res)=>{
-          toast.success("Approved Successfully", { theme: "colored" })
+          toast.success("Approved for Testing", { theme: "colored" })
           setTimeout(() => {
             props.callBackmodel("editStatus");
         }, 1000);      

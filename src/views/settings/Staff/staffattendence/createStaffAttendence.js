@@ -271,7 +271,7 @@ const createStaffAttendence = () => {
                     <Col md={3}>
                       <FormGroup>
                         <Label for="pin" >Pin</Label>
-                         <Input type="number" name="pin" value={values.pin} onChange={handleChange} />  
+                         <Input type="password" name="pin" value={values.pin} onChange={handleChange} />  
                       </FormGroup>
                     </Col>
                     <Col md={6}>
