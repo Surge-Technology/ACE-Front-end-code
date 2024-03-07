@@ -117,6 +117,7 @@ export default function ContractDetailsList() {
         Loading...
       </Spinner> : null}
       <Card >
+    
         <CardBody className='cardbg'>
           <h4><b>Contract Details List</b></h4>
           <div className='height15'></div>

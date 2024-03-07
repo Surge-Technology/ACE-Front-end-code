@@ -224,7 +224,8 @@ const createcontract = () => {
                               <FormGroup>
                                 <Label for="programName">Name<span className="required">*</span></Label>
                                 <Input name="programName" placeholder='Contract name' type="text" value={values.programName} onChange={handleChange} onBlur={handleBlur}
-                                  invalid={touched.programName && !!errors.programName} />
+                                  invalid={touched.programName && !!errors.programName}
+                                  disabled={enrolled?true:false} />
                                 <ErrorMessage name="programName" component="div" className='errmsg'></ErrorMessage>
                               </FormGroup>
                             </Col>
@@ -236,6 +237,7 @@ const createcontract = () => {
                                 <InputGroup>
                                   <Input placeholder="0.00" type="number" min="1" onKeyPress={preventMinus} name="pricing" step="1"
                                     onChange={handleChange} onBlur={handleBlur} value={values.pricing}
+                                    disabled={enrolled?true:false}
                                     invalid={touched.pricing && !!errors.pricing} />
                                 </InputGroup>
                                 <ErrorMessage name="pricing" component="div" className='errmsg'></ErrorMessage>
@@ -252,6 +254,7 @@ const createcontract = () => {
                                       value={values.lengths}
                                       onChange={(selectedOption) => (form.setFieldValue('lengths', selectedOption),allfrequencies(selectedOption))}
                                       onBlur={() => { form.setFieldTouched('lengths') }}
+                                      isDisabled={enrolled?true:false}
                                     />
                                   )}
                                 </Field>

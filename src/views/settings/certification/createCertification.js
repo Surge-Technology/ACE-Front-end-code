@@ -193,7 +193,7 @@ const createCertification = () => {
                         </Col>
                         <Col md={7}>
                           <Label for="programName"> BackGround Image </Label>
-                          <Input name="backgroundImage" type="file"  accept=".jpg, .jpeg, .png" value={values.backgroundImage} onChange={(e)=>(fileHandleChange(e))}/>
+                          <Input name="backgroundImage" type="file"  accept=".jpg, .jpeg, .png" value={backgroundImage.name} onChange={(e)=>(fileHandleChange(e))} required />
                         </Col>
                       </Row>
                       <Row>

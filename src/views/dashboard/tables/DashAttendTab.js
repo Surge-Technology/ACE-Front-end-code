@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card, CardBody,TabContent, TabPane, Nav, NavItem, NavLink, Row, Col} from 'reactstrap';
 import classnames from 'classnames';  
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import StudentAttandList from './StudentAttandList';
 import StaffAttendList from './StaffAttendList';

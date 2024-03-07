@@ -9,14 +9,15 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import moment from 'moment/moment';
-import Select from 'react-select'; 
+import Select from 'react-select';
 import Swal from 'sweetalert2';
 import DatePicker from "react-datepicker";
 import emptyimage from "../../assets/images/avatars/userempty.jpg";
 import { CSpinner } from '@coreui/react';
+
 let dateToday = moment(new Date()).format("YYYY-MM-DD");
 const createLevelTesting = () => {
-  const [state, setState] = useState({ startDate: new Date(), master: null,program:null, class: null, loader: false });
+  const [state, setState] = useState({ startDate: new Date(), master: null, program: null, class: null, loader: false });
   const [programOptions, setProgramOptions] = useState([]);
   const [masterOptions, setMasterOptions] = useState([]);
   const [classOptions, setClassOptions] = useState([]);
@@ -25,13 +26,15 @@ const createLevelTesting = () => {
   const [studentAttendenceList, setStudentAttendenceList] = useState([]);
   const [studentDetails, setStudentDetails] = useState([]);
   const [showLoading, setShowLoading] = useState('');
+  const [promoted,setPromoted] = useState ('');
 
-   const navigate = useNavigate();
+
+  const navigate = useNavigate();
   useEffect(() => {
-     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL_BASE}api/program-names`)
       .then((res) => {
-         let programs = []
+        let programs = []
         res.data.map((key, index) => {
           programs.push({ value: key.id, label: key.name });
         })
@@ -44,7 +47,18 @@ const createLevelTesting = () => {
           Swal.fire('Oops, something went wrong. Please try again later');
         }
       })
-  }, []);
+      axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+      axios.get(`${process.env.REACT_APP_BASE_URL}/student-statuses/${dateToday}`)
+        .then((response) => {
+          console.log("res", response);
+          if (response.status === 200) {
+            setStudentAttendenceList(response.data);
+          }
+        })
+        .catch((err) => {
+          Swal.fire(err.response.data.message, 'Please try again later');
+        });
+    }, []);
   const initialValues = {
     startDate: state.startDate,
     master: state.master,
@@ -54,45 +68,49 @@ const createLevelTesting = () => {
     values.startDate = date;
     setState({ ...values });
     let dat = moment(date).format("YYYY-MM-DD")
-    axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
     axios.get(`${process.env.REACT_APP_BASE_URL}/student-statuses/${dat}`).then(response => {
-    if(response.status===200){
-      setStudentAttendenceList(response.data);
-     }
+      if (response.status === 200) {
+        setStudentAttendenceList(response.data);
+      }
     }).catch((err) => {
       //console.log("err",err.response)
-     Swal.fire('No Student to promote');
+      setStudentAttendenceList([]);
+      Swal.fire('No Student to promote');
+
     })
-  } 
+  }
+
+
   const selectedRow = {
     mode: 'checkbox',
     showOnlySelected: true,
     onSelect: (row, isSelected, rowIndex, e) => {
-        if (isSelected) {
+      if (isSelected) {
         const data = studentDetails
         data.push(row)
-          setTimeout(() => { 
+        setTimeout(() => {
           setStudentDetails(data);
-           setState({ ...state });
-       }, 500);
+          setState({ ...state });
+        }, 500);
       } else {
-        const selectedData= []
-        studentDetails.map((mapdata,index)=>{
-          if(mapdata.studentId!==row.studentId){
+        const selectedData = []
+        studentDetails.map((mapdata, index) => {
+          if (mapdata.studentId !== row.studentId) {
             selectedData.push(mapdata)
           }
         })
-         setTimeout(() => {
-           setStudentDetails(selectedData);
+        setTimeout(() => {
+          setStudentDetails(selectedData);
         }, 500);
       }
     },
     onSelectAll: (isSelect, rows, e) => {
-       if (isSelect) {
+      if (isSelect) {
         setStudentDetails(rows);
       }
-      
-     if (!isSelect)  {
+
+      if (!isSelect) {
         setStudentDetails([]);
       }
     }
@@ -105,61 +123,73 @@ const createLevelTesting = () => {
       </Media>
     )
   }
+
   const attendenceSubmit = (values) => {
     setShowLoading(true);
-     let payload = []
-      studentDetails.map((mapdat,index)=>{
-          payload.push({
-            "levelId": mapdat.currentLevel?mapdat.currentLevel.id:null,
-            "studentId": mapdat.studentId,
-            "certificateName": mapdat.certificate?mapdat.certificate.backgroundPhoto?mapdat.certificate.backgroundPhoto:null:null
-          })
-      })
-        setTimeout(() => {
-          //setShowLoading(true);
-    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-    axios.post(`${process.env.REACT_APP_BASE_URL}/level-testing/promote`, payload)
-      .then((res) => {
-        setShowLoading(false);
-         if (res.status === 201) {
-          setStudentDetails([])
-          toast.success("Successfully", { theme: "colored" });
-        }
-      }).catch((err) => {
-        if (err.response.status === 401) {
+    let payload = [];
+    studentDetails.map((mapdat, index) => {
+      payload.push({
+        "levelId": mapdat.currentLevel ? mapdat.currentLevel.id : null,
+        "studentId": mapdat.studentId,
+        "certificateName": mapdat.certificate ? mapdat.certificate.backgroundPhoto ? mapdat.certificate.backgroundPhoto : null : null
+      });
+    });
+    setTimeout(() => {
+      axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+      axios.post(`${process.env.REACT_APP_BASE_URL}/level-testing/promote`, payload)
+        .then((res) => {
           setShowLoading(false);
-          Swal.fire('401 session expired..!', 'Please re-login');
-        }
-        else {
-           setShowLoading(false);
-           Swal.fire(err.response.data.message,'Please try again later');
-        }
-      })
-      }, 500);
-  }
+          if (res.status === 201) {
+            const updatedStudentList = studentAttendenceList.filter(student => !studentDetails.some(detail => detail.studentId === student.studentId));
+            setStudentAttendenceList(updatedStudentList);
+            setStudentDetails([]);
+            setPromoted(true);
+            toast.success("Successfully", { theme: "colored" });
+          }
+        }).catch((err) => {
+          setShowLoading(false);
+          if (err.response.status === 401) {
+            Swal.fire('401 session expired..!', 'Please re-login');
+          } else {
+            Swal.fire(err.response.data.message, 'Please try again later');
+          }
+        });
+    }, 500);
+  };
   
+
   const displaycurrentLevel = (cell, row) => {
-    return (<span>{row.currentLevel.name? row.currentLevel.name : null}</span>);
+    return (<span>{row.currentLevel.name ? row.currentLevel.name : null}</span>);
+
   }
   const displaynextLevel = (cell, row) => {
-    return (<span>{row.nextLevel.name? row.nextLevel.name : null}</span>);
+    return (<span>{row.nextLevel.name ? row.nextLevel.name : null}</span>);
   }
-   const displaysubLevels = (cell, row) => {
-   
-    let name ='';
-    if(row.subLevels ){
-      row.subLevels.map((mapdat,index)=>{
-          if(index===0){
-              name=mapdat.shortName
-          }else{
-              name=name+", "+mapdat.shortName 
-          }
+  const displaysubLevels = (cell, row) => {
+
+    let name = '';
+    if (row.subLevels) {
+      row.subLevels.map((mapdat, index) => {
+        if (index === 0) {
+          name = mapdat.shortName
+        } else {
+          name = name + ", " + mapdat.shortName
+        }
       })
-   }
-   return name
+    }
+    return name
   }
+
+  const displayPromoted =() => {
+    if (promoted){
+      return "Yes";
+    }else {
+      return "No";
+    }
+  }
+
   return (
-    <> 
+    <>
       <ToastContainer />
       {state.loader ? <Spinner
         className='loaderr'
@@ -180,7 +210,7 @@ const createLevelTesting = () => {
                 <Form className="add-edit-user-form" onSubmit={handleSubmit}>
                   <Row>
                     <Col md={3}>
-                     <FormGroup>
+                      <FormGroup>
                         <Label for="startDate" >Search By Date</Label>
                         <DatePicker
                           className='studentsattendancecolor'
@@ -188,32 +218,32 @@ const createLevelTesting = () => {
                           selected={values.startDate ? new Date(values.startDate) : null}
                           onChange={(date) => setStartDate(date, values)}
                           placeholderText="mm/dd/yyyy"
-                          />
+                        />
                       </FormGroup>
-                    </Col>  
-                     <Col md={2}  >
-                      <FormGroup style={{marginTop:"14%"}}>
-                        <Button   type="submit" disabled={studentDetails.length<=0 ? true : false}>Promote</Button>
+                    </Col>
+                    <Col md={2}  >
+                      <FormGroup style={{ marginTop: "14%" }}>
+                        <Button type="submit" disabled={studentDetails.length <= 0 ? true : false}>Promote</Button>
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <div  className='d-flex justify-content-center'>
-                      { showLoading ? <CSpinner color='success' style={{width: '3rem', height: '3rem'}}  /> : null }
+                    <div className='d-flex justify-content-center'>
+                      {showLoading ? <CSpinner color='success' style={{ width: '3rem', height: '3rem' }} /> : null}
                     </div>
                   </Row>
                 </Form>
               )}
-            </Formik> 
+            </Formik>
           </Card>
           <hr />
-           <Row className='rowborder'>
+          <Row className='rowborder'>
             <Card className='marginStyleForTablee'>
               <BootstrapTable data={studentAttendenceList} selectRow={selectedRow} keyField="studentId" search tableContainerClass='studenttablescro' multiColumnSearch="true">
                 <TableHeaderColumn width="100" dataField='studentId' hidden >unique field</TableHeaderColumn>
-                <TableHeaderColumn  width="150" dataField='studentName'>Student Name</TableHeaderColumn>
+                <TableHeaderColumn width="150" dataField='studentName'>Student Name</TableHeaderColumn>
                 <TableHeaderColumn width="150" dataField='currentLevel' dataFormat={displaycurrentLevel}>Current Level</TableHeaderColumn>
-                <TableHeaderColumn  width="130" dataField='nextLevel' dataFormat={displaynextLevel} >Next Level</TableHeaderColumn>
+                <TableHeaderColumn width="130" dataField='nextLevel' dataFormat={displaynextLevel} >Next Level</TableHeaderColumn>
                 <TableHeaderColumn width="100" dataField='phone' dataFormat={displaysubLevels} >Tip</TableHeaderColumn>
               </BootstrapTable>
             </Card>
