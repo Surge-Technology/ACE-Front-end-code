@@ -117,7 +117,7 @@ export default function ContractDetailsList() {
         Loading...
       </Spinner> : null}
       <Card >
-    
+      <i className = "fa fa-arrow-circle-left dashicon" aria-hidden = "true" onClick ={() => navigate("/dashboard")} ></i>
         <CardBody className='cardbg'>
           <h4><b>Contract Details List</b></h4>
           <div className='height15'></div>
