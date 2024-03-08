@@ -12,6 +12,45 @@ export default function InquiryDetailsList() {
   const [studentData, setState] = useState(StudentAttandinitialData);
   const {inquiryList,totalPages,currentPage,loader,startDate,endDate} =  studentData;
   const navigate = useNavigate();
+
+  useEffect(() => {
+     
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = today.getMonth() + 1; // Months are zero indexed, so we add 1
+
+    // Get the first day of the current month
+    var startDate = new Date(year, month - 1, 1); // Day is 1 since we want the first day
+
+    // Get the last day of the current month
+    var endDate = new Date(year, month, 0); // Day 0 will give the last day of the previous month
+
+    // Format the dates as yyyy-mm-dd
+    var startDateFormatted = startDate.toISOString().split('T')[0];
+    var endDateFormatted = endDate.toISOString().split('T')[0];
+  
+
+    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+    axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/inquiry?startDate=${startDateFormatted}&endDate=${endDateFormatted}`).then((res)=>{
+      if(res.status===200||res.status===201){
+        setState((prevState)=>({
+          ...prevState, 
+          inquiryList:res.data.inquiryDtos,
+          loader:false
+        }))
+      }else{
+        setState((prevState)=>({
+          ...prevState, 
+           loader:false
+        }))
+      }
+     }).catch(err=>{
+      setState((prevState)=>({...prevState,loader:false}))
+    })
+}, []);
+
+
+
   
   const dateHandleChange=(name,date)=>{
     if(name==="startDate"){
@@ -37,7 +76,6 @@ export default function InquiryDetailsList() {
       //axios.put(`${process.env.REACT_APP_BASE_URL}/sports/
       //api/dashboard/inquiry?startDate=2023-10-05&endDate=2023-12-06
       axios.get(`${process.env.REACT_APP_BASE_URL}/dashboard/inquiry?startDate=${StartDat}&endDate=${endDat}`).then((res)=>{
-        console.log("res", res)
         if(res.status===200||res.status===201){
           setState((prevState)=>({
             ...prevState, 
@@ -96,8 +134,8 @@ export default function InquiryDetailsList() {
                 <Label>Start Date</Label>
                   <DatePicker
                     name="startDate"
-                   // selected={startDate?new Date(startDate):null}
-                   selected={startDate}
+                    //selected={startDate?new Date(startDate):null}
+                    selected={startDate}
                     onChange={(date) => dateHandleChange("startDate",date)}
                     placeholderText="mm/dd/yyyy"
                   />

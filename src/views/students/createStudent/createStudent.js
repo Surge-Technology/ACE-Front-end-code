@@ -687,9 +687,9 @@ function createStudent() {
                         </Row>
                         <Row>
                           <Col md={4}>
-                            <Label > Discount % </Label>
+                            <Label > Discount  </Label>
                             <span className='displayNone'>{values.discount=discount}</span>
-                            <Input name="discount" type="number" placeholder='%' value={discount} disabled onChange={fieldHandleChange}  />
+                            <Input name="discount" type="number" placeholder='0' value={discount} disabled onChange={fieldHandleChange}  />
                           </Col>
                           <Col md={4}>
                             <Label > Total Fee $ </Label> 

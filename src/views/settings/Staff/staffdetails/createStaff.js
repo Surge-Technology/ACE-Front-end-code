@@ -131,7 +131,7 @@ const createStaff = () => {
           phoneNumber: user.phone, email: user.email,
            employmentType: { value: user.employmentType.id, label: user.employmentType.name },
           userType: { value: user.roles[0].id, label: user.roles[0].roleName }, 
-           login: user.login, password: "",
+           login: user.login, password: "xxxxxxxxxxxxxxxxxxxxxx",
            address: user.address.addressLine1, address2: user.address.addressLine2, city: user.address.city,
            state: { value: user.address.state.id, label: user.address.state.name }, zipcode: user.address.pinCode,
           });

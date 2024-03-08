@@ -190,7 +190,7 @@ export default function EditStatusModal(props) {
                     <Row>
                       <Col>
                         <Label check ><span>Testing Approved</span></Label>
-                        <Input type="checkbox" name="approved" value={approved} checked={approved} onChange={(e)=>checkboxHandleChange(e,"approved")}/>
+                        <Input type="checkbox" name="approved" value={approved} checked={approved} disabled={!anticipated} onChange={(e)=>checkboxHandleChange(e,"approved")}/>
                       </Col>
                     </Row>
                 </ModalBody>

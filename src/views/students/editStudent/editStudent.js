@@ -687,8 +687,8 @@ export default function editStudent() {
                                                                 </Row>
                                                                 <Row>
                                                                     <Col md={4}>
-                                                                        <Label > Discount % </Label>
-                                                                        <Input name="discount" type="number" value={values.discount} onChange={handleChange} placeholder='%' disabled />
+                                                                        <Label > Discount </Label>
+                                                                        <Input name="discount" type="number" value={values.discount} onChange={handleChange} placeholder='' disabled />
                                                                     </Col>
                                                                     <Col md={4}>
                                                                         <Label > Total Fee $ </Label>
