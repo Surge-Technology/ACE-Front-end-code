@@ -243,8 +243,10 @@ const createEvent = () => {
       <Card  >
         <h4><strong>{params.id === "new" ? "Create" : "Update"} Event</strong></h4>
         <Row>
+          
           <Col md={8}>
             <Card className='cardbgw'>
+            <i className = "fa fa-arrow-circle-left dashicon" aria-hidden = "true" onClick={() => navigate(-1)} ></i>
               <Formik
                 enableReinitialize="true"
                 initialValues={initialValues}

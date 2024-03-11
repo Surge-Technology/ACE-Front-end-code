@@ -13,15 +13,13 @@ export default function ContractDetailsList() {
   const navigate = useNavigate();
   useEffect(() => {
     var someDate = new Date();
-    var today = new Date();
-    var year = today.getFullYear();
-    var month = today.getMonth() + 1; // Months are zero indexed, so we add 1
-
+    let startDat=moment(someDate).startOf('month');
+    let endDat=moment(someDate).endOf('month')
     // Get the first day of the current month
-    var StartDat = new Date(year, month - 1, 1); // Day is 1 since we want the first day
+    // var StartDat = new Date(year, month - 1, 1); // Day is 1 since we want the first day
 
-    // Get the last day of the current month
-    var endDat = new Date(year, month, 0); // Day 0 will give the last day of the previous month
+    // // Get the last day of the current month
+    // var endDat = new Date(year, month, 0); // Day 0 will give the last day of the previous month
 
     // Format the dates as yyyy-mm-dd
     // var startDateFormatted = startDate.toISOString().split('T')[0];
@@ -29,12 +27,12 @@ export default function ContractDetailsList() {
     // let StartDat = moment(someDate).format("YYYY-MM-DD");
     // let endDat = moment(someDate).format("YYYY-MM-DD");
     
-    Axios.get(`/dashboard/all-contract?${StartDat}&endDate=${endDat}`).then((res) => {
+    Axios.get(`/dashboard/all-contract?${startDat.format("YYYY-MM-DD")}&endDate=${endDat.format("YYYY-MM-DD")}`).then((res) => {
       console.log("res", res)
       setState((prevState) => ({
         ...prevState,
-        startDate: someDate,
-        endDate: someDate,
+        startDate: startDat.toDate(),
+        endDate: endDat.toDate(),
         StudentAttandList: res.data.contractDtos,
         loader: false
       }))

@@ -236,6 +236,7 @@ const createStaff = () => {
         <Row>
           <Col md={8}>
             <Card className='cardbgw'>
+            <i className = "fa fa-arrow-circle-left dashicon" aria-hidden = "true" onClick={() =>navigate('/userTabs/2')} ></i>
               <Formik
                 enableReinitialize="true"
                 initialValues={initialValues}

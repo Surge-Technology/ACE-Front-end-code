@@ -256,6 +256,7 @@ const createBatch = () => {
         <Row>
           <Col md={6}>
             <Card className='cardbgw'>
+            <i className = "fa fa-arrow-circle-left dashicon" aria-hidden = "true" onClick={() => navigate(-1)}></i>
               <Formik
                 enableReinitialize="true"
                 initialValues={initialValues}

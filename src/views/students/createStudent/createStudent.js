@@ -150,6 +150,7 @@ function createStudent() {
       //   }
            axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
                axios.post(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/contract-promotion/${contractNameSelect.value}/contract-status/New/student`,payload).then((res)=>{
+                console.log("contractNameSelect.value--"+contractNameSelect.value)
                 toast.success("Student registered successfully", { theme: "colored" })
                   setTimeout(() => {
                     history("/studentTabs/2");
@@ -295,10 +296,16 @@ function createStudent() {
     if(type==="getMembers"){
          Axios.get(`contract-promotions/${fieldData.value}/members`).then((res)=>{
           let  allmembers = []
-            res.data.map((mapdata,index)=>{
-            allmembers.push( { value: mapdata.id, label: mapdata.members })
-            })
-        setState((prevState)=>({
+
+            const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+         
+            res.data.forEach((mapdata) => {
+              // Check for duplicates before pushing to the array
+              if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
+                allmembers.push({ value: mapdata.id, label: mapdata.members });
+              }
+            });
+    setState((prevState)=>({
           ...prevState,
           memberOptions:allmembers,contractNameSelect:fieldData,memberFrequency:{},fee:"",totalFee:"",discount:""
         }))
@@ -308,11 +315,20 @@ function createStudent() {
     }
      if(type==="getFrequency"){
       Axios.get(`contract-promotion/${contractNameSelect.value}/members/${fieldData.label}/subscription-frequency`).then((res)=>{
-          let  allmembers = []
-           res.data.map((mapdata,index)=>{
-            allmembers.push( { value: mapdata.id, label:  mapdata.name  })
-           })
-        setState((prevState)=>({
+        let allmembers = []
+        res.data.map((mapdata, index) => {
+            allmembers.push({ value: mapdata.id, label: mapdata.name })
+        })
+        const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+ 
+              res.data.forEach((mapdata) => {
+          // Check for duplicates before pushing to the array
+          if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
+            allmembers.push({ value: mapdata.id, label: mapdata.members });
+          }
+        });
+
+setState((prevState)=>({
           ...prevState,
           contractMemberOptions:allmembers,member:fieldData,memberFrequency:{},fee:"",totalFee:"",discount:""
         }))
@@ -445,6 +461,7 @@ function createStudent() {
         <CardBody className='cardbg'>
         <h5><strong>Register Student</strong></h5>
         <Card className='cardbgw'>
+        <i className = "fa fa-arrow-circle-left dashicon" aria-hidden = "true" onClick={()=> history("/studentTabs/2")} ></i>
           <Formik
             enableReinitialize={true}
             initialValues={initialStudentFields}
@@ -454,10 +471,12 @@ function createStudent() {
           {({ values,setFieldValue,handleChange,handleSubmit,handleBlur,errors,touched }) => (
               <Form onSubmit={handleSubmit} >                    
                 <CardBody>
+                  
                 <h5><strong>Student</strong></h5> 
                   <Row>
                     <Col md={8}>
                     <Row>  
+                      
                         <Col md={4}>
                           <Label > First Name <span className='colorRed'>*</span></Label>
                             <Input name="firstName" type="text" value={values.firstName} onBlur={handleBlur} onChangeCapture={handleChange} onChange={(fieldHandleChange)} invalid={touched.firstName &&   !!errors.firstName } />

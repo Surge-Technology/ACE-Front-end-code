@@ -99,9 +99,27 @@ export default function editStudent() {
                     "city": values.gcity,
                     "state": { "id": values.gstate.value, "name": values.gstate.label }
                 }
+            },
+            "contract":{
+                "pricing":{
+                  "id":values.member.value,
+                  "fee":values.fee,
+                  "discount":values.discount,
+                  "totalFee":values.totalFee,
+                  "members":values.member.label,
+                  "subscriptionFrequency":{
+                    "id":values.memberFrequency.value,
+                    "name":values.memberFrequency.label
+                  }
+              },
+              "startDate":moment(values.startDate).format("YYYY-MM-DD"),
+              "endDate":moment(values.endDate).format("YYYY-MM-DD"),
+              "attachment": contractImageName,
             }
+    
         }
         axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+        
         axios.put(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/student/${params.id}/update-student`, payload).then((res) => {
             toast.success("Student updated successfully", { theme: "colored" })
             setTimeout(() => {
@@ -286,6 +304,7 @@ export default function editStudent() {
                     res.data.map((mapdata, index) => {
                         allmembers.push({ value: mapdata.id, label: mapdata.name })
                     })
+                    console.log("Testing")
                     setState((prevState) => ({
                         ...prevState,
                         contractMemberOptions: allmembers
@@ -304,31 +323,32 @@ export default function editStudent() {
             // setStudentImage( res.data.photo===""?"":process.env.REACT_APP_BASE_URL_BASE+"auth/student/image/"+res.data.photo);
             if (res.data.photo !== "") {
 
-            axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-            Axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/student/image/${res.data.photo}`, { responseType: 'arraybuffer' })
-                .then((response) => {
-                    // Check if the response status is successful (200)
-                    if (response.status === 200) {
-                        const imageData = btoa(
-                            new Uint8Array(response.data).reduce(
-                                (data, byte) => data + String.fromCharCode(byte),
-                                ''
-                            )
-                        );
+                axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+                Axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/student/image/${res.data.photo}`, { responseType: 'arraybuffer' })
+                    .then((response) => {
+                        // Check if the response status is successful (200)
+                        if (response.status === 200) {
+                            const imageData = btoa(
+                                new Uint8Array(response.data).reduce(
+                                    (data, byte) => data + String.fromCharCode(byte),
+                                    ''
+                                )
+                            );
 
-                        // Set the base data as the image source
-                        setStudentImage(`data:${response.headers['content-type'].toLowerCase()};base64,${imageData}`);
+                            // Set the base data as the image source
+                            setStudentImage(`data:${response.headers['content-type'].toLowerCase()};base64,${imageData}`);
 
-                        console.log("Student Image Data:", response);
-                    } else {
-                        // Handle other response statuses (if needed)
-                        console.error("Failed to fetch image:", response.statusText);
-                    }
-                })
-                .catch(err => {
-                    console.log('error loading image');
-                    Swal.fire(err.response.data.message, 'Please try again later');
-                })}
+                            console.log("Student Image Data:", response);
+                        } else {
+                            // Handle other response statuses (if needed)
+                            console.error("Failed to fetch image:", response.statusText);
+                        }
+                    })
+                    .catch(err => {
+                        console.log('error loading image');
+                        Swal.fire(err.response.data.message, 'Please try again later');
+                    })
+            }
         }).catch(err => {
             Swal.fire(err.response.data.message, 'Please try again later');
         })
@@ -361,7 +381,7 @@ export default function editStudent() {
                 title: 'Payment Method for the client not integrated.',
                 showConfirmButton: false,
                 timer: 1500
-              })
+            })
             // setState((prevState) => ({
             //     ...prevState,
             //     paymentButtonClick: !paymentButtonClick
@@ -373,25 +393,50 @@ export default function editStudent() {
     }
     const contractSelectHandle = (fieldData, type) => {
         if (type === "getMembers") {
-            Axios.get(`contract-promotions/${fieldData.value}/members`).then((res) => {
-                let allmembers = []
-                res.data.map((mapdata, index) => {
-                    allmembers.push({ value: mapdata.id, label: mapdata.members })
-                })
+            Axios.get(`contract-promotions/${fieldData.value}/members`)
+              .then((res) => {
+                let allmembers = [];
+         
+                // Helper function to check for duplicate values based on label
+                const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+         
+                res.data.forEach((mapdata) => {
+                  // Check for duplicates before pushing to the array
+                  if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
+                    allmembers.push({ value: mapdata.id, label: mapdata.members });
+                  }
+                });
+         
                 setState((prevState) => ({
-                    ...prevState,
-                    memberOptions: allmembers, contractNameSelect: fieldData, memberFrequency: {}, fee: "", totalFee: "", discount: ""
-                }))
-            }).catch(err => {
+                  ...prevState,
+                  memberOptions: allmembers, // Use the filtered array
+                  contractNameSelect: fieldData,
+                  memberFrequency: {},
+                  fee: "",
+                  totalFee: "",
+                  discount: "",
+                }));
+              })
+              .catch((err) => {
                 Swal.fire(err.response.data.message, 'Please try again later');
-            })
-        }
+              });
+          }
         if (type === "getFrequency") {
             Axios.get(`contract-promotion/${contractNameSelect.value}/members/${fieldData.label}/subscription-frequency`).then((res) => {
                 let allmembers = []
                 res.data.map((mapdata, index) => {
                     allmembers.push({ value: mapdata.id, label: mapdata.name })
                 })
+                const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+         
+                      res.data.forEach((mapdata) => {
+                  // Check for duplicates before pushing to the array
+                  if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
+                    allmembers.push({ value: mapdata.id, label: mapdata.members });
+                  }
+                });
+
+
                 setState((prevState) => ({
                     ...prevState,
                     contractMemberOptions: allmembers, member: fieldData, memberFrequency: {}, fee: "", totalFee: "", discount: ""
@@ -507,6 +552,12 @@ export default function editStudent() {
             </Modal>
             <Card >
                 <CardBody className='cardbg'>
+                    <i
+                        className="fa fa-arrow-circle-left dashicon"
+                        aria-hidden="true"
+                        style={{ float: 'left', cursor: 'pointer', height: '20px' }}
+                        onClick={() => navigate("/studentTabs/2")}
+                    ></i>
                     <Row>
                         <Col  ><h5><strong>Edit Student</strong></h5></Col>
                         <Col  ><Button type="button" color="primary" size="sm" className='floatg' onClick={() => modalHandleChange("deactivation")} > Deactivate Student</Button></Col>
