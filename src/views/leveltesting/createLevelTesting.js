@@ -56,7 +56,7 @@ const createLevelTesting = () => {
           }
         })
         .catch((err) => {
-          Swal.fire(err.response.data.message, 'Please try again later');
+          Swal.fire('No Student to promote');
         });
     }, []);
   const initialValues = {

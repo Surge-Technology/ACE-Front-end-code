@@ -22,44 +22,46 @@ const createCertification = () => {
   const submitCertification =(e)=>{
     if(imageName===""){
       Swal.fire("Please Select Background Image");
-    }
-    if(params.id !== "new"){
-      let payload = {
-        "name": e.programName,
-        "backgroundPhoto": e.imageName,
-        "templateBody": e.bodyCopy
-      }
-      axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-      axios.put(`${process.env.REACT_APP_BASE_URL_BASE}api/level/${selectAwards.value}/certificate/${params.id}`, payload).then((res) => {
-             toast.info(`Updated successfully`, { theme: "colored" });
-             setTimeout(() => {
+    }else{
+      if(params.id !== "new"){
+        let payload = {
+          "name": e.programName,
+          "backgroundPhoto": e.imageName,
+          "templateBody": e.bodyCopy
+        }
+        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+        axios.put(`${process.env.REACT_APP_BASE_URL_BASE}api/level/${selectAwards.value}/certificate/${params.id}`, payload).then((res) => {
+               toast.info(`Updated successfully`, { theme: "colored" });
+               setTimeout(() => {
+                navigate("/certifications");
+              }, 1000);
+          }).catch((err) => {
+              Swal.fire(err.response.data.message, 'Please try again later');
+          })
+      }else{
+        setState((prevState)=>({...prevState,loader:true}));
+        let payload = {
+          "name": e.programName,
+          "backgroundPhoto": e.imageName,
+          "templateBody": e.bodyCopy
+        }
+        axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
+        axios.post(`${process.env.REACT_APP_BASE_URL}/level/${selectAwards.value}/certificate`,payload).then((res)=>{
+           toast.success("Registered successfully", { theme: "colored" })
+           setState((prevState)=>({...prevState,loader:false}));
+            setTimeout(() => {
               navigate("/certifications");
             }, 1000);
-        }).catch((err) => {
-            Swal.fire(err.response.data.message, 'Please try again later');
-        })
-    }else{
-      setState((prevState)=>({...prevState,loader:true}));
-      let payload = {
-        "name": e.programName,
-        "backgroundPhoto": e.imageName,
-        "templateBody": e.bodyCopy
+        }).catch(err=>{
+          setState((prevState)=>({...prevState,loader:false}));
+          Swal.fire(
+                  err.response.data.message,
+                   'Please try again '
+                )
+        })  
       }
-      axios.defaults.headers.common['Authorization'] =  "Bearer " + localStorage.getItem("token");
-      axios.post(`${process.env.REACT_APP_BASE_URL}/level/${selectAwards.value}/certificate`,payload).then((res)=>{
-         toast.success("Registered successfully", { theme: "colored" })
-         setState((prevState)=>({...prevState,loader:false}));
-          setTimeout(() => {
-            navigate("/certifications");
-          }, 1000);
-      }).catch(err=>{
-        setState((prevState)=>({...prevState,loader:false}));
-        Swal.fire(
-                err.response.data.message,
-                 'Please try again '
-              )
-      })  
     }
+    
   }
   const ValidationSchema = () => Yup.object().shape({
     programName: Yup.string().required('Program Name is Required'),
@@ -193,7 +195,7 @@ const createCertification = () => {
                         </Col>
                         <Col md={7}>
                           <Label for="programName"> BackGround Image </Label>
-                          <Input name="backgroundImage" type="file"  accept=".jpg, .jpeg, .png" value={backgroundImage.name} onChange={(e)=>(fileHandleChange(e))} required />
+                          <Input name="backgroundImage" type="file"  accept=".jpg, .jpeg, .png" value={backgroundImage.name} onChange={(e)=>(fileHandleChange(e))} required={!params.id} />
                         </Col>
                       </Row>
                       <Row>

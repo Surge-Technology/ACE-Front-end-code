@@ -67,12 +67,13 @@ export default function editStudent() {
         }
     }
     const onSubmit = (values) => {
-        setState((prevState) => ({ ...prevState, loader: true }))
-        let payload = {
+        setState((prevState) => ({ ...prevState, loader: true }));
+     
+       
+        let studentPayload = {
             "firstName": values.firstName,
             "lastName": values.lastName,
             "dob": values.birthDate === null ? null : moment(values.birthDate).format("YYYY-MM-DD"),
-            //"gender": gender,
             "photo": studentImageNameForApi,
             "sameAsStudent": sameAsStudent,
             "phone": values.phone,
@@ -80,60 +81,95 @@ export default function editStudent() {
             "notes": values.notes,
             "referBy": referBy,
             "address": {
-                "id": addressId,
-                "addressLine1": values.address,
-                "addressLine2": values.address2,
-                "pinCode": values.zipcode,
-                "city": values.city,
-                "state": { "id": values.state.value, "name": values.state.label }
+              "id": addressId,
+              "addressLine1": values.address,
+              "addressLine2": values.address2,
+              "pinCode": values.zipcode,
+              "city": values.city,
+              "state": { "id": values.state.value, "name": values.state.label }
             },
             "parent": {
-                "id": parentId,
-                "firstName": values.gfirstName,
-                "lastName": values.glastName,
-                "address": {
-                    "id": gaddressId,
-                    "addressLine1": values.gaddress,
-                    "addressLine2": values.gaddress2,
-                    "pinCode": values.gzipcode,
-                    "city": values.gcity,
-                    "state": { "id": values.gstate.value, "name": values.gstate.label }
-                }
+              "id": parentId,
+              "firstName": values.gfirstName,
+              "lastName": values.glastName,
+              "address": {
+                "id": gaddressId,
+                "addressLine1": values.gaddress,
+                "addressLine2": values.gaddress2,
+                "pinCode": values.gzipcode,
+                "city": values.gcity,
+                "state": { "id": values.gstate.value, "name": values.gstate.label }
+              }
             },
-            "contract":{
-                "pricing":{
-                  "id":values.member.value,
-                  "fee":values.fee,
-                  "discount":values.discount,
-                  "totalFee":values.totalFee,
-                  "members":values.member.label,
-                  "subscriptionFrequency":{
-                    "id":values.memberFrequency.value,
-                    "name":values.memberFrequency.label
-                  }
+            "contract": {
+              "pricing": {
+                "id": values.member.value,
+                "fee": values.fee,
+                "discount": values.discount,
+                "totalFee": values.totalFee,
+                "members": values.member.label,
+                "subscriptionFrequency": {
+                  "id": values.memberFrequency.value,
+                  "name": values.memberFrequency.label
+                }
               },
-              "startDate":moment(values.startDate).format("YYYY-MM-DD"),
-              "endDate":moment(values.endDate).format("YYYY-MM-DD"),
+              "startDate": moment(values.startDate).format("YYYY-MM-DD"),
+              "endDate": moment(values.endDate).format("YYYY-MM-DD"),
               "attachment": contractImageName,
             }
-    
-        }
+       
+        };
+     
+       
+        let contractPayload = {
+          "contract":{
+            "pricing":{
+              "id":values.member.value,
+              "fee":values.fee,
+              "discount":values.discount,
+              "totalFee":values.totalFee,
+              "members":values.member.label,
+              "subscriptionFrequency":{
+                "id":values.memberFrequency.value,
+                "name":values.memberFrequency.label
+              }
+          },
+          "startDate":moment(values.startDate).format("YYYY-MM-DD"),
+          "endDate":moment(values.endDate).format("YYYY-MM-DD"),
+          "attachment": contractImageName,
+        },
+          "contractPromotionId": contractNameSelect.value,
+          "contractStatusName": values.contractStatus.value,
+        };
+     
         axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-        
-        axios.put(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/student/${params.id}/update-student`, payload).then((res) => {
-            toast.success("Student updated successfully", { theme: "colored" })
+     
+       
+        axios.all([
+          axios.put(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/student/${params.id}/update-student`, studentPayload),
+          axios.post(`${process.env.REACT_APP_BASE_URL}/contract-promotion/${contractNameSelect.value}/contract-status/${values.contractStatus.value}/student/${params.id}`, contractPayload)
+        ])
+          .then(axios.spread((resUpdateStudent, resContractPromotion) => {
+         
+           
+            toast.success("Student updated successfully", { theme: "colored" });
             setTimeout(() => {
-                navigate("/studentTabs/2");
+              navigate("/studentTabs/2");
             }, 1000);
-            setState((prevState) => ({ ...prevState, loader: false }))
-        }).catch((err) => {
             setState((prevState) => ({ ...prevState, loader: false }));
-            Swal.fire(
-                err.response.data.message,
+          }))
+          .catch(errors => {
+           
+            console.error("Request errors:", errors);
+            setState((prevState) => ({ ...prevState, loader: false }));
+            errors.forEach(error => {
+              Swal.fire(
+                error.response.data.message,
                 'Please try again '
-            )
-        })
-    }
+              );
+            });
+          });
+      };
     const sportsSelectHandle = (selectedData, type) => {
         // if (type === "sports") {
         //     Axios.get(`sports/${selectedData.value}/program-name`).then((res) => {
@@ -216,7 +252,7 @@ export default function editStudent() {
         }).catch(err => {
             Swal.fire(err.response.data.message, 'Please try again later');
         })
-        Axios.get("contract-promotions/contract").then((res) => {
+        Axios.get("contract-promotions").then((res) => {
             let allcontract = []
             res.data.map((mapdata, index) => {
                 allcontract.push({ value: mapdata.id, label: mapdata.name })
@@ -255,6 +291,21 @@ export default function editStudent() {
             Swal.fire(err.response.data.message, 'Please try again later');
         })
     }, [])
+
+    const studentGetLevelsDataHandle = () => {
+        Axios.get(`student/${params.id}`).then((res) => {
+            console.log("getbyid", res)
+            setState((prevState) => ({
+                ...prevState,
+                studentStatusLevel: res.data.studentCurrentBeltStatus === null ? [] : res.data.studentCurrentBeltStatus.level,
+                studentStatusSubLevel: res.data.studentCurrentBeltStatus === null ? [] : res.data.studentCurrentBeltStatus.subLevel,
+            })).catch(err => {
+                console.log('error loading image');
+                Swal.fire(err.response.data.message, 'Please try again later');
+            })
+        })
+    }
+
     const studentGetApiDataHandle = () => {
         Axios.get(`student/${params.id}`).then((res) => {
             console.log("getbyid", res)
@@ -365,7 +416,7 @@ export default function editStudent() {
                 ...prevState,
                 editStatusModalToggle: !editStatusModalToggle
             }))
-            studentGetApiDataHandle()
+            sstudentGetLevelsDataHandle()
         }
         if (data === "history") {
             setState((prevState) => ({
@@ -392,35 +443,26 @@ export default function editStudent() {
         modalHandleChange(data);
     }
     const contractSelectHandle = (fieldData, type) => {
-        if (type === "getMembers") {
-            Axios.get(`contract-promotions/${fieldData.value}/members`)
-              .then((res) => {
-                let allmembers = [];
-         
-                // Helper function to check for duplicate values based on label
-                const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
-         
-                res.data.forEach((mapdata) => {
-                  // Check for duplicates before pushing to the array
-                  if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
-                    allmembers.push({ value: mapdata.id, label: mapdata.members });
-                  }
-                });
-         
-                setState((prevState) => ({
-                  ...prevState,
-                  memberOptions: allmembers, // Use the filtered array
-                  contractNameSelect: fieldData,
-                  memberFrequency: {},
-                  fee: "",
-                  totalFee: "",
-                  discount: "",
-                }));
-              })
-              .catch((err) => {
-                Swal.fire(err.response.data.message, 'Please try again later');
-              });
-          }
+        if(type==="getMembers"){
+            Axios.get(`contract-promotions/${fieldData.value}/members`).then((res)=>{
+             let  allmembers = []
+   
+               const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+            
+               res.data.forEach((mapdata) => {
+                 // Check for duplicates before pushing to the array
+                 if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
+                   allmembers.push({ value: mapdata.id, label: mapdata.members });
+                 }
+               });
+       setState((prevState)=>({
+             ...prevState,
+             memberOptions:allmembers,contractNameSelect:fieldData,memberFrequency:{},fee:"",totalFee:"",discount:""
+           }))
+           }).catch(err=>{
+           Swal.fire(err.response.data.message,'Please try again later');
+           })
+       }
         if (type === "getFrequency") {
             Axios.get(`contract-promotion/${contractNameSelect.value}/members/${fieldData.label}/subscription-frequency`).then((res) => {
                 let allmembers = []
@@ -442,7 +484,8 @@ export default function editStudent() {
                     contractMemberOptions: allmembers, member: fieldData, memberFrequency: {}, fee: "", totalFee: "", discount: ""
                 }))
             }).catch(err => { })
-        } if (type === "getFee") {
+        } 
+        if (type === "getFee") {
             Axios.get(`contract-promotion/${contractNameSelect.value}`).then((res) => {
                 let lengt = res.data.tenure.name.slice(0, 2);
                 let length = parseInt(lengt);
@@ -577,31 +620,31 @@ export default function editStudent() {
                                             <Row>
                                                 <Col>
                                                     <Label > First Name  </Label>
-                                                    <Input name="firstName" type="text" value={values.firstName} onBlur={handleBlur} onChange={handleChange} />
+                                                    <Input name="firstName" type="text" value={values.firstName} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                     <ErrorMessage name="firstName" component="div" className='errmsg'></ErrorMessage>
                                                 </Col>
                                                 <Col>
                                                     <Label > Last Name  </Label>
-                                                    <Input name="lastName" type="text" value={values.lastName} onBlur={handleBlur} onChange={handleChange} />
+                                                    <Input name="lastName" type="text" value={values.lastName} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                     <ErrorMessage name="lastName" component="div" className='errmsg'></ErrorMessage>
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col>
                                                     <Label > Address  </Label>
-                                                    <Input name="address" type="text" value={values.address} onBlur={handleBlur} onChange={handleChange} />
+                                                    <Input name="address" type="text" value={values.address} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                     <ErrorMessage name="address" component="div" className='errmsg'></ErrorMessage>
                                                 </Col>
                                             </Row><div className='height15'></div>
                                             <Row>
                                                 <Col>
-                                                    <Input name="address2" type="text" value={values.address2} onBlur={handleBlur} onChange={handleChange} />
+                                                    <Input name="address2" type="text" value={values.address2} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col md={6}>
                                                     <Label > City  </Label>
-                                                    <Input name="city" type="text" value={values.city} onBlur={handleBlur} onChange={handleChange} />
+                                                    <Input name="city" type="text" value={values.city} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                     <ErrorMessage name="city" component="div" className='errmsg'></ErrorMessage>
                                                 </Col>
                                                 <Col md={3}>
@@ -616,7 +659,7 @@ export default function editStudent() {
                                                 </Col>
                                                 <Col md={3}>
                                                     <Label > Zipcode  </Label>
-                                                    <Input name="zipcode" type="number" value={values.zipcode} onBlur={handleBlur} onChange={handleChange} />
+                                                    <Input name="zipcode" type="number" value={values.zipcode} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange}/>
                                                     <ErrorMessage name="zipcode" component="div" className='errmsg'></ErrorMessage>
                                                 </Col>
                                             </Row>
@@ -630,31 +673,31 @@ export default function editStudent() {
                                                                 <Row>
                                                                     <Col>
                                                                         <Label > First Name  </Label>
-                                                                        <Input name="gfirstName" type="text" value={values.gfirstName} onChange={handleChange} />
+                                                                        <Input name="gfirstName" type="text" value={values.gfirstName} onChangeCapture={handleChange} onChange={fieldHandleChange}/>
                                                                         <ErrorMessage name="gfirstName" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                     <Col>
                                                                         <Label > Last Name  </Label>
-                                                                        <Input name="glastName" type="text" value={values.glastName} onChange={handleChange} />
+                                                                        <Input name="glastName" type="text" value={values.glastName} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                                         <ErrorMessage name="glastName" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col>
                                                                         <Label > Address  </Label>
-                                                                        <Input name="gaddress" type="text" value={values.gaddress} onChange={handleChange} />
+                                                                        <Input name="gaddress" type="text" value={values.gaddress} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                                         <ErrorMessage name="gaddress" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                 </Row><div className='height15'></div>
                                                                 <Row>
                                                                     <Col>
-                                                                        <Input name="gaddress2" type="text" value={values.gaddress2} onChange={handleChange} />
+                                                                        <Input name="gaddress2" type="text" value={values.gaddress2} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                                     </Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col md={6}>
                                                                         <Label > City  </Label>
-                                                                        <Input name="gcity" type="text" value={values.gcity} onChange={handleChange} />
+                                                                        <Input name="gcity" type="text" value={values.gcity} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                                         <ErrorMessage name="gcity" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                     <Col md={3}>
@@ -669,19 +712,19 @@ export default function editStudent() {
                                                                     </Col>
                                                                     <Col md={3}>
                                                                         <Label > Zipcode  </Label>
-                                                                        <Input name="gzipcode" type="number" value={values.gzipcode} onChange={handleChange} />
+                                                                        <Input name="gzipcode" type="number" value={values.gzipcode} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                                         <ErrorMessage name="gzipcode" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col>
                                                                         <Label > Email  </Label>
-                                                                        <Input name="email" type="email" value={values.email} onChange={handleChange} />
+                                                                        <Input name="email" type="email" value={values.email} onChangeCapture={handleChange} onChange={fieldHandleChange} />
                                                                         <ErrorMessage name="email" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                     <Col>
                                                                         <Label > Phone  </Label>
-                                                                        <Input name="phone" type="text" value={values.phone} onChange={(handleChange, fieldHandleChange)} />
+                                                                        <Input name="phone" type="text" value={values.phone} onChangeCapture={handleChange} onChange={fieldHandleChange}/>
                                                                         <ErrorMessage name="phone" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                 </Row>
@@ -733,17 +776,17 @@ export default function editStudent() {
                                                                     </Col>
                                                                     <Col md={4}>
                                                                         <Label > Base Fee $ </Label>
-                                                                        <Input name="fee" type="number" placeholder='$' value={values.fee} onChange={handleChange} disabled />
+                                                                        <Input name="fee" type="number" placeholder='$' value={values.fee} onChangeCapture={handleChange} onChange={fieldHandleChange} disabled />
                                                                     </Col>
                                                                 </Row>
                                                                 <Row>
                                                                     <Col md={4}>
                                                                         <Label > Discount </Label>
-                                                                        <Input name="discount" type="number" value={values.discount} onChange={handleChange} placeholder='' disabled />
+                                                                        <Input name="discount" type="number" value={values.discount} onChangeCapture={handleChange} onChange={fieldHandleChange} placeholder='' disabled />
                                                                     </Col>
                                                                     <Col md={4}>
                                                                         <Label > Total Fee $ </Label>
-                                                                        <Input name="totalFee" type="number" value={values.totalFee} onChange={handleChange} placeholder='$' disabled />
+                                                                        <Input name="totalFee" type="number" value={values.totalFee} onChangeCapture={handleChange} onChange={fieldHandleChange} placeholder='$' disabled />
                                                                     </Col>
                                                                     <Col md={4}>
                                                                         <Label > Status </Label>
@@ -910,7 +953,7 @@ export default function editStudent() {
                                             <Row>
                                                 <Col>
                                                     <Label > Notes  </Label>
-                                                    <Input type="textarea" name="notes" value={values.notes} onBlur={handleBlur} onChange={handleChange} placeholder='Student extra information...' rows="8" />
+                                                    <Input type="textarea" name="notes" value={values.notes} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange} placeholder='Student extra information...' rows="8" />
                                                 </Col>
                                             </Row>
                                         </Col>

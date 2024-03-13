@@ -36,7 +36,10 @@ const Studentattendence = () => {
         res.data.map((key, index) => {
           programs.push({ value: key.id, label: key.name });
         })
-        setProgramOptions(programs)
+        //console.log("prgrms",programs.filter(()=>{programs.label==="others"}))
+       // setProgramOptions(programs.filter(()=>{programs.label=="others" || programs.label=="Others"}))
+       setProgramOptions(programs.filter((program) => program.label.toLowerCase() !== 'others'))
+        
       }).catch((err) => {
         if (err.response.status === 401) {
           Swal.fire('401 session expired..!', 'Please re-login');
