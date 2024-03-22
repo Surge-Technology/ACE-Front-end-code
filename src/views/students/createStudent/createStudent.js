@@ -307,7 +307,7 @@ function createStudent() {
             });
     setState((prevState)=>({
           ...prevState,
-          memberOptions:allmembers,contractNameSelect:fieldData,memberFrequency:{},fee:"",totalFee:"",discount:""
+          memberOptions:allmembers,contractNameSelect:fieldData,member: "",memberFrequency:"",fee:"",totalFee:"",discount:""
         }))
         }).catch(err=>{
         Swal.fire(err.response.data.message,'Please try again later');

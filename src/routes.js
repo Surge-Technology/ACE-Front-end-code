@@ -32,6 +32,8 @@ const UserTabs = React.lazy(() => import('./views/settings/Staff/userTabs'))
 const Staff = React.lazy(() => import('./views/settings/Staff/staffdetails/staffList'))
 const CreateStaff = React.lazy(() => import('./views/settings/Staff/staffdetails/createStaff'))
 const PermissionsList = React.lazy(() => import('./views/settings/Staff/permissions/permissionsList'))
+const EditPermission = React.lazy(() => import('./views/settings/Staff/permissions/editPermission'))
+
 const CreatePermission = React.lazy(() => import('./views/settings/Staff/permissions/createPermission'))
  const CreateStaffAttendence = React.lazy(() => import('./views/settings/Staff/staffattendence/createStaffAttendence'))
 const CreateCertification = React.lazy(() => import('./views/settings/certification/createCertification'))
@@ -81,6 +83,7 @@ const routes = [
    { path: '/userTabs/:id', name: 'UserTabs', element: UserTabs, exact: true },
    { path: '/permissions', name: 'PermissionsList', element: PermissionsList, exact: true },
    { path: '/permissions/create/:id', name: 'CreatePermission', element: CreatePermission, exact: true },
+{ path: '/permissions/edit/:id', name: 'EditPermission', element: EditPermission, exact: true },
  { path: '/staff/createstaff/:id', name: 'CreateStaff', element: CreateStaff, exact: true },
   //{ path: '/staff/staffattendence', name: 'StaffAttendence', element: StaffAttendence, exact: true },
   { path: '/staff/createstaffattendence/:id', name: 'CreateStaffAttendence', element: CreateStaffAttendence, exact: true },

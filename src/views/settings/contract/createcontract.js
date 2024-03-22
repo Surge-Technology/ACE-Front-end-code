@@ -11,9 +11,10 @@ import Swal from 'sweetalert2';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import contractImage from "../../../assets/images/avatars/contract.jpg"
+import { element } from 'prop-types';
 const createcontract = () => {
   const [contractValues, setContractValues] = useState([{ programName: "", pricing: "", trailProgram: true }]);
-  const [contractLoopValues, setContractLoopValues] = useState([{ id:"",ifperson: "", frequency: "", then: "", discount: "", amount: "" }]);
+  const [contractLoopValues, setContractLoopValues] = useState([{ id: "", ifperson: "", frequency: "", then: "", discount: "", amount: "" }]);
   const [lengths, setLengths] = useState("");
   const [contractlengths, setContractLengths] = useState("");
   const [contractfrequencies, setContractFrequencies] = useState("");
@@ -26,20 +27,20 @@ const createcontract = () => {
   let navigate = useNavigate();
   const params = useParams();
   const initialValues = {
-    programName : contractValues.programName,
-    pricing     : contractValues.pricing,
-    lengths     : lengths,
-    contractLoopValues : contractLoopValues,
+    programName: contractValues.programName,
+    pricing: contractValues.pricing,
+    lengths: lengths,
+    contractLoopValues: contractLoopValues,
   }
   const ContractSchema = () => Yup.object().shape({
-    programName : Yup.string().matches(/^[a-zA-Z0-9@]/, "Special character are not allowed").min(2, 'Too Short!').max(70, 'Too Long!').required('Contract name Required'),
-    pricing     : Yup.number().required('Base Price is required'),
-    lengths     : Yup.object().required('Length is Required'),
-    contractLoopValues : Yup.array().of(
-            Yup.object().shape({
-              ifperson  : Yup.string().required("Member(s) required"),
-              frequency : Yup.object().required('Frequency Required')
-            })
+    programName: Yup.string().matches(/^[a-zA-Z0-9@]/, "Special character are not allowed").min(2, 'Too Short!').max(70, 'Too Long!').required('Contract name Required'),
+    pricing: Yup.number().required('Base Price is required'),
+    lengths: Yup.object().required('Length is Required'),
+    contractLoopValues: Yup.array().of(
+      Yup.object().shape({
+        ifperson: Yup.string().required("Member(s) required"),
+        frequency: Yup.object().required('Frequency Required')
+      })
     )
   });
   useEffect(() => {
@@ -49,15 +50,15 @@ const createcontract = () => {
         setContractValues({ ...contractValues, programName: res.data.name, pricing: res.data.basePrice })
         setLengths({ value: res.data.tenure.id, label: res.data.tenure.name })
         let backendContractLoopValues = []
-        let setrow =[]
+        let setrow = []
         res.data.pricing.map((key, index) => {
           backendContractLoopValues.push({ id: key.id, ifperson: key.members, frequency: { value: key.subscriptionFrequency.id, label: key.subscriptionFrequency.name }, then: key.fee, discount: key.discount, amount: key.total })
-          setrow.push({id:key.id})
+          setrow.push({ id: key.id })
         })
         allfrequencies({ value: res.data.tenure.id, label: res.data.tenure.name })
         setRowDeleteId(setrow);
         setContractLoopValues(backendContractLoopValues);
-         let backendContractLoopValues1 = []
+        let backendContractLoopValues1 = []
         res.data.pricing.map((key, index) => {
           backendContractLoopValues1.push({ id: key.id, members: key.members, subscriptionFrequency: { id: key.subscriptionFrequency.id }, fee: key.fee, discount: key.discount, total: key.total })
         })
@@ -105,7 +106,7 @@ const createcontract = () => {
     })
     let newarray1 = [];
     contractLoopValues.map((element, i) => {
-       if (element.id === undefined) {
+      if (element.id === undefined) {
         newarray1.push({
           members: element.ifperson,
           fee: element.then,
@@ -113,7 +114,7 @@ const createcontract = () => {
           subscriptionFrequency: { id: element.frequency.value },
           total: values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (element.discount)).toFixed(2)
         })
-      } 
+      }
     })
     let newarray3 = [];
     values.contractLoopValues.map((element, i) => {
@@ -131,7 +132,7 @@ const createcontract = () => {
       basePrice: values.pricing,
       pricing: newarray
     }
-    
+
     const updatePayload = {
       name: values.programName,
       basePrice: values.pricing,
@@ -157,7 +158,7 @@ const createcontract = () => {
     }
     else {
       Axios.put(`contract-tenure/${tenureId}/contract-promotion/${params.id}`, updatePayload).then((res) => {
-         if (res.status === 200) {
+        if (res.status === 200) {
           toast.info("Contract updated successfully", { theme: "colored" });
           setTimeout(() => {
             navigate('/settings/allcontracts');
@@ -173,37 +174,39 @@ const createcontract = () => {
       e.preventDefault();
     }
   };
-  const rowDeleteHandle=(id)=>{
-     if (params.id !== "new") {
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-              }).then((result) => {
-              if (result.isConfirmed) {
-                Axios.delete(`pricing/${id}/contract-promotion/${params.id}`)
-                .then((response) => {
-                  if (response.status == 200) {
-                   Swal.fire('Record Deleted!', '', 'success')
-                  }
-                }).catch((error) => { 
-                Swal.fire( 'Please try again ' ) 
-               })
-              }
-              else {
-              Swal.fire('Your Data safe', '');
-              }
+  const rowDeleteHandle = (id) => {
+    if (params.id !== "new") {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Axios.delete(`pricing/${id}/contract-promotion/${params.id}`)
+            .then((response) => {
+              if (response.status == 200 || result.isConfirmed) {
+                Swal.fire('Record Deleted!', '', 'success')
+                window.location.reload()
+              }                
+
+            }).catch((error) => {
+              Swal.fire('Please try again ')
             })
+        }
+        else {
+          Swal.fire('Your Data safe', '');
+        }
+      })
     }
   }
   return (
     <>
       <ToastContainer />
-       <Card >
+      <Card >
         <CardBody className='cardbg'>
           <h5><strong>{params.id === "new" ? "Create Contract" : "Update Contract"}</strong></h5>
           <Card>
@@ -225,7 +228,7 @@ const createcontract = () => {
                                 <Label for="programName">Name<span className="required">*</span></Label>
                                 <Input name="programName" placeholder='Contract name' type="text" value={values.programName} onChange={handleChange} onBlur={handleBlur}
                                   invalid={touched.programName && !!errors.programName}
-                                  disabled={enrolled?true:false} />
+                                  disabled={enrolled ? true : false} />
                                 <ErrorMessage name="programName" component="div" className='errmsg'></ErrorMessage>
                               </FormGroup>
                             </Col>
@@ -237,7 +240,7 @@ const createcontract = () => {
                                 <InputGroup>
                                   <Input placeholder="0.00" type="number" min="1" onKeyPress={preventMinus} name="pricing" step="1"
                                     onChange={handleChange} onBlur={handleBlur} value={values.pricing}
-                                    disabled={enrolled?true:false}
+                                    disabled={enrolled ? true : false}
                                     invalid={touched.pricing && !!errors.pricing} />
                                 </InputGroup>
                                 <ErrorMessage name="pricing" component="div" className='errmsg'></ErrorMessage>
@@ -252,9 +255,9 @@ const createcontract = () => {
                                       name="lengths"
                                       options={contractlengths}
                                       value={values.lengths}
-                                      onChange={(selectedOption) => (form.setFieldValue('lengths', selectedOption),allfrequencies(selectedOption))}
+                                      onChange={(selectedOption) => (form.setFieldValue('lengths', selectedOption), allfrequencies(selectedOption))}
                                       onBlur={() => { form.setFieldTouched('lengths') }}
-                                      isDisabled={enrolled?true:false}
+                                      isDisabled={enrolled ? true : false}
                                     />
                                   )}
                                 </Field>
@@ -266,10 +269,10 @@ const createcontract = () => {
                             name="contractLoopValues"
                             render={arrayHelpers => {
                               const contractLoopValues = values.contractLoopValues;
-                               return (
+                              return (
                                 <div>
                                   {contractLoopValues && contractLoopValues.length > 0 ? contractLoopValues.map((element, index) => (
-                                    <div key={index}> 
+                                    <div key={index}>
                                       <Row>
                                         <Col md={2}>
                                           <FormGroup>
@@ -321,7 +324,7 @@ const createcontract = () => {
                                           </FormGroup>
                                         </Col>
                                         <Col md={2}>
-                                           <FormGroup>
+                                          <FormGroup>
                                             <Label for="amount">{index === 0 ? "Total $" : ""}</Label>
                                             <Input type="number" name={`contractLoopValues.${index}.amount`} disabled="true" readonly="readonly" value={values.pricing && ((parseFloat(values.pricing ? values.pricing : 0.00) + parseFloat(element.then ? element.then : 0.00)) - (element.discount)).toFixed(2)} />
                                           </FormGroup>
@@ -335,7 +338,7 @@ const createcontract = () => {
                                             id="plusbutton" >
                                             <i className="fa fa-plus" aria-hidden="true" id="plusicon"></i>
                                           </Button> &nbsp;
-                                          {index ? <Button color='danger' disabled={enrolled && (defaultcount >= (index + 1)) ? true : false} onClick={() => { arrayHelpers.remove(index), setBackbutton(!backbutton),rowDeleteHandle(element.id) }} id="minusbutton">
+                                          {index ? <Button color='danger' disabled={enrolled && (defaultcount >= (index + 1)) ? true : false} onClick={() => { (params.id == "new" ? arrayHelpers.remove(index) : null), setBackbutton(!backbutton), rowDeleteHandle(element.id) }} id="minusbutton">
                                             <i className="fa fa-minus" aria-hidden="true" id="minusicon"></i>
                                           </Button> : null}
                                         </Col>
@@ -349,8 +352,8 @@ const createcontract = () => {
                           />
                         </CardBody>
                         <CardFooter id='cardfootercolor'>
-                          <Button  size="md" color='secondary' type='button' className='btncncl' id="cancelbutton" onClick={() => navigate(-1)}>Cancel</Button>{' '}
-                          <Button  color="primary" size='md' className='btnsave' id="savebutton" type="submit">Save</Button>{' '}
+                          <Button size="md" color='secondary' type='button' className='btncncl' id="cancelbutton" onClick={() => navigate(-1)}>Cancel</Button>{' '}
+                          <Button color="primary" size='md' className='btnsave' id="savebutton" type="submit">Save</Button>{' '}
                         </CardFooter>
                       </Form>
                     )}

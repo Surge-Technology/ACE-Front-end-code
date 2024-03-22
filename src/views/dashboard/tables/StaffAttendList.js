@@ -78,16 +78,16 @@ export default function StaffAttendList() {
   }
   useEffect(()=>{
     var someDate = new Date();
-    let StartDat = moment(someDate).format("YYYY-MM-DD");
-      let endDat = moment(someDate).format("YYYY-MM-DD");
-      Axios.get(`/staff-attendance/summary/${StartDat}/${endDat}`).then((res)=>{
+    let StartDat = moment(someDate).startOf('month');
+      let endDat = moment(someDate).endOf('month');
+      Axios.get(`/staff-attendance/summary/${StartDat.format("YYYY-MM-DD")}/${endDat.format("YYYY-MM-DD")}`).then((res)=>{
         setState((prevState)=>({
           ...prevState,
-          startDate:someDate,  endDate:someDate,
+          startDate:StartDat.toDate(),  endDate:endDat.toDate(),
           StaffAttandList:res.data,loader:false,SummaryORhours:"hours"
         }))
       }).catch(err=>{
-        Swal.fire( err.response.data.message, 'Please try again '  ) 
+        Swal.fire( err.response.data.message, 'Please try again '  )
         setState((prevState)=>({...prevState,loader:false}))
       })
   },[])

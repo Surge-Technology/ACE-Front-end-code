@@ -97,6 +97,11 @@ const createStaffAttendence = () => {
     axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
      axios.get(`${process.env.REACT_APP_BASE_URL_BASE}staff-api/user/${data.value}/staff-attendance/${moment(state.datee).format('YYYY-MM-DD')}`).then((res) => {
       console.log("today date", res)
+      if (res.data.checkIn && res.data.checkOut){
+        Swal.fire(
+          "Today's attendence is marked."
+        )
+      }
       if (res.data === "") {
         setInCheck(true);
         //setResponseData(res.data);
@@ -154,9 +159,7 @@ const createStaffAttendence = () => {
         console.log("post", res)
         if (res.status === 201) {
           Swal.fire(
-            'Attendance Marked!',
-            'Staff In time entered successfully',
-            'success'
+            'Check-In Time is Marked!'
           )
              //  toast.success(`Staff In time entered successfully `, { theme: "colored" });
           sevendaysData(res.data);
@@ -179,9 +182,7 @@ const createStaffAttendence = () => {
         console.log("update", res)
         if (res.status === 200) {
           Swal.fire(
-            'Good job!',
-            'Staff Out time entered successfully',
-            'success'
+            'Check-out Time is Marked!'
           )
           // toast.info(`Staff Out time entered successfully`, { theme: "colored" });
         //  window.location.reload(false)

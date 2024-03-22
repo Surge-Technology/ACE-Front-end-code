@@ -44,17 +44,113 @@ const Login = () => {
     // console.log("additionValue", additionalValue, userloginRequestPayload)
     axios.post(`${process.env.REACT_APP_BASE_URL_BASE}auth/login/${additionalValue}`, userloginRequestPayload)
       .then((res) => {
+ 
         localStorage.setItem('role', res.data.user.roles[0].name)
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('username', `${res.data.user.firstName}${res.data.user.lastName}`)
         localStorage.setItem('useremail', res.data.user.email)
         localStorage.setItem('userid', res.data.user.id)
         localStorage.setItem('employmentType', res.data.user.employmentType.id)
+        const employmentType = res.data.user.roles[0].name
         if (res.status === 200) {
           toast.success("User Login successful", { theme: "colored" })
           setTimeout(() => {
-            navigate("/dashboard");
-          }, 500);
+           
+           
+ 
+            // navigate("/dashboard");
+         
+          axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+          axios.get(`${process.env.REACT_APP_BASE_URL_BASE}auth/current-user/`)
+      .then((res) => {console.log(res)
+       
+     const roles= res.data.roles[0];
+      console.log("data",roles);
+      const roleData = res.data.roles;
+ 
+      roleData.forEach(role => {
+        // Access the properties of each role, for example:
+        console.log("Role Name:", role.roleName);
+        console.log("Can View:", role.dashboard.canView);
+       
+        if(role.dashboard.canView === true)
+        {
+          navigate("/dashboard");
+        }
+       else if(role.students.canView === true)
+        {
+          navigate("/studentTabs/2")
+        }
+        // else if(role.inquiries.canView === true)
+        // {
+        //   navigate("")
+        // }
+        else if(role.contracts.canView === true)
+        {
+          navigate("/settings/allcontracts")
+        }
+        else if(role.email_templates.canView === true)
+        {
+          navigate("/settings/allemailtemplates")
+        }
+        else if(role.batches.canView === true)
+        {
+          navigate("/settings/batches")
+        }
+        else if(role.student_attendences.canView === true)
+        {
+          navigate("/studentattendenceList")
+        }
+        else if(role.events.canView === true)
+        {
+          navigate("/events")
+        }
+        else if(role.users.canView === true)
+        {
+          navigate("/userTabs")
+        }
+        else if(role.certificates.canView === true)
+        {
+          navigate("/certifications")
+        }
+        else if(role.levelTesting.canView === true)
+        {
+          navigate("/leveltesting/new")
+        }
+        else if(role.staff_attendence.canView === true)
+        {
+          navigate("/attendence/createstaffattendence/new")
+        }
+        // else if(role.permissions.canView === true)
+        // {
+         
+        // }
+        // else if(role.usersTab.canView === true)
+        // {
+ 
+        // }
+        // else if(role.studentTab.canView === true)
+        // {
+ 
+        // }
+        // else if(role.attendenceTab.canView === true)
+        // {
+ 
+        // }
+       
+       
+       
+       
+       
+        // Accessing canView for the dashboard of the role
+        // You can access other properties similarly
+    });
+     
+      }
+     
+      )
+    }, 500);
+         
         }
       }).catch((err) => {
         setFormValues({ ...formValues, loader: false });
