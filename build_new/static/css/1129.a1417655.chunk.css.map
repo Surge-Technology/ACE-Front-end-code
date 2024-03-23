@@ -1,1 +1,0 @@
-{"version":3,"file":"static/css/1129.a1417655.chunk.css","mappings":"AAAA,aACI,WACJ,CACA,sBACI,qBACJ,CACA,WACI,wBACJ","sources":["views/settings/emailtemplate/emailtemplate.css"],"sourcesContent":[".buttonfloat{\n    float: right;\n}\n#cardheaderbackground{\n    background-color: white;\n}\n#tablecard{\n    background-color: #afdef9;\n}"],"names":[],"sourceRoot":""}

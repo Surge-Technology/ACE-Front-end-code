@@ -68,8 +68,8 @@ export default function editStudent() {
     }
     const onSubmit = (values) => {
         setState((prevState) => ({ ...prevState, loader: true }));
-
-
+     
+       
         let studentPayload = {
             "firstName": values.firstName,
             "lastName": values.lastName,
@@ -81,95 +81,95 @@ export default function editStudent() {
             "notes": values.notes,
             "referBy": referBy,
             "address": {
-                "id": addressId,
-                "addressLine1": values.address,
-                "addressLine2": values.address2,
-                "pinCode": values.zipcode,
-                "city": values.city,
-                "state": { "id": values.state.value, "name": values.state.label }
+              "id": addressId,
+              "addressLine1": values.address,
+              "addressLine2": values.address2,
+              "pinCode": values.zipcode,
+              "city": values.city,
+              "state": { "id": values.state.value, "name": values.state.label }
             },
             "parent": {
-                "id": parentId,
-                "firstName": values.gfirstName,
-                "lastName": values.glastName,
-                "address": {
-                    "id": gaddressId,
-                    "addressLine1": values.gaddress,
-                    "addressLine2": values.gaddress2,
-                    "pinCode": values.gzipcode,
-                    "city": values.gcity,
-                    "state": { "id": values.gstate.value, "name": values.gstate.label }
+              "id": parentId,
+              "firstName": values.gfirstName,
+              "lastName": values.glastName,
+              "address": {
+                "id": gaddressId,
+                "addressLine1": values.gaddress,
+                "addressLine2": values.gaddress2,
+                "pinCode": values.gzipcode,
+                "city": values.gcity,
+                "state": { "id": values.gstate.value, "name": values.gstate.label }
+              }
+            },
+            "contract": {
+              "pricing": {
+                "id": values.member.value,
+                "fee": values.fee,
+                "discount": values.discount,
+                "totalFee": values.totalFee,
+                "members": values.member.label,
+                "subscriptionFrequency": {
+                  "id": values.memberFrequency.value,
+                  "name": values.memberFrequency.label
                 }
-            },
-            "contract": {
-                "pricing": {
-                    "id": values.member.value,
-                    "fee": values.fee,
-                    "discount": values.discount,
-                    "totalFee": values.totalFee,
-                    "members": values.member.label,
-                    "subscriptionFrequency": {
-                        "id": values.memberFrequency.value,
-                        "name": values.memberFrequency.label
-                    }
-                },
-                "startDate": moment(values.startDate).format("YYYY-MM-DD"),
-                "endDate": moment(values.endDate).format("YYYY-MM-DD"),
-                "attachment": contractImageName,
+              },
+              "startDate": moment(values.startDate).format("YYYY-MM-DD"),
+              "endDate": moment(values.endDate).format("YYYY-MM-DD"),
+              "attachment": contractImageName,
             }
-
+       
         };
-
-
+     
+       
         let contractPayload = {
-            "contract": {
-                "pricing": {
-                    "id": values.member.value,
-                    "fee": values.fee,
-                    "discount": values.discount,
-                    "totalFee": values.totalFee,
-                    "members": values.member.label,
-                    "subscriptionFrequency": {
-                        "id": values.memberFrequency.value,
-                        "name": values.memberFrequency.label
-                    }
-                },
-                "startDate": moment(values.startDate).format("YYYY-MM-DD"),
-                "endDate": moment(values.endDate).format("YYYY-MM-DD"),
-                "attachment": contractImageName,
-            },
-            "contractPromotionId": contractNameSelect.value,
-            "contractStatusName": values.contractStatus.value,
+          "contract":{
+            "pricing":{
+              "id":values.member.value,
+              "fee":values.fee,
+              "discount":values.discount,
+              "totalFee":values.totalFee,
+              "members":values.member.label,
+              "subscriptionFrequency":{
+                "id":values.memberFrequency.value,
+                "name":values.memberFrequency.label
+              }
+          },
+          "startDate":moment(values.startDate).format("YYYY-MM-DD"),
+          "endDate":moment(values.endDate).format("YYYY-MM-DD"),
+          "attachment": contractImageName,
+        },
+          "contractPromotionId": contractNameSelect.value,
+          "contractStatusName": values.contractStatus.value,
         };
-
+     
         axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-
-
+     
+       
         axios.all([
-            axios.put(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/student/${params.id}/update-student`, studentPayload),
-            axios.post(`${process.env.REACT_APP_BASE_URL}/contract-promotion/${contractNameSelect.value}/contract-status/${values.contractStatus.value}/student/${params.id}`, contractPayload)
+          axios.put(`${process.env.REACT_APP_BASE_URL}/sports/${values.sports.value}/program/${values.programName.value}/batch/${values.batch.value}/student/${params.id}/update-student`, studentPayload),
+          axios.post(`${process.env.REACT_APP_BASE_URL}/contract-promotion/${contractNameSelect.value}/contract-status/${values.contractStatus.value}/student/${params.id}`, contractPayload)
         ])
-            .then(axios.spread((resUpdateStudent, resContractPromotion) => {
-
-
-                toast.success("Student updated successfully", { theme: "colored" });
-                setTimeout(() => {
-                    navigate("/studentTabs/2");
-                }, 1000);
-                setState((prevState) => ({ ...prevState, loader: false }));
-            }))
-            .catch(errors => {
-
-                console.error("Request errors:", errors);
-                setState((prevState) => ({ ...prevState, loader: false }));
-                errors.forEach(error => {
-                    Swal.fire(
-                        error.response.data.message,
-                        'Please try again '
-                    );
-                });
+          .then(axios.spread((resUpdateStudent, resContractPromotion) => {
+         
+           
+            toast.success("Student updated successfully", { theme: "colored" });
+            setTimeout(() => {
+              navigate("/studentTabs/2");
+            }, 1000);
+            setState((prevState) => ({ ...prevState, loader: false }));
+          }))
+          .catch(errors => {
+           
+            console.error("Request errors:", errors);
+            setState((prevState) => ({ ...prevState, loader: false }));
+            errors.forEach(error => {
+              Swal.fire(
+                error.response.data.message,
+                'Please try again '
+              );
             });
-    };
+          });
+      };
     const sportsSelectHandle = (selectedData, type) => {
         // if (type === "sports") {
         //     Axios.get(`sports/${selectedData.value}/program-name`).then((res) => {
@@ -443,54 +443,57 @@ export default function editStudent() {
         modalHandleChange(data);
     }
     const contractSelectHandle = (fieldData, type) => {
-        if (type === "getMembers") {
-            Axios.get(`contract-promotions/${fieldData.value}/members`).then((res) => {
-                let allmembers = []
-
+        if(type==="getMembers"){
+            Axios.get(`contract-promotions/${fieldData.value}/members`).then((res)=>{
+             let  allmembers = []
+   
+               const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+            
+               res.data.forEach((mapdata) => {
+                 // Check for duplicates before pushing to the array
+                 if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
+                   allmembers.push({ value: mapdata.id, label: mapdata.members });
+                 }
+               });
+       setState((prevState)=>({
+             ...prevState,
+             memberOptions:allmembers,contractNameSelect:fieldData,memberFrequency:{},fee:"",totalFee:"",discount:""
+           }))
+           }).catch(err=>{
+           Swal.fire(err.response.data.message,'Please try again later');
+           })
+       }
+       if (type === "getFrequency") {
+        Axios.get(`contract-promotion/${contractNameSelect.value}/members/${fieldData.label}/subscription-frequency`)
+            .then((res) => {
+                let allFrequencies = [];
+    
                 const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
-
-                res.data.forEach((mapdata) => {
+    
+                res.data.forEach((frequencyData) => {
                     // Check for duplicates before pushing to the array
-                    if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
-                        allmembers.push({ value: mapdata.id, label: mapdata.members });
+                    if (!isDuplicate(allFrequencies, { value: frequencyData.id, label: frequencyData.name })) {
+                        allFrequencies.push({ value: frequencyData.id, label: frequencyData.name });
                     }
                 });
+    
                 setState((prevState) => ({
                     ...prevState,
-                    memberOptions: allmembers, contractNameSelect: fieldData,member: "", memberFrequency: "", fee: "", totalFee: "", discount: ""
-                }))
-            }).catch(err => {
-                Swal.fire(err.response.data.message, 'Please try again later');
+                    contractMemberOptions: allFrequencies,
+                    member: fieldData,
+                    memberFrequency: {},
+                    fee: "",
+                    totalFee: "",
+                    discount: ""
+                }));
             })
-        }
-        if (type === "getFrequency") {
-            Axios.get(`contract-promotion/${contractNameSelect.value}/members/${fieldData.label}/subscription-frequency`)
-                .then((res) => {
-                    let allFrequencies = [];
-
-                    const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
-
-                    res.data.forEach((frequencyData) => {
-                        // Check for duplicates before pushing to the array
-                        if (!isDuplicate(allFrequencies, { value: frequencyData.id, label: frequencyData.name })) {
-                            allFrequencies.push({ value: frequencyData.id, label: frequencyData.name });
-                        }
-                    });
-
-                    setState((prevState) => ({
-                        ...prevState,
-                        contractMemberOptions: allFrequencies,
-                        member: fieldData,
-                        memberFrequency: {},
-                        fee: "",
-                        totalFee: "",
-                        discount: ""
-                    }));
-                })
-                .catch(err => {
-                    console.error(err);
-                });
-        }
+            .catch(err => {
+                console.error(err);
+            });
+    }
+    
+    
+    
         if (type === "getFee") {
             Axios.get(`contract-promotion/${contractNameSelect.value}`).then((res) => {
                 let lengt = res.data.tenure.name.slice(0, 2);
@@ -515,14 +518,13 @@ export default function editStudent() {
                 Swal.fire(err.response.data.message, 'Please try again later');
             })
         }
-        
-        
         if (type === "contractStatus") {
             setState((prevState) => ({
                 ...prevState,
                 contractStatus: fieldData
             }))
-        } else {
+        } 
+        else {
             setState((prevState) => ({
                 ...prevState,
                 [type]: fieldData
@@ -576,6 +578,38 @@ export default function editStudent() {
             Swal.fire(err.response.data.message, 'Please try again later');
         })
     }
+
+    const handleDownload = (e) => {
+        e.preventDefault();
+        
+        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+    
+        axios.get(`${process.env.REACT_APP_BASE_URL}/files/fileimage/upload/${params.id}`, {
+          responseType: 'blob' 
+        })
+          .then(response => {
+    
+            
+            const imageUrl = URL.createObjectURL(response.data);
+    
+
+            const link = document.createElement('a');
+            link.href = imageUrl;
+    
+            
+            link.download = 'image.jpg';
+    
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          })
+          .catch(error => {
+           
+            console.error(error);
+          });
+    
+      };
     return (
         <>
             <ToastContainer />
@@ -667,7 +701,7 @@ export default function editStudent() {
                                                 </Col>
                                                 <Col md={3}>
                                                     <Label > Zipcode  </Label>
-                                                    <Input name="zipcode" type="number" value={values.zipcode} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange} />
+                                                    <Input name="zipcode" type="number" value={values.zipcode} onBlur={handleBlur} onChangeCapture={handleChange} onChange={fieldHandleChange}/>
                                                     <ErrorMessage name="zipcode" component="div" className='errmsg'></ErrorMessage>
                                                 </Col>
                                             </Row>
@@ -681,7 +715,7 @@ export default function editStudent() {
                                                                 <Row>
                                                                     <Col>
                                                                         <Label > First Name  </Label>
-                                                                        <Input name="gfirstName" type="text" value={values.gfirstName} onChangeCapture={handleChange} onChange={fieldHandleChange} />
+                                                                        <Input name="gfirstName" type="text" value={values.gfirstName} onChangeCapture={handleChange} onChange={fieldHandleChange}/>
                                                                         <ErrorMessage name="gfirstName" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                     <Col>
@@ -732,7 +766,7 @@ export default function editStudent() {
                                                                     </Col>
                                                                     <Col>
                                                                         <Label > Phone  </Label>
-                                                                        <Input name="phone" type="text" value={values.phone} onChangeCapture={handleChange} onChange={fieldHandleChange} />
+                                                                        <Input name="phone" type="text" value={values.phone} onChangeCapture={handleChange} onChange={fieldHandleChange}/>
                                                                         <ErrorMessage name="phone" component="div" className='errmsg'></ErrorMessage>
                                                                     </Col>
                                                                 </Row>
@@ -766,7 +800,7 @@ export default function editStudent() {
                                                                         <Select
                                                                             name="member"
                                                                             isDisabled={!contractEditButton}
-                                                                            value={member|| "Select"}
+                                                                            value={member}
                                                                             onChange={(e) => { setFieldValue("member", e), contractSelectHandle(e, "getFrequency") }}
                                                                             options={memberOptions}
                                                                         />
@@ -835,6 +869,15 @@ export default function editStudent() {
                                                                             Contract Upload <input type="file" onChange={(e) => ContractFileHandleChange(e)} />
                                                                         </span>
                                                                         <span> {contractImageName ? <b style={{ color: "green" }}>Uploaded</b> : null}</span>
+                                                                        <div style={{ marginTop: '10px' }}>
+                              <p>
+                                <a href="#" onClick={handleDownload} style={{ marginBottom: "10px" }}>
+                                 
+                                    <b style={{ color: "#65bdf7" }}>Click here to download</b>
+                                  
+                                </a>
+                              </p>
+                            </div>
                                                                     </Col>
                                                                 </Row>
                                                             </AccordionBody>

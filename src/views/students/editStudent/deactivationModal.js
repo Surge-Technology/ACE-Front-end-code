@@ -23,7 +23,7 @@ export default function DeactivationModal(props) {
         axios.post(`${process.env.REACT_APP_BASE_URL}/deactivation/student/${props.studentId}`,payload).then((res)=>{
             toast.success("Student deactivated successfully", { theme: "colored" })
           setTimeout(() => {
-            navigate("/students")
+            navigate("/studentTabs/2")
         }, 1000);
         }).catch(err=>{  
            Swal.fire(err.response.data.message,'Please try again later');
