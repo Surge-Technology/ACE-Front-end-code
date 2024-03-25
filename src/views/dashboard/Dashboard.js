@@ -106,9 +106,9 @@ export default function Dashboard() {
         totalContracts: res.data.totalContracts,
         totalRenewals: res.data.totalRenewals,
         totalUpgrades: res.data.totalUpgrades,
-        renewalPercentage: res.data.renewalPercentage,
-        upgradePercentage: res.data.upgradePercentage,
-      }))
+        renewalPercentage: Math.round( res.data.renewalPercentage),
+        upgradePercentage: Math.round(res.data.upgradePercentage),
+        }))
     }).catch(err => { })
   }, [])
   const getAllBatches = () => {

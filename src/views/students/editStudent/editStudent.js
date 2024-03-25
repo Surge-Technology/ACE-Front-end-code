@@ -255,8 +255,9 @@ export default function editStudent() {
         Axios.get("contract-promotions").then((res) => {
             let allcontract = []
             res.data.map((mapdata, index) => {
-                allcontract.push({ value: mapdata.id, label: mapdata.name })
-            })
+                if(mapdata.activeInactive === true ){
+                    allcontract.push({ value: mapdata.id, label: mapdata.name })
+                    }            })
             setState((prevState) => ({
                 ...prevState,
                 contractNameOptions: allcontract, startDate: moment().format('YYYY-MM-DD')
@@ -340,27 +341,37 @@ export default function editStudent() {
             sportsSelectHandle({ value: res.data.program.id, label: res.data.program.name }, "programName");
             Axios.get(`contract-promotions/${res.data.contract.contractPromotion.id}/members`).then((res) => {
                 let allmembers = []
-                res.data.map((mapdata, index) => {
-                    allmembers.push({ value: mapdata.id, label: mapdata.members })
-                })
+ 
+                const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+ 
+                res.data.forEach((mapdata) => {
+                    // Check for duplicates before pushing to the array
+                    if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
+                        allmembers.push({ value: mapdata.id, label: mapdata.members });
+                    }
+                });
                 setState((prevState) => ({
                     ...prevState,
                     memberOptions: allmembers
-                }))
-            }).catch(err => { })
+                }))        }).catch(err => { })
             setTimeout(() => {
                 sportsSelectHandle({ value: res.data.batch.id, label: res.data.batch.name }, "batch");
                 Axios.get(`contract-promotion/${res.data.contract.contractPromotion.id}/members/${res.data.contract.pricing.members}/subscription-frequency`).then((res) => {
-                    let allmembers = []
-                    res.data.map((mapdata, index) => {
-                        allmembers.push({ value: mapdata.id, label: mapdata.name })
-                    })
-                    console.log("Testing")
+                    let allFrequencies = [];
+ 
+                    const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+           
+                    res.data.forEach((frequencyData) => {
+                      // Check for duplicates before pushing to the array
+                      if (!isDuplicate(allFrequencies, { value: frequencyData.id, label: frequencyData.name })) {
+                        allFrequencies.push({ value: frequencyData.id, label: frequencyData.name });
+                      }
+                    });
                     setState((prevState) => ({
-                        ...prevState,
-                        contractMemberOptions: allmembers
-                    }))
-                }).catch(err => { })
+                      ...prevState,
+                      contractMemberOptions: allFrequencies
+                     
+                    }));                                 }).catch(err => { })
                 Axios.get(`${process.env.REACT_APP_BASE_URL}/sports/all`).then((res) => {
                     setState((prevState) => ({
                         ...prevState,
@@ -457,7 +468,7 @@ export default function editStudent() {
                });
        setState((prevState)=>({
              ...prevState,
-             memberOptions:allmembers,contractNameSelect:fieldData,memberFrequency:{},fee:"",totalFee:"",discount:""
+             memberOptions:allmembers,contractNameSelect:fieldData,member:"",memberFrequency:"",fee:"",totalFee:"",discount:""
            }))
            }).catch(err=>{
            Swal.fire(err.response.data.message,'Please try again later');
@@ -550,7 +561,7 @@ export default function editStudent() {
                 address: Yup.string().required("Address is required"),
                 city: Yup.string().required("City is required"),
                 state: Yup.object().required("State is required"),
-                gfirstName: Yup.string().required("First Name is required"),
+                firstName: Yup.string().required("First Name is required"),
                 glastName: Yup.string().required("Last Name is required"),
                 gaddress: Yup.string().required("Address is required"),
                 gcity: Yup.string().required("City is required"),
@@ -581,35 +592,51 @@ export default function editStudent() {
 
     const handleDownload = (e) => {
         e.preventDefault();
-        
+       
         axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-    
+   
         axios.get(`${process.env.REACT_APP_BASE_URL}/files/fileimage/upload/${params.id}`, {
-          responseType: 'blob' 
-        })
+            responseType: 'blob'
+          })
           .then(response => {
-    
-            
-            const imageUrl = URL.createObjectURL(response.data);
-    
-
-            const link = document.createElement('a');
-            link.href = imageUrl;
-    
-            
-            link.download = 'image.jpg';
-    
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+              console.log(response.data); // Check the response data
+             
+              // Determine the file type from the server response
+              const fileType = response.headers['content-type'].split('/')[1];
+              let extension, mimeType;
+              switch(fileType) {
+                  case 'pdf':
+                      extension = 'pdf';
+                      mimeType = 'application/pdf';
+                      break;
+                  case 'jpeg':
+                  case 'jpg':
+                      extension = 'jpg';
+                      mimeType = 'image/jpeg';
+                      break;
+                  case 'excel':
+                      extension = 'xlsx';
+                      mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                      break;
+                  default:
+                      console.error('Unsupported file type');
+                      return;
+              }
+             
+              const url = URL.createObjectURL(new Blob([response.data], { type: mimeType }));
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `file.${extension}`;
+             
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
           })
           .catch(error => {
-           
-            console.error(error);
+              console.error('Error downloading file:', error);
+              // Handle error, such as displaying an error message to the user
           });
-    
-      };
+    };
     return (
         <>
             <ToastContainer />
@@ -800,7 +827,7 @@ export default function editStudent() {
                                                                         <Select
                                                                             name="member"
                                                                             isDisabled={!contractEditButton}
-                                                                            value={member}
+                                                                            value={member||"Select"}
                                                                             onChange={(e) => { setFieldValue("member", e), contractSelectHandle(e, "getFrequency") }}
                                                                             options={memberOptions}
                                                                         />

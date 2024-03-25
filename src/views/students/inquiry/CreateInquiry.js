@@ -241,35 +241,51 @@ function CreateInquiry() {
 
   const handleDownload = (e) => {
     e.preventDefault();
-    // Set authorization header
-    axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-
-    axios.get(`${process.env.REACT_APP_BASE_URL}/inquireDownload/fileimage/upload/${params.id}`, {
-      responseType: 'blob' // Expecting a binary response
-    })
+   
+   axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+ 
+axios.get(`${process.env.REACT_APP_BASE_URL}/inquireDownload/fileimage/upload/${params.id}`, {
+  responseType: 'blob' // Expecting a binary response
+})
       .then(response => {
-
-        // Create a blob URL from the binary data received
-        const imageUrl = URL.createObjectURL(response.data);
-
-        // Create a temporary anchor element to trigger the download
-        const link = document.createElement('a');
-        link.href = imageUrl;
-
-        // Set the correct file extension for JPEG images
-        link.download = 'image.jpg';
-
-        // Programmatically trigger the download
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+          console.log(response.data); // Check the response data
+         
+          // Determine the file type from the server response
+          const fileType = response.headers['content-type'].split('/')[1];
+          let extension, mimeType;
+          switch(fileType) {
+              case 'pdf':
+                  extension = 'pdf';
+                  mimeType = 'application/pdf';
+                  break;
+              case 'jpeg':
+              case 'jpg':
+                  extension = 'jpg';
+                  mimeType = 'image/jpeg';
+                  break;
+              case 'excel':
+                  extension = 'xlsx';
+                  mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                  break;
+              default:
+                  console.error('Unsupported file type');
+                  return;
+          }
+         
+          const url = URL.createObjectURL(new Blob([response.data], { type: mimeType }));
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `file.${extension}`;
+         
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
       })
       .catch(error => {
-        // Handle errors
-        console.error(error);
+          console.error('Error downloading file:', error);
+          // Handle error, such as displaying an error message to the user
       });
-
-  };
+};
   return (
     <>
       {loader ? <Spinner

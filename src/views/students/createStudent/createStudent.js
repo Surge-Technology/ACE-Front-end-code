@@ -245,8 +245,9 @@ function createStudent() {
      Axios.get("contract-promotions").then((res)=>{
         let  allcontract = []
          res.data.map((mapdata,index)=>{
-          allcontract.push( { value: mapdata.id, label: mapdata.name })
-         })
+          if(mapdata.activeInactive === true ){
+            allcontract.push({ value: mapdata.id, label: mapdata.name })
+            }         })
       setState((prevState)=>({
         ...prevState,
         contractNameOptions:allcontract,startDate:moment().format('MM/DD/YYYY')
@@ -315,24 +316,26 @@ function createStudent() {
     }
      if(type==="getFrequency"){
       Axios.get(`contract-promotion/${contractNameSelect.value}/members/${fieldData.label}/subscription-frequency`).then((res)=>{
-        let allmembers = []
-        res.data.map((mapdata, index) => {
-            allmembers.push({ value: mapdata.id, label: mapdata.name })
-        })
-        const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
- 
-              res.data.forEach((mapdata) => {
-          // Check for duplicates before pushing to the array
-          if (!isDuplicate(allmembers, { value: mapdata.id, label: mapdata.members })) {
-            allmembers.push({ value: mapdata.id, label: mapdata.members });
-          }
-        });
-
-setState((prevState)=>({
-          ...prevState,
-          contractMemberOptions:allmembers,member:fieldData,memberFrequency:{},fee:"",totalFee:"",discount:""
-        }))
-      }).catch(err=>{ })
+        let allFrequencies = [];
+        
+               const isDuplicate = (array, value) => array.some((item) => item.label === value.label);
+        
+               res.data.forEach((frequencyData) => {
+                 // Check for duplicates before pushing to the array
+                 if (!isDuplicate(allFrequencies, { value: frequencyData.id, label: frequencyData.name })) {
+                   allFrequencies.push({ value: frequencyData.id, label: frequencyData.name });
+                 }
+               });
+        
+               setState((prevState) => ({
+                 ...prevState,
+                 contractMemberOptions: allFrequencies,
+                 member: fieldData,
+                 memberFrequency: {},
+                 fee: "",
+                 totalFee: "",
+                 discount: ""
+               }));      }).catch(err=>{ })
     }if(type==="getFee"){
        Axios.get(`contract-promotion/${contractNameSelect.value}`).then((res)=>{
            let lengt = res.data.tenure.name.slice(0, 2);
@@ -682,7 +685,7 @@ setState((prevState)=>({
                           <Label > Member   <span className='colorRed'>*</span> </Label>
                             <Select
                               name="member"
-                              defaultValue={member}
+                              value={member}
                               onChange={(e)=>{setFieldValue("member",e),contractSelectHandle(e,"getFrequency")}}
                               options={memberOptions}
                             />
@@ -692,7 +695,7 @@ setState((prevState)=>({
                           <Label >Frequency  <span className='colorRed'>*</span> </Label>
                             <Select
                               name="memberFrequency"
-                              defaultValue={memberFrequency}
+                              value={memberFrequency}
                               onChange={(e)=>{setFieldValue("memberFrequency",e),contractSelectHandle(e,"getFee")}}
                               options={contractMemberOptions}
                             />

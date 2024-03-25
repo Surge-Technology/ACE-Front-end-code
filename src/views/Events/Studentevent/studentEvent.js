@@ -175,12 +175,11 @@ export default function studentEvent() {
               </Row>
               <Row>
                 <Col md={7}>
-                  <Label > <b>Email</b> </Label>
-                  <Input name="email" type="email" value={values.email} onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur} invalid={touched.email && !!errors.email }/>
+                  <Label > <b>Email</b><span className='colorRed'>*</span> </Label>                  <Input name="email" type="email" value={values.email} onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur} invalid={touched.email && !!errors.email }/>
                   <ErrorMessage name="email" component="div"  className='errmsg'></ErrorMessage>
                 </Col>
                 <Col md={5}>
-                  <Label ><b>Phone</b></Label>
+                  <Label ><b>Phone</b><span className='colorRed'>*</span></Label>
                   <Input name="phone" type="text" value={values.phone} onChange={(handleChange,fieldHandleChange)} onBlur={handleBlur} invalid={touched.phone &&   !!errors.phone }/>
                   <ErrorMessage name="phone" component="div"  className='errmsg'></ErrorMessage>
                 </Col>
